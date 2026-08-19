@@ -1,0 +1,13 @@
+{
+  "name": "gestion-activos-ti",
+  "version": "1.0.0",
+  "description": "Sistema de gestión de activos TI",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "exceljs": "^4.3.0"
+  }
+}

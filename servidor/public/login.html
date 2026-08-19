@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ingresar — Gestión de Activos TI</title>
+<style>
+  :root{ --azul:#1e3a5f; --azul-claro:#2c5282; --rojo:#c53030; --borde:#cbd5e0; --gris-100:#f7fafc; --gris-500:#718096; }
+  *{box-sizing:border-box;}
+  body{font-family: Segoe UI, Arial, sans-serif; background:linear-gradient(135deg,var(--azul),var(--azul-claro)); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center;}
+  .box{background:#fff; border-radius:12px; padding:34px; width:100%; max-width:380px; box-shadow:0 10px 40px rgba(0,0,0,.25);}
+  h1{font-size:17px; color:var(--azul); margin:0 0 4px;}
+  p.sub{color:var(--gris-500); font-size:13px; margin:0 0 22px;}
+  label{font-size:12px; font-weight:600; color:#2d3748; display:block; margin-bottom:4px;}
+  input{width:100%; padding:9px 10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:14px;}
+  button.btn{width:100%; background:var(--azul); color:#fff; border:none; padding:10px; border-radius:6px; font-size:14px; cursor:pointer;}
+  button.btn:hover{background:var(--azul-claro);}
+  button.btn:disabled{opacity:.6;}
+  .err{background:#fff5f5; color:var(--rojo); padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:12px; display:none;}
+  .msg{background:#f0fff4; color:#2f855a; padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:12px; display:none;}
+  a.link{color:var(--azul); font-size:12.5px; cursor:pointer; text-decoration:underline; display:inline-block; margin-top:4px;}
+  .hidden{display:none;}
+</style>
+</head>
+<body>
+  <div class="box">
+    <h1>Gestión de Activos TI</h1>
+    <p class="sub">Axis Group</p>
+
+    <div id="viewLogin">
+      <div class="err" id="loginErr"></div>
+      <label>Usuario</label>
+      <input type="text" id="loginUser" autocomplete="username" placeholder="Ingresa tu usuario">
+      <label>Contraseña</label>
+      <input type="password" id="loginPass" autocomplete="current-password">
+      <button class="btn" id="btnLogin">Ingresar</button>
+      <a class="link" onclick="showView('forgot1')">¿Olvidaste tu contraseña?</a>
+    </div>
+
+    <div id="viewForgot1" class="hidden">
+      <div class="msg" id="forgotMsg"></div>
+      <p class="sub" style="margin-top:0;">Escribe el correo de recuperación asociado a tu usuario. Si está registrado, te enviaremos una contraseña temporal para ingresar.</p>
+      <label>Correo de recuperación</label>
+      <input type="email" id="forgotEmail" placeholder="tucorreo@empresa.com">
+      <button class="btn" id="btnForgot">Enviar contraseña temporal</button>
+      <a class="link" onclick="showView('login')">Volver a iniciar sesión</a>
+    </div>
+  </div>
+
+<script>
+function showView(name){
+  document.getElementById('viewLogin').classList.add('hidden');
+  document.getElementById('viewForgot1').classList.add('hidden');
+  document.getElementById('view'+name.charAt(0).toUpperCase()+name.slice(1)).classList.remove('hidden');
+}
+function showErr(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+function hideErr(id){ document.getElementById(id).style.display='none'; }
+function showMsg(id, msg){ const el=document.getElementById(id); el.textContent=msg; el.style.display='block'; }
+
+document.getElementById('btnLogin').addEventListener('click', async ()=>{
+  hideErr('loginErr');
+  const username = document.getElementById('loginUser').value.trim();
+  const password = document.getElementById('loginPass').value;
+  if(!username || !password){ showErr('loginErr','Ingresa usuario y contraseña'); return; }
+  try{
+    const r = await fetch('/api/login', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({username, password})});
+    const data = await r.json();
+    if(!r.ok){ showErr('loginErr', data.error || 'No se pudo iniciar sesión'); return; }
+    window.location.href = '/';
+  }catch(e){ showErr('loginErr', 'Error de conexión con el servidor'); }
+});
+document.getElementById('loginPass').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('btnLogin').click(); });
+
+document.getElementById('btnForgot').addEventListener('click', async ()=>{
+  const email = document.getElementById('forgotEmail').value.trim();
+  if(!email) return;
+  const btn = document.getElementById('btnForgot');
+  btn.disabled = true;
+  try{
+    const r = await fetch('/api/forgot-password', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email})});
+    const data = await r.json();
+    showMsg('forgotMsg', data.mensaje || data.error || 'Solicitud procesada');
+  }catch(e){ showMsg('forgotMsg', 'Error de conexión con el servidor'); }
+  finally{ btn.disabled = false; }
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,2471 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Activos TI - Axis Group</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600;700&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --azul:#1e40af; --azul-claro:#3b82f6; --rojo:#dc2626; --ambar:#d97706; --verde:#16a34a;
+    --gris-100:#f8fafc; --gris-200:#edf2f7; --gris-300:#e2e8f0; --gris-500:#718096; --gris-700:#2d3748; --gris-900:#1a202c;
+    --borde:#cbd5e0;
+    --font-num:'Fira Code', 'Consolas', monospace;
+  }
+  *{box-sizing:border-box;}
+  body{font-family: 'Fira Sans', Segoe UI, Arial, sans-serif; margin:0; background:var(--gris-100); color:var(--gris-900);}
+  header{background:var(--azul); color:#fff; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;}
+  header h1{font-size:18px; margin:0; font-weight:600;}
+  header .sub{font-size:12px; opacity:.8;}
+  #connStatus{font-size:11px; padding:3px 10px; border-radius:10px; background:rgba(255,255,255,.15);}
+  #connStatus.bad{background:#c53030;}
+  nav{display:flex; background:var(--azul-claro); flex-wrap:wrap;}
+  nav button{background:none; border:none; color:#fff; padding:12px 16px; cursor:pointer; font-size:13px; opacity:.8; border-bottom:3px solid transparent;}
+  nav button:hover{opacity:1; background:rgba(255,255,255,.08);}
+  nav button.active{opacity:1; border-bottom:3px solid #fff; font-weight:600;}
+  main{padding:20px; max-width:1400px; margin:0 auto;}
+  .view{display:none;}
+  .view.active{display:block;}
+  .card{background:#fff; border:1px solid var(--borde); border-radius:8px; padding:16px; margin-bottom:16px;}
+  .card h2{margin-top:0; font-size:16px; color:var(--azul);}
+  .kpis{display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:12px; margin-bottom:16px;}
+  .kpi{background:#fff; border:1px solid var(--borde); border-radius:8px; padding:14px; text-align:center;}
+  .kpi .num{font-family:var(--font-num); font-size:26px; font-weight:700; color:var(--azul);}
+  .kpi .lbl{font-size:12px; color:var(--gris-500); margin-top:4px;}
+  .kpi.alert .num{color:var(--rojo);}
+  .kpi.warn .num{color:var(--ambar);}
+  table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  th,td{border:1px solid var(--gris-300); padding:6px 8px; text-align:left;}
+  th{background:var(--gris-200); position:sticky; top:0; cursor:pointer; white-space:nowrap;}
+  tr:hover{background:var(--gris-100);}
+  .tablewrap{overflow:auto; max-height:65vh; border:1px solid var(--borde); border-radius:6px;}
+  .tag{display:inline-block; padding:2px 8px; border-radius:12px; font-size:11px; font-weight:600;}
+  .tag.ok{background:#e6fffa; color:var(--verde);}
+  .tag.warn{background:#fffaf0; color:var(--ambar);}
+  .tag.bad{background:#fff5f5; color:var(--rojo);}
+  .tag.neutral{background:var(--gris-200); color:var(--gris-700);}
+  button.btn{background:var(--azul); color:#fff; border:none; padding:8px 14px; border-radius:6px; cursor:pointer; font-size:13px;}
+  button.btn:hover{background:var(--azul-claro);}
+  button.btn.secondary{background:#fff; color:var(--azul); border:1px solid var(--azul);}
+  button.btn.danger{background:var(--rojo);}
+  button.btn.small{padding:4px 8px; font-size:11px;}
+  .btn-group{display:flex; gap:6px; align-items:center;}
+  button.btn-icon{background:none; border:none; font-size:16px; cursor:pointer; padding:6px 8px; border-radius:5px; transition:all 0.2s; position:relative;}
+  button.btn-icon:hover{background:rgba(30,58,95,0.1); transform:scale(1.1);}
+  button.btn-icon.primary{color:var(--azul);}
+  button.btn-icon.secondary{color:#666;}
+  button.btn-icon.danger{color:var(--rojo);}
+  button.btn-icon:disabled{opacity:.5; cursor:not-allowed;}
+  button.btn-icon[title]{position:relative;}
+  button.btn-icon[title]:hover::after{content:attr(title); position:absolute; bottom:100%; left:50%; transform:translateX(-50%); background:var(--azul); color:#fff; padding:4px 8px; border-radius:4px; font-size:11px; white-space:nowrap; z-index:10; margin-bottom:4px;}
+  button.btn:disabled{opacity:.5; cursor:not-allowed;}
+  input, select, textarea{padding:7px 8px; border:1px solid var(--borde); border-radius:5px; font-size:13px; font-family:inherit;}
+  label{font-size:12px; color:var(--gris-700); font-weight:600; display:block; margin-bottom:3px;}
+  .field{margin-bottom:10px;}
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;}
+  .grid4{display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px;}
+  .itemsRow{display:grid; grid-template-columns:1.3fr .7fr 1.3fr 1fr 1fr auto; gap:6px; align-items:end; margin-bottom:6px; padding:8px; background:var(--gris-100); border-radius:6px;}
+  .modal-bg{display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:50; align-items:flex-start; justify-content:center; overflow:auto; padding:30px 12px;}
+  .modal-bg.active{display:flex;}
+  .modal{background:#fff; border-radius:10px; padding:20px; width:100%; max-width:760px; max-height:90vh; overflow:auto;}
+  .modal h3{margin-top:0; color:var(--azul);}
+  .toolbar{display:flex; gap:10px; margin-bottom:12px; flex-wrap:wrap; align-items:center;}
+  .toolbar input[type=text],.toolbar select{min-width:160px;}
+  .muted{color:var(--gris-500); font-size:12px;}
+  .close-x{float:right; cursor:pointer; font-size:20px; color:var(--gris-500); background:none; border:none;}
+  .hist-item{border-left:3px solid var(--azul); padding:6px 10px; margin-bottom:8px; background:var(--gris-100); border-radius:0 6px 6px 0;}
+  .hist-item .d{font-size:11px; color:var(--gris-500);}
+  footer{text-align:center; padding:20px; color:var(--gris-500); font-size:11px;}
+  .banner{background:#fffaf0; border:1px solid #fbd38d; color:#7b341e; padding:10px 14px; border-radius:6px; margin-bottom:14px; font-size:13px;}
+  a.link{color:var(--azul); cursor:pointer; text-decoration:underline;}
+  .charts-row{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+  @media (max-width:800px){ .charts-row{grid-template-columns:1fr;} }
+  .chart-bars{display:flex; flex-direction:column; gap:8px;}
+  .chart-bar-row{display:grid; grid-template-columns:110px 1fr 40px; align-items:center; gap:8px; font-size:12px;}
+  .chart-bar-track{background:var(--gris-200); border-radius:4px; height:14px; overflow:hidden;}
+  .chart-bar-fill{height:100%; border-radius:4px; background:var(--azul);}
+  .chart-bar-val{font-family:var(--font-num); text-align:right; color:var(--gris-700);}
+  .bulkbar{display:none; align-items:center; gap:10px; background:#eff6ff; border:1px solid var(--azul-claro); border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:13px;}
+  .bulkbar.active{display:flex;}
+  .bulkbar .count{font-weight:600; color:var(--azul);}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Gestión de Activos TI — Axis Group</h1>
+    <div class="sub">Registro, entregas, devoluciones, mantenimiento y actas — sincronizado en la red</div>
+  </div>
+  <div style="display:flex; align-items:center; gap:12px;">
+    <div id="connStatus">Conectando...</div>
+    <div id="userBadge" class="sub"></div>
+    <button class="btn secondary small" style="background:transparent; color:#fff; border-color:#fff;" onclick="logout()">Cerrar sesión</button>
+  </div>
+</header>
+
+<nav id="mainNav">
+  <button data-view="dashboard" class="active">Panel / Alertas</button>
+  <button data-view="inventario">Inventario</button>
+  <button data-view="usuarios">Usuarios</button>
+  <button data-view="nuevoCargo">Nueva Entrega (Cargo)</button>
+  <button data-view="devoluciones">Devoluciones</button>
+  <button data-view="bajas">Bajas</button>
+  <button data-view="mantenimiento">Mantenimiento</button>
+  <button data-view="cargos">Actas / Cargos</button>
+  <button data-view="directorio-telefonos">📱 Directorio Telefónico</button>
+  <button data-view="solicitudes-compra">🛒 Solicitudes de Compra</button>
+  <button data-view="inventarios">Últimos Inventarios</button>
+  <button data-view="agentes">Reportes de Agentes</button>
+  <button data-view="config">Backup / Importar specs</button>
+</nav>
+
+<main>
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+  <div class="kpis" id="kpiRow"></div>
+  <div class="charts-row">
+    <div class="card"><h2>Equipos por tipo</h2><div class="chart-bars" id="chartTipo"></div></div>
+    <div class="card"><h2>Equipos por estado</h2><div class="chart-bars" id="chartEstado"></div></div>
+  </div>
+  <div class="card">
+    <h2>Equipos que requieren atención por vigencia (Laptop/PC/Impresora/Escáner: 3 años · Celular: 2 años)</h2>
+    <div class="toolbar">
+      <input type="text" id="alertFilter" list="alertFilterOptions" autocomplete="off" value="Vencidos" placeholder="Buscar...">
+      <datalist id="alertFilterOptions">
+        <option value="Vencidos"><option value="Próximos a vencer (3 meses)"><option value="Todos con umbral">
+      </datalist>
+    </div>
+    <div class="tablewrap"><table id="alertTable"></table></div>
+  </div>
+</div>
+
+<!-- INVENTARIO -->
+<div class="view" id="view-inventario">
+  <div class="card">
+    <h2>Inventario de equipos y accesorios</h2>
+    <div class="toolbar">
+      <input type="text" id="invSearch" placeholder="Buscar por nombre, marca, modelo, serie...">
+      <input type="text" id="invTipoFilter" list="invTipoFilterOptions" autocomplete="off" placeholder="Todos los tipos"><datalist id="invTipoFilterOptions"></datalist>
+      <input type="text" id="invEstadoFilter" list="invEstadoFilterOptions" autocomplete="off" placeholder="Todos los estados"><datalist id="invEstadoFilterOptions"></datalist>
+      <input type="text" id="invSedeFilter" list="invSedeFilterOptions" autocomplete="off" placeholder="Todas las sedes"><datalist id="invSedeFilterOptions"></datalist>
+      <input type="text" id="invUsuarioFilter" list="invUsuarioFilterOptions" autocomplete="off" placeholder="Filtrar por usuario"><datalist id="invUsuarioFilterOptions"></datalist>
+      <button class="btn" onclick="openEquipoModal()">+ Registrar equipo</button>
+      <span class="muted" id="invCount"></span>
+    </div>
+    <div class="bulkbar" id="invBulkbar">
+      <span><span class="count" id="invBulkCount">0</span> seleccionados</span>
+      <button class="btn secondary small" onclick="bulkExportSeleccionados()">Exportar seleccionados (CSV)</button>
+      <button class="btn danger small" onclick="bulkBajaSeleccionados()">Dar de baja seleccionados</button>
+      <button class="btn secondary small" onclick="clearInvSelection()">Cancelar selección</button>
+    </div>
+    <div class="tablewrap"><table id="invTable"></table></div>
+  </div>
+</div>
+
+<!-- USUARIOS -->
+<div class="view" id="view-usuarios">
+  <div class="card">
+    <h2>Mantenimiento de usuarios</h2>
+    <p class="muted">Registro de trabajadores de la empresa. Cuando se registra una devolución por salida del trabajador, el usuario queda <b>inactivo</b> automáticamente y ya no aparece disponible para nuevas asignaciones. Si vuelve a la empresa, actívalo aquí.</p>
+    <div class="toolbar">
+      <input type="text" id="usrSearch" placeholder="Buscar por nombre, DNI, área...">
+      <input type="text" id="usrEstadoFilter" list="usrEstadoFilterOptions" autocomplete="off" placeholder="Todos los estados">
+      <datalist id="usrEstadoFilterOptions"><option value="Activos"><option value="Inactivos"></datalist>
+      <button class="btn" onclick="openUsuarioModal()">+ Nuevo usuario</button>
+      <span class="muted" id="usrCount"></span>
+    </div>
+    <div class="tablewrap"><table id="usuariosTable"></table></div>
+  </div>
+</div>
+
+<!-- NUEVO CARGO -->
+<div class="view" id="view-nuevoCargo">
+  <div class="card">
+    <h2>Nueva entrega (Acta / Cargo)</h2>
+    <p class="muted">Registra la entrega a un trabajador. Puedes incluir varios equipos y accesorios en la misma acta (ej. laptop + mochila + mouse).</p>
+    <div class="grid4">
+      <div class="field"><label>Fecha de entrega</label><input type="date" id="cFecha"></div>
+      <div class="field"><label>Trabajador</label><input type="text" id="cTrabajador" list="cTrabajadorList" placeholder="Nombre completo"><datalist id="cTrabajadorList"></datalist></div>
+      <div class="field"><label>DNI</label><input type="text" id="cDni"></div>
+      <div class="field"><label>Área</label><input type="text" id="cArea"></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Sede</label>
+        <input type="text" id="cSede" list="sedeOptions" autocomplete="off" value="LIMA">
+      </div>
+      <div class="field"><label>Observaciones</label><input type="text" id="cObs" placeholder="Opcional"></div>
+    </div>
+
+    <h3 style="color:var(--azul); font-size:14px;">Ítems de la entrega</h3>
+    <div id="cargoItems"></div>
+    <div style="display:flex; gap:8px;">
+      <button class="btn secondary small" onclick="addCargoItemRow()">+ Agregar equipo/accesorio</button>
+      <button class="btn secondary small" onclick="addLineMóvilRow()">📱 Agregar línea móvil</button>
+    </div>
+
+    <div style="margin-top:16px;">
+      <button class="btn" id="btnSaveCargo" onclick="saveCargo()">Guardar entrega y generar acta</button>
+    </div>
+  </div>
+</div>
+
+<!-- DEVOLUCIONES -->
+<div class="view" id="view-devoluciones">
+  <div class="card">
+    <h2>Registrar devolución</h2>
+    <div class="grid3">
+      <div class="field"><label>Trabajador</label><input type="text" id="devTrabajador" list="devTrabajadorOptions" autocomplete="off" placeholder="Buscar trabajador..."><datalist id="devTrabajadorOptions"></datalist></div>
+      <div class="field"><label>Motivo</label>
+        <input type="text" id="devMotivo" list="devMotivoOptions" autocomplete="off" value="Devolución por salida del trabajador">
+        <datalist id="devMotivoOptions"><option value="Devolución por salida del trabajador"><option value="Devolución por renovación"></datalist>
+      </div>
+      <div class="field"><label>Fecha de devolución</label><input type="date" id="devFecha"></div>
+    </div>
+    <div class="field">
+      <label>Equipos asignados a este trabajador (marca los que devuelve)</label>
+      <div id="devEquiposList" class="muted" style="border:1px solid var(--borde); border-radius:6px; padding:8px;">Selecciona un trabajador para ver sus equipos.</div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Estado luego de devolución</label>
+        <input type="text" id="devEstadoNuevo" list="devEstadoNuevoOptions" autocomplete="off" value="Disponible">
+        <datalist id="devEstadoNuevoOptions"><option value="Disponible"><option value="En custodia"><option value="Por reparar"></datalist>
+      </div>
+      <div class="field" style="grid-column:span 2;"><label>Observaciones</label><input type="text" id="devObs"></div>
+    </div>
+    <button class="btn" id="btnSaveDev" onclick="saveDevolucion()">Registrar devolución y generar acta</button>
+  </div>
+  <div class="card">
+    <h2>Equipos actualmente en custodia / por reparar</h2>
+    <div class="tablewrap"><table id="custodiaTable"></table></div>
+  </div>
+</div>
+
+<!-- BAJAS -->
+<div class="view" id="view-bajas">
+  <div class="card">
+    <h2>Dar de baja un equipo</h2>
+    <div class="grid3">
+      <div class="field"><label>Equipo</label><input type="text" id="bajaEquipo" list="bajaEquipoOptions" autocomplete="off" placeholder="Buscar equipo..."><datalist id="bajaEquipoOptions"></datalist></div>
+      <div class="field"><label>Fecha de baja</label><input type="date" id="bajaFecha"></div>
+      <div class="field"><label>Motivo</label>
+        <input type="text" id="bajaMotivo" list="bajaMotivoOptions" autocomplete="off" value="Obsolescencia / fin de vida útil">
+        <datalist id="bajaMotivoOptions">
+          <option value="Obsolescencia / fin de vida útil"><option value="Daño irreparable"><option value="Pérdida o robo"><option value="Venta"><option value="Otro">
+        </datalist>
+      </div>
+    </div>
+    <div class="field"><label>Observaciones</label><input type="text" id="bajaObs" style="width:100%"></div>
+    <button class="btn danger" id="btnSaveBaja" onclick="saveBaja()">Dar de baja</button>
+  </div>
+  <div class="card">
+    <h2>Equipos dados de baja</h2>
+    <div class="tablewrap"><table id="bajasTable"></table></div>
+  </div>
+</div>
+
+<!-- MANTENIMIENTO -->
+<div class="view" id="view-mantenimiento">
+  <div class="card">
+    <h2>Registrar mantenimiento / cambio de repuesto</h2>
+    <div class="grid4">
+      <div class="field"><label>Equipo</label><input type="text" id="mEquipo" list="mEquipoOptions" autocomplete="off" placeholder="Buscar equipo..."><datalist id="mEquipoOptions"></datalist></div>
+      <div class="field"><label>Fecha</label><input type="date" id="mFecha"></div>
+      <div class="field"><label>Tipo</label>
+        <input type="text" id="mTipo" list="mTipoOptions" autocomplete="off" value="Mantenimiento preventivo">
+        <datalist id="mTipoOptions"><option value="Mantenimiento preventivo"><option value="Reparación"><option value="Cambio de repuesto"><option value="Otro"></datalist>
+      </div>
+      <div class="field"><label>Realizado por</label><input type="text" id="mPor"></div>
+    </div>
+    <div class="field"><label>Descripción</label><input type="text" id="mDesc" style="width:100%" placeholder="Ej: cambio de batería, limpieza, cambio de teclado..."></div>
+    <button class="btn" id="btnSaveMant" onclick="saveMantenimiento()">Guardar mantenimiento</button>
+  </div>
+  <div class="card">
+    <h2>Historial de mantenimientos</h2>
+    <div class="toolbar"><input type="text" id="mantSearch" placeholder="Filtrar por equipo/serie..."></div>
+    <div class="tablewrap"><table id="mantTable"></table></div>
+  </div>
+</div>
+
+<!-- DIRECTORIO DE NÚMEROS TELEFÓNICOS -->
+<div class="view" id="view-directorio-telefonos">
+  <div class="card">
+    <h2>📱 Directorio de Números Telefónicos</h2>
+    <p class="muted">Listado de todos los números telefónicos registrados en actas de entrega/devolución. Puedes usar esta información para asignar números a nuevas actas.</p>
+    <div class="toolbar">
+      <input type="text" id="telefonoDirectorioSearch" placeholder="Buscar por número, trabajador o área...">
+      <span class="muted" id="telefonoDirectorioCount"></span>
+    </div>
+    <div class="tablewrap"><table id="telefonoDirectorioTable"></table></div>
+  </div>
+</div>
+
+<!-- SOLICITUDES DE COMPRA -->
+<div class="view" id="view-solicitudes-compra">
+  <div class="card">
+    <h2>🛒 Solicitudes de Compra</h2>
+    <div class="toolbar">
+      <button class="btn primary" onclick="abrirNuevaSolicitud()">+ Nueva Solicitud</button>
+    </div>
+    <div class="tablewrap"><table id="solicitudesTable"></table></div>
+  </div>
+</div>
+
+<!-- FORMULARIO SOLICITUD COMPRA (Modal) -->
+<div class="modal-bg" id="solicitudFormModal">
+  <div class="modal" style="width: 800px; max-height: 90vh; overflow-y: auto;">
+    <h2>Solicitud de Compra</h2>
+
+    <h3>Items</h3>
+    <div id="solicitudItems"></div>
+    <button class="btn secondary" onclick="agregarItemSolicitud()">+ Agregar Item</button>
+
+    <div style="margin-top: 20px; display: flex; gap: 10px; justify-content: flex-end;">
+      <button class="btn" onclick="cerrarSolicitudForm()">Cancelar</button>
+      <button class="btn primary" id="btnGuardarSolicitud" onclick="guardarSolicitud()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- CARGOS / ACTAS -->
+<div class="view" id="view-cargos">
+  <div class="card">
+    <h2>Historial de entregas / devoluciones (Actas)</h2>
+    <div class="toolbar">
+      <button class="btn primary" onclick="abrirNuevaActa()">+ Nueva Acta</button>
+      <input type="text" id="cargoSearch" placeholder="Buscar por trabajador...">
+      <input type="text" id="cargoSearchTelefono" placeholder="Buscar por número telefónico...">
+      <input type="text" id="cargoTipoFilter" list="cargoTipoFilterOptions" autocomplete="off" placeholder="Todos los tipos">
+      <datalist id="cargoTipoFilterOptions">
+        <option value="Asignación"><option value="Devolución por salida"><option value="Devolución por renovación"><option value="Baja">
+      </datalist>
+    </div>
+    <div class="tablewrap"><table id="cargosTable"></table></div>
+  </div>
+</div>
+
+<!-- ÚLTIMOS INVENTARIOS -->
+<div class="view" id="view-inventarios">
+  <div class="card">
+    <h2>Últimos Inventarios Realizados</h2>
+    <p class="muted">Datos recolectados automáticamente por el agente de inventario</p>
+    <div style="margin-bottom:16px;">
+      <button class="btn" onclick="renderInventarios()">🔄 Actualizar</button>
+    </div>
+    <div class="tablewrap"><table id="inventariosTable"></table></div>
+  </div>
+</div>
+
+<!-- REPORTES DE AGENTES -->
+<div class="view" id="view-agentes">
+  <div class="card">
+    <h2>Reportes de Agentes de Inventario</h2>
+    <p class="muted">Aquí aparecen todos los reportes enviados por agentes. Enlaza cada reporte con su equipo correspondiente.</p>
+    <div class="toolbar">
+      <button class="btn" onclick="renderAgentesReportes()">🔄 Actualizar</button>
+    </div>
+    <div id="agentesFilterInfo" style="margin-bottom:12px; font-size:13px;">
+      <span id="agentesNoEnlazados" style="color:#666;"></span> · <span id="agentesEnlazados" style="color:#2f855a;"></span>
+    </div>
+    <div class="tablewrap"><table id="agentesTable"></table></div>
+  </div>
+</div>
+
+<!-- CONFIG -->
+<div class="view" id="view-config">
+  <div class="card">
+    <h2>Mi cuenta</h2>
+    <p class="muted">Sesión activa: <b id="cfgUsername"></b></p>
+    <div class="grid3">
+      <div class="field"><label>Contraseña actual</label><input type="password" id="cpOld"></div>
+      <div class="field"><label>Nueva contraseña</label><input type="password" id="cpNew1"></div>
+      <div class="field"><label>Repetir nueva contraseña</label><input type="password" id="cpNew2"></div>
+    </div>
+    <button class="btn" onclick="changePassword()">Cambiar contraseña</button>
+    <div id="cpMsg" class="muted" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <h2>Usuarios del sistema (acceso a la aplicación)</h2>
+    <p class="muted">Cuentas que pueden iniciar sesión en este panel. Esto es distinto de la pestaña "Usuarios" (trabajadores que reciben equipos).</p>
+    <div class="toolbar"><button class="btn" onclick="openSysUserModal()">+ Nuevo usuario del sistema</button></div>
+    <div class="tablewrap"><table id="sysUsersTable"></table></div>
+  </div>
+  <div class="card">
+    <h2>Copia de seguridad</h2>
+    <p class="muted">Los datos ya viven en la base de datos del servidor y se sincronizan solos entre dispositivos. Aun así, exporta una copia periódica por si necesitas restaurar.</p>
+    <button class="btn" onclick="exportBackup()">Descargar copia de seguridad (JSON)</button>
+    <button class="btn secondary" onclick="document.getElementById('importFile').click()">Restaurar desde copia de seguridad</button>
+    <input type="file" id="importFile" accept=".json" style="display:none" onchange="importBackup(event)">
+    <br><br>
+    <button class="btn secondary" onclick="exportCSV('equipos')">Exportar Inventario (CSV)</button>
+    <button class="btn secondary" onclick="exportCSV('movimientos')">Exportar Movimientos (CSV)</button>
+  </div>
+  <div class="card">
+    <h2>Importar especificaciones técnicas (desde script PowerShell)</h2>
+    <p class="muted">Ejecuta <code>Get-EquipoSpecs.ps1</code> en la máquina del trabajador. Genera un archivo JSON con marca, modelo, serie, procesador, RAM y almacenamiento. Impórtalo aquí: si el número de serie coincide con un equipo del inventario, se completan sus specs; si no existe, se crea un equipo nuevo.</p>
+    <button class="btn secondary" onclick="document.getElementById('specsFile').click()">Importar archivo de specs (JSON)</button>
+    <input type="file" id="specsFile" accept=".json" style="display:none" onchange="importSpecs(event)">
+    <div id="specsImportResult" class="muted" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <h2>⚙️ Configuración del Agente de Inventario</h2>
+    <p class="muted">Configura el servidor destino donde el agente enviará los reportes de inventario. Los cambios se aplican la próxima vez que se ejecute el agente.</p>
+    <div class="field"><label>URL del Servidor</label><input type="text" id="agenteServidor" placeholder="http://localhost:3335" style="width:100%;"></div>
+    <div class="field"><label>Intervalo (segundos)</label><input type="number" id="agenteIntervalo" placeholder="3600" style="width:100%;"></div>
+    <div style="display:flex; gap:10px; margin-top:12px;">
+      <button class="btn" onclick="cargarConfigAgente()">🔄 Cargar</button>
+      <button class="btn" onclick="guardarConfigAgente()">💾 Guardar</button>
+    </div>
+    <div id="agenteConfigMsg" class="muted" style="margin-top:8px;"></div>
+  </div>
+  <div class="card">
+    <h2 style="color:var(--rojo)">Reiniciar datos</h2>
+    <p class="muted">Borra todos los datos de la base y vuelve a cargar los datos originales migrados desde el Excel. Afecta a todos los dispositivos conectados.</p>
+    <button class="btn danger" onclick="resetToSeed()">Restaurar datos originales del Excel</button>
+  </div>
+</div>
+
+</main>
+
+<footer>Gestión de Activos TI · Axis Group — servidor local en la red de la empresa</footer>
+
+<!-- MODALS -->
+<div class="modal-bg" id="equipoModalBg">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('equipoModalBg')">&times;</button>
+    <h3 id="equipoModalTitle">Registrar equipo</h3>
+    <input type="hidden" id="eqId">
+    <div class="field"><label>Nombre del equipo</label><input type="text" id="eqNombre" placeholder="Ej: LAPTOP-JUAN-001" style="width:100%"></div>
+    <div class="grid3">
+      <div class="field"><label>Tipo</label>
+        <input type="text" id="eqTipo" list="eqTipoOptions" autocomplete="off" value="Laptop">
+        <datalist id="eqTipoOptions"><option value="Laptop"><option value="PC"><option value="Impresora"><option value="Escaner"><option value="Celular"><option value="Accesorio"></datalist>
+      </div>
+      <div class="field"><label>Marca</label><input type="text" id="eqMarca"></div>
+      <div class="field"><label>Modelo</label><input type="text" id="eqModelo"></div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Serie / IMEI</label><input type="text" id="eqSerie"></div>
+      <div class="field"><label>Fecha de compra</label><input type="date" id="eqFechaCompra"></div>
+      <div class="field"><label>Sede</label>
+        <input type="text" id="eqSede" list="sedeOptions" autocomplete="off" value="LIMA">
+      </div>
+    </div>
+    <div class="grid3">
+      <div class="field"><label>Estado</label>
+        <input type="text" id="eqEstado" list="eqEstadoOptions" autocomplete="off" value="Disponible">
+        <datalist id="eqEstadoOptions"><option value="Disponible"><option value="Asignado"><option value="En custodia"><option value="Por reparar"><option value="De baja"><option value="Perdido/Robado"><option value="Vendido"></datalist>
+      </div>
+      <div class="field"><label>Usuario actual</label><input type="text" id="eqUsuario" list="eqUsuarioOptions" autocomplete="off" placeholder="Buscar usuario..."><datalist id="eqUsuarioOptions"></datalist></div>
+      <div class="field"><label>Área</label><input type="text" id="eqArea"></div>
+    </div>
+    <div class="field"><label>Observaciones</label><input type="text" id="eqObs" style="width:100%"></div>
+    <div class="field"><label>Procesador (opcional)</label><input type="text" id="eqCpu" style="width:100%"></div>
+    <div class="grid2">
+      <div class="field"><label>RAM (opcional)</label><input type="text" id="eqRam"></div>
+      <div class="field"><label>Almacenamiento (opcional)</label><input type="text" id="eqDisco"></div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:space-between;">
+      <button class="btn" onclick="saveEquipoModal()">Guardar</button>
+      <button class="btn danger" id="btnDeleteEquipo" onclick="deleteEquipo()" style="display:none;">Eliminar equipo</button>
+    </div>
+  </div>
+</div>
+
+<datalist id="sedeOptions"><option value="LIMA"><option value="PAITA"><option value="JAYANCA"><option value="UNIREEFER"></datalist>
+
+<div class="modal-bg" id="usuarioModalBg">
+  <div class="modal" style="max-width:520px;">
+    <button class="close-x" onclick="closeModal('usuarioModalBg')">&times;</button>
+    <h3 id="usuarioModalTitle">Nuevo usuario</h3>
+    <input type="hidden" id="usrOrigNombre">
+    <div class="field"><label>Nombre completo</label><input type="text" id="usrNombre" style="width:100%"></div>
+    <div class="grid3">
+      <div class="field"><label>DNI</label><input type="text" id="usrDni"></div>
+      <div class="field"><label>Área</label><input type="text" id="usrArea"></div>
+      <div class="field"><label>Sede</label><input type="text" id="usrSede" list="sedeOptions" autocomplete="off"></div>
+    </div>
+    <div class="field"><label style="display:inline-block; margin-right:8px;">Usuario activo</label><input type="checkbox" id="usrActivo" checked style="width:auto; vertical-align:middle;"></div>
+    <p class="muted">Los usuarios inactivos (por ejemplo, por salida de la empresa) no aparecen disponibles al registrar una nueva entrega.</p>
+    <button class="btn" onclick="saveUsuario()">Guardar</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="historialModalBg">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('historialModalBg')">&times;</button>
+    <h3 id="historialTitle">Historial de equipo</h3>
+    <div id="historialBody"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="enlazarAgenteModalBg">
+  <div class="modal" style="max-width:540px;">
+    <button class="close-x" onclick="closeModal('enlazarAgenteModalBg')">&times;</button>
+    <h3>Enlazar Reporte de Agente con Equipo</h3>
+    <input type="hidden" id="enlazarAgenteReporteId">
+    <div class="field">
+      <label>Buscar equipo</label>
+      <input type="text" id="enlazarAgenteSearch" placeholder="Buscar por nombre, ID, serie..." style="width:100%; margin-bottom:8px;">
+    </div>
+    <div class="field">
+      <label>Equipos disponibles (Asignados)</label>
+      <div id="enlazarAgenteList" style="border:1px solid var(--borde); border-radius:5px; max-height:300px; overflow-y:auto; background:var(--gris-100);">
+        <div style="padding:12px; color:var(--gris-500); text-align:center;">Cargando equipos...</div>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+      <button class="btn secondary" onclick="closeModal('enlazarAgenteModalBg')">Cancelar</button>
+      <button class="btn" id="btnEnlazarAgenteConfirm" onclick="confirmarEnlaceAgente()" disabled>Enlazar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="sysUserModalBg">
+  <div class="modal" style="max-width:440px;">
+    <button class="close-x" onclick="closeModal('sysUserModalBg')">&times;</button>
+    <h3 id="sysUserModalTitle">Nuevo usuario del sistema</h3>
+    <input type="hidden" id="sysUserOrigName">
+    <div class="field"><label>Usuario (para iniciar sesión)</label><input type="text" id="sysUserName" style="width:100%" placeholder="ej: jperez"></div>
+    <div class="field"><label>Correo de recuperación (opcional)</label><input type="email" id="sysUserEmail" style="width:100%" placeholder="usuario@empresa.com"></div>
+    <div class="field"><label id="sysUserPassLabel">Contraseña (opcional — si la dejas en blanco se genera una temporal)</label><input type="password" id="sysUserPassword" style="width:100%" autocomplete="new-password"></div>
+    <p class="muted">La persona deberá cambiar su contraseña al ingresar por primera vez.</p>
+    <button class="btn" id="sysUserSaveBtn" onclick="saveSystemUser()">Crear usuario</button>
+    <div id="sysUserResult" class="muted" style="margin-top:10px;"></div>
+  </div>
+</div>
+
+<div class="modal-bg" id="forceChangeModalBg">
+  <div class="modal" style="max-width:420px;">
+    <h3>Debes cambiar tu contraseña</h3>
+    <p class="muted">Estás usando una contraseña temporal. Define una nueva contraseña para continuar.</p>
+    <div class="err" id="forceChangeErr" style="display:none; background:#fff5f5; color:#c53030; padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:10px;"></div>
+    <div class="field"><label>Nueva contraseña</label><input type="password" id="fcNew1" style="width:100%"></div>
+    <div class="field"><label>Repetir nueva contraseña</label><input type="password" id="fcNew2" style="width:100%"></div>
+    <button class="btn" onclick="forceChangePassword()">Guardar y continuar</button>
+  </div>
+</div>
+
+<script>
+const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celular':24 };
+let DB = { equipos: [], movimientos: [], mantenimientos: [], trabajadores: [] };
+let currentUsername = '';
+
+function todayISO(){ return new Date().toISOString().slice(0,10); }
+function fmtDate(iso){ if(!iso) return '—'; const d=new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+function monthsBetween(iso){
+  if(!iso) return null;
+  const a = new Date(iso+'T00:00:00'); const b = new Date();
+  if(isNaN(a)) return null;
+  let m = (b.getFullYear()-a.getFullYear())*12 + (b.getMonth()-a.getMonth());
+  if(b.getDate() < a.getDate()) m -= 1;
+  return Math.max(m,0);
+}
+function escapeHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// ---------- Cuadros de búsqueda (reemplazo de <select> por input + datalist) ----------
+function fillDatalist(datalistId, values){
+  const el = document.getElementById(datalistId);
+  if(!el) return;
+  el.innerHTML = values.map(v=>`<option value="${escapeHtml(v)}">`).join('');
+}
+// Los motivos/tipos de movimiento se guardan en la base de datos sin tildes (compatibilidad con datos existentes),
+// pero se muestran con el texto correcto en los cuadros de búsqueda mediante estos mapas.
+const MOTIVO_DEVOLUCION_LABELS = {
+  'Devolucion por salida': 'Devolución por salida del trabajador',
+  'Devolucion por renovacion': 'Devolución por renovación'
+};
+const TIPO_MOVIMIENTO_LABELS = {
+  'Asignacion': 'Asignación',
+  'Devolucion por salida': 'Devolución por salida',
+  'Devolucion por renovacion': 'Devolución por renovación',
+  'Baja': 'Baja'
+};
+function movTipoLabel(code){ return TIPO_MOVIMIENTO_LABELS[code] || code || ''; }
+function resolveByLabel(map, typed){
+  const t = (typed||'').trim();
+  const found = Object.entries(map).find(([code,label])=>label.toLowerCase()===t.toLowerCase());
+  return found ? found[0] : t;
+}
+// Para los equipos, el cuadro de búsqueda muestra una etiqueta legible que termina en [ID-DEL-EQUIPO];
+// esta función recupera el ID real a partir de ese texto (o de una coincidencia exacta de la etiqueta).
+function equipoIdFromLabelInput(inputEl){
+  const val = (inputEl.value||'').trim();
+  if(!val) return null;
+  const m = val.match(/\[([^\[\]]+)\]\s*$/);
+  if(m && DB.equipos.some(e=>e.id===m[1])) return m[1];
+  const eq = DB.equipos.find(e=>equipoOptionLabel(e)===val);
+  return eq ? eq.id : null;
+}
+function fillEquipoDatalist(datalistId, filterFn){
+  const list = DB.equipos.filter(filterFn);
+  fillDatalist(datalistId, list.map(equipoOptionLabel));
+}
+
+// ---------- API helpers ----------
+function handleAuthFailure(status){
+  if(status === 401){ window.location.href = '/login.html'; }
+}
+async function apiGet(url){
+  const r = await fetch(url);
+  if(r.status === 401){ handleAuthFailure(401); throw new Error('No autenticado'); }
+  if(!r.ok) throw new Error('Error de red: ' + r.status);
+  return r.json();
+}
+async function apiPost(url, body){
+  const r = await fetch(url, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  if(r.status === 401){ handleAuthFailure(401); throw new Error('No autenticado'); }
+  if(!r.ok){ const e = await r.json().catch(()=>({error:r.statusText})); throw new Error(e.error||'Error'); }
+  return r.json();
+}
+async function apiPut(url, body){
+  const r = await fetch(url, {method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify(body)});
+  if(r.status === 401){ handleAuthFailure(401); throw new Error('No autenticado'); }
+  if(!r.ok){ const e = await r.json().catch(()=>({error:r.statusText})); throw new Error(e.error||'Error'); }
+  return r.json();
+}
+async function apiDelete(url){
+  const r = await fetch(url, {method:'DELETE'});
+  if(r.status === 401){ handleAuthFailure(401); throw new Error('No autenticado'); }
+  if(!r.ok){ const e = await r.json().catch(()=>({error:r.statusText})); throw new Error(e.error||'Error'); }
+  return r.json();
+}
+async function loadMe(){
+  try{
+    const me = await apiGet('/api/me');
+    currentUsername = me.username;
+    document.getElementById('userBadge').textContent = me.username;
+    document.getElementById('cfgUsername').textContent = me.username;
+    if(me.mustChangePassword){
+      document.getElementById('forceChangeModalBg').classList.add('active');
+    }
+  }catch(e){ /* redirect ya manejado */ }
+}
+async function logout(){
+  try{ await fetch('/api/logout', {method:'POST'}); }catch(e){}
+  window.location.href = '/login.html';
+}
+async function changePassword(){
+  const oldPassword = document.getElementById('cpOld').value;
+  const newPassword = document.getElementById('cpNew1').value;
+  const newPassword2 = document.getElementById('cpNew2').value;
+  const msgEl = document.getElementById('cpMsg');
+  if(newPassword !== newPassword2){ msgEl.textContent = 'Las contraseñas no coinciden'; return; }
+  if(newPassword.length < 6){ msgEl.textContent = 'La nueva contraseña debe tener al menos 6 caracteres'; return; }
+  try{
+    await apiPost('/api/change-password', {oldPassword, newPassword});
+    msgEl.textContent = 'Contraseña actualizada correctamente.';
+    document.getElementById('cpOld').value = ''; document.getElementById('cpNew1').value=''; document.getElementById('cpNew2').value='';
+  }catch(err){ msgEl.textContent = 'Error: ' + err.message; }
+}
+async function forceChangePassword(){
+  const p1 = document.getElementById('fcNew1').value;
+  const p2 = document.getElementById('fcNew2').value;
+  const errEl = document.getElementById('forceChangeErr');
+  errEl.style.display = 'none';
+  if(p1 !== p2){ errEl.textContent = 'Las contraseñas no coinciden'; errEl.style.display='block'; return; }
+  if(p1.length < 6){ errEl.textContent = 'Debe tener al menos 6 caracteres'; errEl.style.display='block'; return; }
+  try{
+    await apiPost('/api/change-password', {newPassword: p1});
+    closeModal('forceChangeModalBg');
+  }catch(err){ errEl.textContent = err.message; errEl.style.display='block'; }
+}
+
+let refreshing = false;
+async function refreshState(silent){
+  console.log('[REFRESH STATE] Iniciando');
+  try{
+    DB = await apiGet('/api/state');
+    console.log('[REFRESH STATE] Datos recibidos');
+
+    setConn(true);
+    renderAll();
+    console.log('[REFRESH STATE] Completado');
+  }catch(err){
+    console.error('[REFRESH STATE ERROR]', err.message);
+    setConn(false);
+    if(!silent) alert('Servidor no responde: ' + err.message);
+  }
+}
+function setConn(ok){
+  const el = document.getElementById('connStatus');
+  if(ok){ el.textContent = 'Conectado · actualizado ' + new Date().toLocaleTimeString('es-PE'); el.classList.remove('bad'); }
+  else { el.textContent = 'Sin conexión con el servidor'; el.classList.add('bad'); }
+}
+
+// ---------- NAV ----------
+document.getElementById('mainNav').addEventListener('click', e=>{
+  if(e.target.tagName!=='BUTTON') return;
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+e.target.dataset.view).classList.add('active');
+  renderAll();
+});
+
+function closeModal(id){ document.getElementById(id).classList.remove('active'); }
+function showView(viewId){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById(viewId);
+  if(el) el.classList.add('active');
+  // Marcar botón de nav como activo si existe
+  const dataView = viewId.replace('view-', '');
+  const navBtn = document.querySelector(`nav button[data-view="${dataView}"]`);
+  if(navBtn) navBtn.classList.add('active');
+  renderAll();
+}
+
+// ---------- DASHBOARD ----------
+function equipoAlertInfo(eq){
+  const umbral = ALERT_MESES[eq.tipo];
+  if(!umbral) return null;
+  if(['De baja','Vendido','Perdido/Robado'].includes(eq.estado)) return null;
+  const meses = monthsBetween(eq.fechaCompra);
+  if(meses==null) return {umbral, meses:null, estado:'sin-fecha'};
+  if(meses>=umbral) return {umbral, meses, estado:'vencido'};
+  if(meses>=umbral-3) return {umbral, meses, estado:'proximo'};
+  return {umbral, meses, estado:'ok'};
+}
+function renderDashboard(){
+  const equipos = DB.equipos;
+  const activos = equipos.filter(e=>!['De baja','Vendido','Perdido/Robado'].includes(e.estado));
+  const asignados = equipos.filter(e=>e.estado==='Asignado').length;
+  const custodia = equipos.filter(e=>['En custodia','Por reparar'].includes(e.estado)).length;
+  const vencidos = equipos.filter(e=>{const i=equipoAlertInfo(e); return i && i.estado==='vencido';}).length;
+  const proximos = equipos.filter(e=>{const i=equipoAlertInfo(e); return i && i.estado==='proximo';}).length;
+  const bajas = equipos.filter(e=>e.estado==='De baja').length;
+  document.getElementById('kpiRow').innerHTML = `
+    <div class="kpi"><div class="num">${activos.length}</div><div class="lbl">Equipos activos</div></div>
+    <div class="kpi"><div class="num">${asignados}</div><div class="lbl">Asignados</div></div>
+    <div class="kpi"><div class="num">${custodia}</div><div class="lbl">En custodia / por reparar</div></div>
+    <div class="kpi alert"><div class="num">${vencidos}</div><div class="lbl">Vencidos (vigencia superada)</div></div>
+    <div class="kpi warn"><div class="num">${proximos}</div><div class="lbl">Próximos a vencer (3 meses)</div></div>
+    <div class="kpi"><div class="num">${bajas}</div><div class="lbl">Dados de baja</div></div>
+  `;
+  renderBarChart('chartTipo', countBy(activos, e=>e.tipo));
+  renderBarChart('chartEstado', countBy(equipos, e=>e.estado));
+  renderAlertTable();
+}
+function countBy(list, keyFn){
+  const counts = {};
+  for(const item of list){
+    const k = keyFn(item) || 'Sin dato';
+    counts[k] = (counts[k]||0) + 1;
+  }
+  return Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+}
+function renderBarChart(containerId, entries){
+  const el = document.getElementById(containerId);
+  if(entries.length===0){ el.innerHTML = '<p class="muted">Sin datos</p>'; return; }
+  const max = Math.max(...entries.map(([,v])=>v));
+  el.innerHTML = entries.map(([label,val])=>`
+    <div class="chart-bar-row">
+      <span>${escapeHtml(label)}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" style="width:${max? (val/max*100):0}%"></div></div>
+      <span class="chart-bar-val">${val}</span>
+    </div>
+  `).join('');
+}
+function renderAlertTable(){
+  const filter = (document.getElementById('alertFilter').value||'').trim();
+  let rows = DB.equipos.map(e=>({e, info:equipoAlertInfo(e)})).filter(r=>r.info && r.info.meses!=null);
+  if(filter==='Vencidos') rows = rows.filter(r=>r.info.estado==='vencido');
+  else if(filter.startsWith('Próximos')) rows = rows.filter(r=>r.info.estado==='proximo');
+  rows.sort((a,b)=> (b.info.meses-b.info.umbral) - (a.info.meses-a.info.umbral));
+  let html = '<tr><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Usuario</th><th>Sede</th><th>Fec. Compra</th><th>Antigüedad</th><th>Umbral</th><th>Estado</th></tr>';
+  if(rows.length===0) html += '<tr><td colspan="9" class="muted">Sin resultados</td></tr>';
+  for(const r of rows){
+    const tag = r.info.estado==='vencido' ? '<span class="tag bad">VENCIDO</span>' : r.info.estado==='proximo' ? '<span class="tag warn">PRÓXIMO</span>' : '<span class="tag ok">OK</span>';
+    html += `<tr>
+      <td>${escapeHtml(r.e.tipo)}</td>
+      <td>${escapeHtml(r.e.marca)} ${escapeHtml(r.e.modelo)}</td>
+      <td>${escapeHtml(r.e.serie)}</td>
+      <td>${escapeHtml(r.e.usuarioActual)}</td>
+      <td>${escapeHtml(r.e.sede)}</td>
+      <td>${fmtDate(r.e.fechaCompra)}</td>
+      <td>${r.info.meses} meses</td>
+      <td>${r.info.umbral} meses</td>
+      <td>${tag}</td>
+    </tr>`;
+  }
+  document.getElementById('alertTable').innerHTML = html;
+}
+document.getElementById('alertFilter').addEventListener('input', renderAlertTable);
+document.getElementById('alertFilter').addEventListener('change', renderAlertTable);
+
+// ---------- INVENTARIO ----------
+function populateFilterOptions(){
+  const tipos = [...new Set(DB.equipos.map(e=>e.tipo))].sort();
+  const estados = [...new Set(DB.equipos.map(e=>e.estado))].sort();
+  const sedes = [...new Set(DB.equipos.map(e=>e.sede).filter(Boolean))].sort();
+  const usuarios = [...new Set(DB.equipos.map(e=>e.usuarioActual).filter(Boolean))].sort();
+  fillDatalist('invTipoFilterOptions', tipos);
+  fillDatalist('invEstadoFilterOptions', estados);
+  fillDatalist('invSedeFilterOptions', sedes);
+  fillDatalist('invUsuarioFilterOptions', usuarios);
+}
+function fechaEntregaEquipo(equipoId){
+  const movs = DB.movimientos.filter(m=>m.tipo==='Asignacion' && m.items.some(it=>it.equipoId===equipoId));
+  if(movs.length===0) return null;
+  return movs.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''))[0].fecha;
+}
+function estadoTag(estado){
+  const map = {'Disponible':'ok','Asignado':'neutral','En custodia':'warn','Por reparar':'warn','De baja':'bad','Perdido/Robado':'bad','Vendido':'neutral'};
+  return `<span class="tag ${map[estado]||'neutral'}">${escapeHtml(estado)}</span>`;
+}
+function renderInventario(){
+  populateFilterOptions();
+  const q = (document.getElementById('invSearch').value||'').toLowerCase();
+  const tipoF = (document.getElementById('invTipoFilter').value||'').toLowerCase();
+  const estadoF = (document.getElementById('invEstadoFilter').value||'').toLowerCase();
+  const sedeF = (document.getElementById('invSedeFilter').value||'').toLowerCase();
+  const usuarioF = (document.getElementById('invUsuarioFilter').value||'').toLowerCase();
+  let rows = DB.equipos.filter(e=>{
+    if(tipoF && !(e.tipo||'').toLowerCase().includes(tipoF)) return false;
+    if(estadoF && !(e.estado||'').toLowerCase().includes(estadoF)) return false;
+    if(sedeF && !(e.sede||'').toLowerCase().includes(sedeF)) return false;
+    if(usuarioF && !(e.usuarioActual||'').toLowerCase().includes(usuarioF)) return false;
+    if(q){
+      const blob = [e.nombre,e.marca,e.modelo,e.serie,e.usuarioActual,e.area].join(' ').toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    return true;
+  });
+  document.getElementById('invCount').textContent = rows.length + ' equipos';
+  const visibleIds = new Set(rows.map(e=>e.id));
+  for(const id of [...invSelected]) if(!visibleIds.has(id)) invSelected.delete(id);
+  const allChecked = rows.length>0 && rows.every(e=>invSelected.has(e.id));
+  let html = `<tr><th><input type="checkbox" id="invSelectAll" ${allChecked?'checked':''} onchange="toggleInvSelectAll(this.checked)"></th><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca</th><th>Modelo</th><th>Serie</th><th>Compra</th><th>Sede</th><th>Estado</th><th>Usuario</th><th>Fecha de entrega</th><th>Alerta</th><th></th></tr>`;
+  for(const e of rows){
+    const info = equipoAlertInfo(e);
+    const alertHtml = info ? (info.estado==='vencido'?'<span class="tag bad">Vencido</span>':info.estado==='proximo'?'<span class="tag warn">Próximo</span>':info.estado==='sin-fecha'?'<span class="muted">Sin fecha</span>':'<span class="tag ok">OK</span>') : '<span class="muted">—</span>';
+    html += `<tr>
+      <td><input type="checkbox" class="invRowChk" value="${e.id}" ${invSelected.has(e.id)?'checked':''} onchange="toggleInvSelect('${e.id}', this.checked)"></td>
+      <td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)}</td><td>${escapeHtml(e.modelo)}</td>
+      <td>${escapeHtml(e.serie)}</td><td>${fmtDate(e.fechaCompra)}</td><td>${escapeHtml(e.sede)}</td>
+      <td>${estadoTag(e.estado)}</td><td>${escapeHtml(e.usuarioActual)}</td><td>${fmtDate(fechaEntregaEquipo(e.id))}</td><td>${alertHtml}</td>
+      <td><div class="btn-group"><button class="btn-icon primary" title="Historial" onclick="openHistorial('${e.id}')">📋</button><button class="btn-icon secondary" title="Especificaciones técnicas" onclick="verEspecificacionesTecnicas('${e.id}')">💻</button><button class="btn-icon primary" title="Editar" onclick="openEquipoModal('${e.id}')">✏️</button></div></td>
+    </tr>`;
+  }
+  document.getElementById('invTable').innerHTML = html;
+  updateInvBulkbar();
+}
+
+// ---------- Selección múltiple en Inventario ----------
+let invSelected = new Set();
+function toggleInvSelect(id, checked){
+  if(checked) invSelected.add(id); else invSelected.delete(id);
+  updateInvBulkbar();
+  const all = document.getElementById('invSelectAll');
+  if(all) all.checked = [...document.querySelectorAll('.invRowChk')].every(c=>c.checked);
+}
+function toggleInvSelectAll(checked){
+  document.querySelectorAll('.invRowChk').forEach(c=>{
+    c.checked = checked;
+    if(checked) invSelected.add(c.value); else invSelected.delete(c.value);
+  });
+  updateInvBulkbar();
+}
+function clearInvSelection(){
+  invSelected.clear();
+  renderInventario();
+}
+function updateInvBulkbar(){
+  const bar = document.getElementById('invBulkbar');
+  document.getElementById('invBulkCount').textContent = invSelected.size;
+  bar.classList.toggle('active', invSelected.size>0);
+}
+function bulkExportSeleccionados(){
+  const headers = ['id','tipo','marca','modelo','serie','fechaCompra','sede','estado','usuarioActual','area','observaciones'];
+  const rows = DB.equipos.filter(e=>invSelected.has(e.id)).map(e=>[e.id,e.tipo,e.marca,e.modelo,e.serie,e.fechaCompra,e.sede,e.estado,e.usuarioActual,e.area,e.observaciones]);
+  const csv = [headers.join(',')].concat(rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(','))).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'equipos_seleccionados_' + todayISO() + '.csv';
+  a.click();
+}
+async function bulkBajaSeleccionados(){
+  const ids = [...invSelected];
+  if(ids.length===0) return;
+  if(!confirm(`Vas a dar de baja ${ids.length} equipo(s) con motivo "Baja masiva". ¿Continuar?`)) return;
+  const fecha = todayISO();
+  let ok = 0, fail = 0;
+  for(const id of ids){
+    try{
+      await apiPost('/api/bajas', {equipoId:id, fecha, motivo:'Baja masiva', observaciones:''});
+      ok++;
+    }catch(err){ fail++; }
+  }
+  invSelected.clear();
+  await refreshState();
+  alert(`Baja masiva completada: ${ok} equipo(s) dados de baja${fail? ', ' + fail + ' con error':''}.`);
+}
+['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderInventario);
+  document.getElementById(id).addEventListener('change', renderInventario);
+});
+
+function openEquipoModal(id){
+  document.getElementById('equipoModalBg').classList.add('active');
+  // Llenar datalist de usuarios
+  const usuarios = [...new Set((DB.trabajadores||[]).map(t=>t.nombre))].sort();
+  fillDatalist('eqUsuarioOptions', usuarios);
+  const btnDelete = document.getElementById('btnDeleteEquipo');
+  if(id){
+    const e = DB.equipos.find(x=>x.id===id);
+    document.getElementById('equipoModalTitle').textContent = 'Editar equipo — ' + id;
+    document.getElementById('eqId').value = id;
+    document.getElementById('eqNombre').value = e.nombre||'';
+    document.getElementById('eqTipo').value = e.tipo;
+    document.getElementById('eqMarca').value = e.marca||'';
+    document.getElementById('eqModelo').value = e.modelo||'';
+    document.getElementById('eqSerie').value = e.serie||'';
+    document.getElementById('eqFechaCompra').value = e.fechaCompra||'';
+    document.getElementById('eqSede').value = e.sede||'LIMA';
+    document.getElementById('eqEstado').value = e.estado||'Disponible';
+    document.getElementById('eqUsuario').value = e.usuarioActual||'';
+    document.getElementById('eqArea').value = e.area||'';
+    document.getElementById('eqObs').value = e.observaciones||'';
+    document.getElementById('eqCpu').value = (e.specs&&e.specs.cpu)||'';
+    document.getElementById('eqRam').value = (e.specs&&e.specs.ram)||'';
+    document.getElementById('eqDisco').value = (e.specs&&e.specs.disco)||'';
+    btnDelete.style.display = 'block';
+  } else {
+    document.getElementById('equipoModalTitle').textContent = 'Registrar equipo';
+    ['eqId','eqNombre','eqMarca','eqModelo','eqSerie','eqFechaCompra','eqUsuario','eqArea','eqObs','eqCpu','eqRam','eqDisco'].forEach(id2=>document.getElementById(id2).value='');
+    document.getElementById('eqTipo').value = 'Laptop';
+    document.getElementById('eqSede').value = 'LIMA';
+    document.getElementById('eqEstado').value = 'Disponible';
+    btnDelete.style.display = 'none';
+  }
+}
+const EQ_TIPO_VALORES = ['Laptop','PC','Impresora','Escaner','Celular','Accesorio'];
+const EQ_ESTADO_VALORES = ['Disponible','Asignado','En custodia','Por reparar','De baja','Perdido/Robado','Vendido'];
+function matchCanonico(valores, typed){
+  const t = (typed||'').trim();
+  return valores.find(v=>v.toLowerCase()===t.toLowerCase()) || null;
+}
+async function saveEquipoModal(){
+  const id = document.getElementById('eqId').value;
+  const nombre = document.getElementById('eqNombre').value.trim();
+  const tipo = matchCanonico(EQ_TIPO_VALORES, document.getElementById('eqTipo').value);
+  const estado = matchCanonico(EQ_ESTADO_VALORES, document.getElementById('eqEstado').value);
+  if(!nombre){ alert('Ingresa el nombre del equipo'); return; }
+  if(!tipo){ alert('Elige un tipo válido de la lista (' + EQ_TIPO_VALORES.join(', ') + ')'); return; }
+  if(!estado){ alert('Elige un estado válido de la lista (' + EQ_ESTADO_VALORES.join(', ') + ')'); return; }
+  // Validar que el nombre no sea duplicado
+  const existente = DB.equipos.find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase() && e.id !== id);
+  if(existente){
+    alert('Ya existe un equipo con el nombre "' + nombre + '". Los nombres deben ser únicos.');
+    return;
+  }
+  const obj = {
+    nombre,
+    tipo,
+    marca: document.getElementById('eqMarca').value.trim(),
+    modelo: document.getElementById('eqModelo').value.trim(),
+    serie: document.getElementById('eqSerie').value.trim(),
+    fechaCompra: document.getElementById('eqFechaCompra').value || null,
+    sede: document.getElementById('eqSede').value.trim(),
+    estado,
+    usuarioActual: document.getElementById('eqUsuario').value.trim(),
+    area: document.getElementById('eqArea').value.trim(),
+    observaciones: document.getElementById('eqObs').value.trim(),
+    specs: {
+      cpu: document.getElementById('eqCpu').value.trim(),
+      ram: document.getElementById('eqRam').value.trim(),
+      disco: document.getElementById('eqDisco').value.trim(),
+    }
+  };
+  try{
+    if(id) await apiPut('/api/equipos/'+encodeURIComponent(id), obj);
+    else await apiPost('/api/equipos', obj);
+    closeModal('equipoModalBg');
+    await refreshState();
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+}
+
+async function deleteEquipo(){
+  const id = document.getElementById('eqId').value;
+  if(!id) return;
+  const e = DB.equipos.find(x=>x.id===id);
+  if(!e) return;
+  let msg = `¿Eliminar el equipo ${e.tipo} (${e.marca} ${e.modelo}) - ${e.serie}?`;
+  if(e.estado==='Asignado'){
+    msg += '\n\nADVERTENCIA: Este equipo está asignado a ' + e.usuarioActual + '. ¿Continuar?';
+  }
+  if(!confirm(msg)) return;
+  const btn = document.getElementById('btnDeleteEquipo');
+  btn.disabled = true;
+  try{
+    await apiDelete('/api/equipos/'+encodeURIComponent(id));
+    closeModal('equipoModalBg');
+    await refreshState();
+  }catch(err){ alert('Error al eliminar: ' + err.message); }
+  finally{ btn.disabled = false; }
+}
+
+function openHistorial(equipoId){
+  const e = DB.equipos.find(x=>x.id===equipoId);
+  document.getElementById('historialModalBg').classList.add('active');
+  document.getElementById('historialTitle').textContent = `Historial — ${e.tipo} ${e.marca} ${e.modelo} (${e.serie||'s/n'})`;
+  const movs = DB.movimientos.filter(m=>m.items.some(it=>it.equipoId===equipoId)).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const mants = DB.mantenimientos.filter(m=>m.equipoId===equipoId).sort((a,b)=>(a.fecha||'').localeCompare(b.fecha||''));
+  const info = equipoAlertInfo(e);
+  let html = `<div class="grid3" style="margin-bottom:10px;">
+    <div><b>Estado actual:</b> ${estadoTag(e.estado)}</div>
+    <div><b>Antigüedad:</b> ${info&&info.meses!=null? info.meses+' meses' : '—'}</div>
+    <div><b>Sede:</b> ${escapeHtml(e.sede)}</div>
+  </div>`;
+  html += '<h4>Movimientos (entregas / devoluciones)</h4>';
+  if(movs.length===0) html += '<p class="muted">Sin movimientos registrados</p>';
+  for(const m of movs){
+    html += `<div class="hist-item"><div class="d">${fmtDate(m.fecha)} · ${escapeHtml(movTipoLabel(m.tipo))}</div>
+      <div>${escapeHtml(m.trabajador||'—')} ${m.area? '· '+escapeHtml(m.area):''}</div>
+      ${m.observaciones? '<div class="muted">'+escapeHtml(m.observaciones)+'</div>':''}
+      <a class="link" onclick="verActa('${m.id}')">ver / imprimir acta</a>
+    </div>`;
+  }
+  html += '<h4>Mantenimientos</h4>';
+  if(mants.length===0) html += '<p class="muted">Sin mantenimientos registrados</p>';
+  for(const m of mants){
+    html += `<div class="hist-item"><div class="d">${fmtDate(m.fecha)} · ${escapeHtml(m.tipo)} · por ${escapeHtml(m.realizadoPor||'—')}</div><div>${escapeHtml(m.descripcion)}</div></div>`;
+  }
+  document.getElementById('historialBody').innerHTML = html;
+}
+function verActa(movId){ window.open('/api/acta/'+encodeURIComponent(movId), '_blank'); }
+
+// ---------- NUEVO CARGO ----------
+function equipoOptionLabel(e){
+  return `${e.tipo} — ${e.marca||''} ${e.modelo||''} (${e.serie||'s/n'}) [${e.id}]`;
+}
+let cargoRowSeq = 0;
+function addCargoItemRow(){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'border:1px solid var(--borde); border-radius:8px; padding:12px; margin-bottom:12px; background:var(--gris-100);';
+  const rowId = 'cargoRow' + (cargoRowSeq++);
+  const disponibles = DB.equipos.filter(e=>['Disponible','En custodia'].includes(e.estado));
+  const celulares = disponibles.filter(e=>e.tipo==='Celular');
+
+  wrap.innerHTML = `
+    <div style="display:grid; grid-template-columns:1.5fr 0.8fr 1fr 1fr 1fr auto; gap:8px; align-items:end; margin-bottom:8px;">
+      <div class="field"><label>Equipo existente (o deja en blanco para accesorio nuevo)</label>
+        <input type="text" class="itEquipo" list="${rowId}Options" autocomplete="off" placeholder="Buscar equipo...">
+        <datalist id="${rowId}Options">${disponibles.map(e=>`<option value="${escapeHtml(equipoOptionLabel(e))}">`).join('')}</datalist>
+      </div>
+      <div class="field"><label>Cant.</label><input type="number" class="itCant" value="1" min="1"></div>
+      <div class="field"><label>Descripción</label><input type="text" class="itDesc" placeholder="Ej: Mouse inalámbrico"></div>
+      <div class="field"><label>Marca/Modelo</label><input type="text" class="itMarcaModelo"></div>
+      <div class="field"><label>Serie/Estado</label><input type="text" class="itSerie"></div>
+      <button class="btn secondary small" onclick="this.closest('[data-row]').remove()">Quitar</button>
+    </div>
+  `;
+  wrap.setAttribute('data-row', rowId);
+  document.getElementById('cargoItems').appendChild(wrap);
+
+  const inp = wrap.querySelector('.itEquipo');
+
+  inp.addEventListener('input', ()=>{
+    const id = equipoIdFromLabelInput(inp);
+
+    if(id){
+      const e = DB.equipos.find(x=>x.id===id);
+      wrap.querySelector('.itDesc').value = `${e.tipo} ${e.marca||''} ${e.modelo||''}`.trim();
+      wrap.querySelector('.itMarcaModelo').value = `${e.marca||''} ${e.modelo||''}`.trim();
+      wrap.querySelector('.itSerie').value = e.serie||'';
+    }
+  });
+}
+function addLineMóvilRow(){
+  const wrap = document.createElement('div');
+  const rowId = 'cargoRow' + (cargoRowSeq++);
+
+  wrap.innerHTML = `
+    <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+      <input type="text" class="itEquipo" placeholder="📱 LIN (se auto-asigna)" disabled value="LIN" style="flex:2; background:#f0f0f0;">
+      <input type="number" class="itCant" min="1" value="1" placeholder="Cant" style="width:50px; display:none;">
+      <input type="text" class="itDesc" placeholder="Descripción (opcional)" style="flex:1;">
+      <input type="tel" class="itSerie" placeholder="Número telefónico" pattern="[0-9]+" style="flex:1.5; font-family:var(--font-num);">
+      <input type="text" class="itMarcaModelo" placeholder="Marca/Modelo" style="flex:1; display:none;">
+      <button class="btn-sm" onclick="this.parentElement.remove()" style="padding:4px 8px;">✕</button>
+    </div>
+    <input type="hidden" class="itTipo" value="LIN">
+  `;
+  wrap.setAttribute('data-row', rowId);
+  document.getElementById('cargoItems').appendChild(wrap);
+}
+
+function refreshCargoItemDatalists(){
+  const disponibles = DB.equipos.filter(e=>['Disponible','En custodia'].includes(e.estado));
+  document.querySelectorAll('#cargoItems .itEquipo').forEach(inp=>{
+    const listId = inp.getAttribute('list');
+    if(listId) fillDatalist(listId, disponibles.map(equipoOptionLabel));
+  });
+}
+function populateTrabajadoresDatalist(){
+  const activos = (DB.trabajadores||[]).filter(t=>!(t.activo===0||t.activo===false));
+  document.getElementById('cTrabajadorList').innerHTML = activos.map(t=>`<option value="${escapeHtml(t.nombre)}">`).join('');
+}
+document.getElementById('cTrabajador').addEventListener('change', ()=>{
+  const nombre = document.getElementById('cTrabajador').value.trim();
+  const t = (DB.trabajadores||[]).find(x=>x.nombre.toLowerCase()===nombre.toLowerCase());
+  if(!t) return;
+  if(t.dni && !document.getElementById('cDni').value.trim()) document.getElementById('cDni').value = t.dni;
+  if(t.area && !document.getElementById('cArea').value.trim()) document.getElementById('cArea').value = t.area;
+  if(t.sede) document.getElementById('cSede').value = t.sede;
+});
+
+// Validación de números telefónicos (Perú: 9XXXXXXXXX)
+function validarTelefono(numero){
+  if(!numero) return true; // opcional
+  const limpio = numero.replace(/\D/g, ''); // solo dígitos
+  // Aceptar:
+  // - 9XXXXXXXXX (9 dígitos comenzando con 9)
+  // - +51 9XXXXXXXXX (12 dígitos: 51 + 9 + 9 dígitos)
+  // - Cualquier número con al menos 7 dígitos (tolerante)
+  if(limpio.length >= 7) return true;
+  return false;
+}
+
+function formatearTelefono(numero){
+  if(!numero) return '';
+  const limpio = numero.replace(/\D/g, ''); // quitar espacios, guiones, +
+  // Si tiene 9 dígitos, asumimos que es 9XXXXXXXXX
+  if(limpio.length === 9) return limpio;
+  // Si tiene 11 o más, extrae los últimos 9 dígitos
+  if(limpio.length >= 9) return limpio.slice(-9);
+  // Si tiene menos de 9, devuelve lo que hay (al menos 7)
+  return limpio;
+}
+
+function abrirNuevaActa(){
+  // Navegar a la vista sin ejecutar renderAll (que sobrescribiría el formulario)
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById('view-nuevoCargo');
+  if(el) el.classList.add('active');
+  const navBtn = document.querySelector(`nav button[data-view="nuevoCargo"]`);
+  if(navBtn) navBtn.classList.add('active');
+  // Limpiar el formulario DESPUÉS de navegar, no antes
+  setTimeout(() => resetCargoForm(), 0);
+}
+
+function resetCargoForm(){
+  try{
+    document.getElementById('cFecha').value = todayISO();
+    document.getElementById('cTrabajador').value='';
+    document.getElementById('cDni').value='';
+    document.getElementById('cArea').value='';
+    document.getElementById('cSede').value='LIMA';
+    document.getElementById('cObs').value='';
+    document.getElementById('cargoItems').innerHTML='';
+    addCargoItemRow();
+    // Restaurar botón a estado original
+    const btn = document.getElementById('btnSaveCargo');
+    btn.textContent = 'Guardar entrega y generar acta';
+    btn.onclick = saveCargo;
+    console.log('[RESET] Formulario limpiado correctamente');
+  }catch(e){
+    console.error('[RESET ERROR]', e);
+  }
+}
+async function saveCargo(){
+  const fecha = document.getElementById('cFecha').value || todayISO();
+  const trabajador = document.getElementById('cTrabajador').value.trim();
+  const dni = document.getElementById('cDni').value.trim();
+  const area = document.getElementById('cArea').value.trim();
+  const sede = document.getElementById('cSede').value;
+  const obs = document.getElementById('cObs').value.trim();
+  if(!trabajador){ alert('Ingresa el nombre del trabajador'); return; }
+  const trabajadorInfo = (DB.trabajadores||[]).find(t=>t.nombre.toLowerCase()===trabajador.toLowerCase());
+  if(trabajadorInfo && (trabajadorInfo.activo===0||trabajadorInfo.activo===false)){
+    alert('Este trabajador figura como inactivo (tiene una devolución por salida registrada). Actívalo primero en la pestaña Usuarios si va a recibir un nuevo equipo.');
+    return;
+  }
+  const rows = [...document.querySelectorAll('#cargoItems [data-row]')];
+  const items = [];
+  for(const r of rows){
+    const tipo = r.querySelector('.itTipo')?.value || '';
+
+    // Si es una línea móvil (LIN)
+    if(tipo === 'LIN'){
+      const numero = r.querySelector('.itSerie').value.trim();
+      const descripcion = r.querySelector('.itDesc').value.trim() || 'Línea móvil';
+
+      if(!numero){
+        alert('Ingresa el número de teléfono para la línea móvil');
+        return;
+      }
+
+      // Validar formato de teléfono
+      if(!validarTelefono(numero)){
+        alert(`Teléfono inválido: "${numero}"\nDebe ser: 9XXXXXXXXX (Perú)`);
+        return;
+      }
+
+      const numeroFormateado = formatearTelefono(numero);
+      items.push({
+        tipo: 'LIN',
+        descripcion: descripcion,
+        serieEstado: numeroFormateado
+      });
+      continue;
+    }
+
+    // Para equipos normales
+    const equipoInputEl = r.querySelector('.itEquipo');
+    let equipoId = equipoIdFromLabelInput(equipoInputEl);
+    const cant = parseInt(r.querySelector('.itCant').value)||1;
+    const desc = r.querySelector('.itDesc').value.trim();
+    const marcaModelo = r.querySelector('.itMarcaModelo').value.trim();
+    const serieEstado = r.querySelector('.itSerie').value.trim();
+    const equipoInputValue = (equipoInputEl.value||'').trim();
+
+    if(!desc && !equipoId && !equipoInputValue) continue;
+
+    // Validar que el equipo no esté ya asignado
+    if(equipoId){
+      const eq = DB.equipos.find(e => e.id === equipoId);
+      if(eq && eq.estado === 'Asignado'){
+        alert(`❌ El equipo "${eq.nombre}" ya está asignado a ${eq.usuarioActual}.\nDebe devolverse primero antes de reasignarlo.`);
+        return;
+      }
+    }
+
+    items.push({
+      equipoId,
+      equipoNombre: equipoInputValue && !equipoId ? equipoInputValue : undefined,
+      cantidad:cant,
+      descripcion:desc,
+      marcaModelo,
+      serieEstado
+    });
+  }
+  if(items.length===0){ alert('Agrega al menos un ítem'); return; }
+  const btn = document.getElementById('btnSaveCargo');
+  btn.disabled = true;
+  try{
+    const res = await apiPost('/api/cargos', {fecha, trabajador, dni, area, sede, observaciones:obs, items});
+    await refreshState();
+    verActa(res.id);
+    resetCargoForm();
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+  finally{ btn.disabled = false; }
+}
+
+// Editar cargo existente
+async function editarCargo(movId){
+  const mov = DB.movimientos.find(m=>m.id===movId);
+  if(!mov) return alert('Cargo no encontrado');
+
+  // Navegar a la vista de edición SIN ejecutar renderAll (que sobrescribiría los datos)
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  const el = document.getElementById('view-nuevoCargo');
+  if(el) el.classList.add('active');
+  const navBtn = document.querySelector(`nav button[data-view="nuevoCargo"]`);
+  if(navBtn) navBtn.classList.add('active');
+
+  // Llenar formulario con datos del cargo
+  document.getElementById('cFecha').value = mov.fecha;
+  document.getElementById('cTrabajador').value = mov.trabajador;
+  document.getElementById('cDni').value = mov.dni;
+  document.getElementById('cArea').value = mov.area;
+  document.getElementById('cSede').value = mov.sede;
+  document.getElementById('cObs').value = mov.observaciones;
+
+  // Limpiar y llenar ítems
+  const cargoItems = document.getElementById('cargoItems');
+  cargoItems.innerHTML = '';
+  let itemIndex = 0;
+  for(const it of mov.items){
+    const eq = it.equipoId ? getEquipoQuick(it.equipoId) : null;
+    const isLineaMóvil = eq && eq.tipo === 'LIN';
+    const row = document.createElement('div');
+    const rowId = 'cargoRowEdit' + (itemIndex++);
+    row.setAttribute('data-row', rowId);
+    row.setAttribute('data-equipo-id', it.equipoId || '');
+
+    if(isLineaMóvil){
+      // Mostrar como línea móvil
+      row.innerHTML = `
+        <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+          <input type="text" class="itEquipo" placeholder="📱 LIN (se auto-asigna)" disabled value="LIN" style="flex:2; background:#f0f0f0;">
+          <input type="number" class="itCant" min="1" value="1" placeholder="Cant" style="width:50px; display:none;">
+          <input type="text" class="itDesc" placeholder="Descripción (opcional)" value="${escapeHtml(it.descripcion)}" style="flex:1;">
+          <input type="tel" class="itSerie" placeholder="Número telefónico" pattern="[0-9]+" value="${escapeHtml(it.serieEstado)}" style="flex:1.5; font-family:var(--font-num);">
+          <input type="text" class="itMarcaModelo" placeholder="Marca/Modelo" style="flex:1; display:none;">
+          <button class="btn-sm" onclick="this.parentElement.remove()" style="padding:4px 8px;">✕</button>
+        </div>
+        <input type="hidden" class="itTipo" value="LIN">
+      `;
+    } else {
+      // Mostrar como equipo normal
+      row.innerHTML = `
+        <div style="display:flex; gap:8px; margin-bottom:8px; align-items:center;">
+          <input type="text" class="itEquipo" list="equiposList" placeholder="Equipo (opcional)" value="${eq ? eq.nombre + ' (' + eq.tipo + ')' : ''}" style="flex:2;">
+          <input type="number" class="itCant" min="1" value="${it.cantidad||1}" placeholder="Cant" style="width:50px;">
+          <input type="text" class="itDesc" placeholder="Descripción" value="${escapeHtml(it.descripcion)}" style="flex:1;">
+          <input type="text" class="itMarcaModelo" placeholder="Marca/Modelo" value="${escapeHtml(it.marcaModelo)}" style="flex:1;">
+          <input type="text" class="itSerie" placeholder="Serie/Estado" value="${escapeHtml(it.serieEstado)}" style="flex:1;">
+          <button class="btn-sm" onclick="this.parentElement.remove()" style="padding:4px 8px;">✕</button>
+        </div>
+      `;
+    }
+    cargoItems.appendChild(row);
+  }
+
+  // Scroll al formulario
+  document.querySelector('#view-nuevoCargo .card').scrollIntoView({behavior: 'smooth'});
+
+  // Cambiar botón a "Actualizar"
+  const btn = document.getElementById('btnSaveCargo');
+  btn.textContent = 'Actualizar cargo';
+  btn.onclick = async ()=>{ await actualizarCargo(movId); };
+}
+
+async function actualizarCargo(movId){
+  const fecha = document.getElementById('cFecha').value;
+  const trabajador = document.getElementById('cTrabajador').value.trim();
+  const dni = document.getElementById('cDni').value.trim();
+  const area = document.getElementById('cArea').value.trim();
+  const sede = document.getElementById('cSede').value;
+  const obs = document.getElementById('cObs').value.trim();
+  if(!trabajador){ alert('Ingresa el nombre del trabajador'); return; }
+
+  const rows = [...document.querySelectorAll('#cargoItems [data-row]')];
+  const items = [];
+  for(const r of rows){
+    const tipo = r.querySelector('.itTipo')?.value || '';
+
+    // Si es una línea móvil (LIN)
+    if(tipo === 'LIN'){
+      const numero = r.querySelector('.itSerie').value.trim();
+      const descripcion = r.querySelector('.itDesc').value.trim() || 'Línea móvil';
+
+      if(!numero){
+        alert('Ingresa el número de teléfono para la línea móvil');
+        return;
+      }
+
+      // Validar formato de teléfono
+      if(!validarTelefono(numero)){
+        alert(`Teléfono inválido: "${numero}"\nDebe ser: 9XXXXXXXXX (Perú)`);
+        return;
+      }
+
+      const numeroFormateado = formatearTelefono(numero);
+      items.push({
+        tipo: 'LIN',
+        descripcion: descripcion,
+        serieEstado: numeroFormateado
+      });
+      continue;
+    }
+
+    // Para equipos normales
+    const equipoInputEl = r.querySelector('.itEquipo');
+    const equipoId = equipoIdFromLabelInput(equipoInputEl);
+    const cant = parseInt(r.querySelector('.itCant').value)||1;
+    const desc = r.querySelector('.itDesc').value.trim();
+    const marcaModelo = r.querySelector('.itMarcaModelo').value.trim();
+    const serieEstado = r.querySelector('.itSerie').value.trim();
+    const equipoInputValue = (equipoInputEl.value||'').trim();
+
+    if(!desc && !equipoId && !equipoInputValue) continue;
+
+    // Validar que el equipo no esté ya asignado (excepto si ya estaba en el cargo)
+    if(equipoId){
+      const eq = DB.equipos.find(e => e.id === equipoId);
+      const eraDelCargoAnterior = mov.items.some(it => it.equipoId === equipoId);
+      if(eq && eq.estado === 'Asignado' && !eraDelCargoAnterior){
+        alert(`❌ El equipo "${eq.nombre}" ya está asignado a ${eq.usuarioActual}.\nDebe devolverse primero antes de reasignarlo.`);
+        return;
+      }
+    }
+
+    items.push({
+      equipoId,
+      equipoNombre: equipoInputValue && !equipoId ? equipoInputValue : undefined,
+      cantidad:cant,
+      descripcion:desc,
+      marcaModelo,
+      serieEstado
+    });
+  }
+  if(items.length===0){ alert('Agrega al menos un ítem'); return; }
+
+  const btn = document.getElementById('btnSaveCargo');
+  btn.disabled = true;
+  try{
+    await apiPut('/api/cargos/'+encodeURIComponent(movId), {fecha, trabajador, dni, area, sede, observaciones:obs, items});
+    await refreshState();
+    alert('Cargo actualizado correctamente');
+    resetCargoForm();
+    renderCargos();
+  }catch(err){ alert('Error al actualizar: ' + err.message); }
+  finally{ btn.disabled = false; btn.textContent = 'Guardar entrega y generar acta'; btn.onclick = saveCargo; }
+}
+
+function getEquipoQuick(id){ return DB.equipos.find(e=>e.id===id); }
+
+// ---------- DEVOLUCIONES ----------
+async function saveDevolucion(){
+  const trabajador = document.getElementById('devTrabajador').value;
+  if(!trabajador){ alert('Selecciona un trabajador'); return; }
+  const equipoIds = [...document.querySelectorAll('#devEquiposList .devChk:checked')].map(c=>c.value);
+  if(equipoIds.length===0){ alert('Marca al menos un equipo a devolver'); return; }
+  const motivo = resolveByLabel(MOTIVO_DEVOLUCION_LABELS, document.getElementById('devMotivo').value);
+  const fecha = document.getElementById('devFecha').value || todayISO();
+  const estadoNuevo = document.getElementById('devEstadoNuevo').value;
+  const obs = document.getElementById('devObs').value.trim();
+  const btn = document.getElementById('btnSaveDev');
+  btn.disabled = true;
+  try{
+    const res = await apiPost('/api/devoluciones', {trabajador, equipoIds, motivo, fecha, estadoNuevo, observaciones:obs});
+    await refreshState();
+    verActa(res.id);
+    document.getElementById('devObs').value='';
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+  finally{ btn.disabled = false; }
+}
+function renderDevEquiposList(){
+  const trabajador = document.getElementById('devTrabajador').value;
+  const cont = document.getElementById('devEquiposList');
+  const previouslyChecked = new Set([...cont.querySelectorAll('.devChk:checked')].map(c=>c.value));
+  const hadAny = cont.querySelectorAll('.devChk').length > 0;
+  if(!trabajador){ cont.innerHTML = 'Selecciona un trabajador para ver sus equipos.'; return; }
+  const equipos = DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual===trabajador);
+  if(equipos.length===0){ cont.innerHTML = 'Este trabajador no tiene equipos asignados actualmente.'; return; }
+  cont.innerHTML = equipos.map(e=>{
+    const checked = hadAny ? previouslyChecked.has(e.id) : true;
+    return `<label style="display:flex; align-items:center; gap:8px; padding:5px 2px; border-bottom:1px solid var(--gris-200); color:var(--gris-900); font-size:13px;">
+      <input type="checkbox" class="devChk" value="${e.id}" ${checked?'checked':''}>
+      <span>${escapeHtml(e.tipo)} — ${escapeHtml(e.marca)} ${escapeHtml(e.modelo)} (${escapeHtml(e.serie)||'s/n'})</span>
+    </label>`;
+  }).join('');
+}
+function renderDevoluciones(){
+  const trabajadores = [...new Set(DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual).map(e=>e.usuarioActual))].sort();
+  fillDatalist('devTrabajadorOptions', trabajadores);
+  renderDevEquiposList();
+  const rows = DB.equipos.filter(e=>['En custodia','Por reparar'].includes(e.estado));
+  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Estado</th><th>Últ. usuario</th></tr>';
+  for(const e of rows){
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
+  }
+  document.getElementById('custodiaTable').innerHTML = html;
+}
+document.getElementById('devTrabajador').addEventListener('input', renderDevEquiposList);
+document.getElementById('devTrabajador').addEventListener('change', renderDevEquiposList);
+
+// ---------- BAJAS ----------
+async function saveBaja(){
+  const equipoId = equipoIdFromLabelInput(document.getElementById('bajaEquipo'));
+  if(!equipoId){ alert('Selecciona un equipo válido de la lista'); return; }
+  const fecha = document.getElementById('bajaFecha').value || todayISO();
+  const motivo = document.getElementById('bajaMotivo').value.trim();
+  const obs = document.getElementById('bajaObs').value.trim();
+  const btn = document.getElementById('btnSaveBaja');
+  btn.disabled = true;
+  try{
+    const res = await apiPost('/api/bajas', {equipoId, fecha, motivo, observaciones:obs});
+    await refreshState();
+    verActa(res.id);
+    document.getElementById('bajaObs').value='';
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+  finally{ btn.disabled = false; }
+}
+function renderBajas(){
+  fillEquipoDatalist('bajaEquipoOptions', e=>!['De baja','Vendido'].includes(e.estado));
+  const rows = DB.equipos.filter(e=>e.estado==='De baja');
+  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Observaciones</th></tr>';
+  for(const e of rows){
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
+  }
+  document.getElementById('bajasTable').innerHTML = html;
+}
+
+// ---------- MANTENIMIENTO ----------
+async function saveMantenimiento(){
+  const equipoId = equipoIdFromLabelInput(document.getElementById('mEquipo'));
+  if(!equipoId){ alert('Selecciona un equipo válido de la lista'); return; }
+  const fecha = document.getElementById('mFecha').value || todayISO();
+  const tipo = document.getElementById('mTipo').value.trim();
+  const por = document.getElementById('mPor').value.trim();
+  const desc = document.getElementById('mDesc').value.trim();
+  if(!desc){ alert('Describe el mantenimiento realizado'); return; }
+  const btn = document.getElementById('btnSaveMant');
+  btn.disabled = true;
+  try{
+    await apiPost('/api/mantenimientos', {equipoId, fecha, tipo, realizadoPor:por, descripcion:desc});
+    await refreshState();
+    document.getElementById('mDesc').value=''; document.getElementById('mPor').value='';
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+  finally{ btn.disabled = false; }
+}
+function renderMantenimiento(){
+  fillEquipoDatalist('mEquipoOptions', e=>!['Vendido'].includes(e.estado));
+  const q = (document.getElementById('mantSearch').value||'').toLowerCase();
+  let rows = DB.mantenimientos.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  let html = '<tr><th>Fecha</th><th>Equipo</th><th>Nombre</th><th>Tipo</th><th>Descripción</th><th>Realizado por</th></tr>';
+  for(const m of rows){
+    const e = DB.equipos.find(x=>x.id===m.equipoId) || {};
+    const blob = `${e.marca||''} ${e.modelo||''} ${e.serie||''}`.toLowerCase();
+    if(q && !blob.includes(q)) continue;
+    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(e.tipo||'')} ${escapeHtml(e.marca||'')} ${escapeHtml(e.modelo||'')} (${escapeHtml(e.serie||'')})</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(m.tipo)}</td><td>${escapeHtml(m.descripcion)}</td><td>${escapeHtml(m.realizadoPor)}</td></tr>`;
+  }
+  document.getElementById('mantTable').innerHTML = html;
+}
+document.getElementById('mantSearch').addEventListener('input', renderMantenimiento);
+
+// ---------- CARGOS / ACTAS ----------
+function renderCargos(){
+  const q = (document.getElementById('cargoSearch').value||'').toLowerCase();
+  const qTel = (document.getElementById('cargoSearchTelefono').value||'').replace(/\D/g, ''); // solo dígitos
+  const tipoRaw = (document.getElementById('cargoTipoFilter').value||'').trim();
+  const tipoResuelto = tipoRaw ? Object.keys(TIPO_MOVIMIENTO_LABELS).find(k=>TIPO_MOVIMIENTO_LABELS[k].toLowerCase()===tipoRaw.toLowerCase()) : null;
+  let rows = DB.movimientos.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  let html = '<tr><th>Fecha</th><th>Tipo</th><th>Trabajador</th><th>Sede</th><th>Ítems</th><th></th></tr>';
+  for(const m of rows){
+    if(tipoRaw){
+      if(tipoResuelto){ if(m.tipo!==tipoResuelto) continue; }
+      else if(!movTipoLabel(m.tipo).toLowerCase().includes(tipoRaw.toLowerCase())) continue;
+    }
+    if(q && !(m.trabajador||'').toLowerCase().includes(q)) continue;
+    // Búsqueda por número de teléfono (en equipos LIN)
+    if(qTel){
+      const tieneNumero = m.items.some(it => {
+        if(!it.equipoId) return false;
+        const eq = DB.equipos.find(e => e.id === it.equipoId);
+        return eq && eq.tipo === 'LIN' && eq.serie.replace(/\D/g, '').includes(qTel);
+      });
+      if(!tieneNumero) continue;
+    }
+    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(movTipoLabel(m.tipo))}</td><td>${escapeHtml(m.trabajador)}</td><td>${escapeHtml(m.sede)}</td><td>${m.items.length}</td><td><div class="btn-group"><button class="btn-icon primary" title="Ver / Imprimir acta" onclick="verActa('${m.id}')">📄</button><button class="btn-icon primary" title="Editar cargo" onclick="editarCargo('${m.id}')">✏️</button></div></td></tr>`;
+  }
+  document.getElementById('cargosTable').innerHTML = html;
+}
+document.getElementById('cargoSearch').addEventListener('input', renderCargos);
+document.getElementById('cargoSearchTelefono').addEventListener('input', renderCargos);
+document.getElementById('cargoTipoFilter').addEventListener('input', renderCargos);
+document.getElementById('cargoTipoFilter').addEventListener('change', renderCargos);
+
+// ---------- DIRECTORIO DE NÚMEROS TELEFÓNICOS ----------
+function renderDirectorioTelefonos(){
+  const q = (document.getElementById('telefonoDirectorioSearch').value||'').toLowerCase();
+
+  // Crear mapa de movimientos para búsqueda O(1)
+  const movimientosMap = new Map();
+  for(const mov of DB.movimientos){
+    movimientosMap.set(mov.id, mov);
+  }
+
+  // Extraer TODOS los números telefónicos de los equipos tipo LIN
+  const telefonos = new Map(); // { "numero": {numero, contador, actas: [...], linId, equipoNombre, estado, usuario} }
+
+  // Primero: Agregar TODOS los equipos LIN directos
+  for(const eq of DB.equipos){
+    if(eq.tipo === 'LIN'){
+      const numero = eq.serie; // El número está en la serie
+      if(!numero) continue;
+
+      if(!telefonos.has(numero)){
+        telefonos.set(numero, {
+          numero: numero,
+          linId: eq.id,
+          equipoNombre: eq.nombre,
+          estado: eq.estado,
+          usuarioActual: eq.usuarioActual,
+          area: eq.area,
+          contador: 0,
+          actas: [],
+          trabajadores: [],
+          areas: []
+        });
+      }
+    }
+  }
+
+  // Segundo: Buscar equipos LIN que tengan registros en movimientos
+  for(const mov of DB.movimientos){
+    for(const it of mov.items){
+      // Si el ítem tiene un equipoId, revisar si es un equipo LIN
+      if(it.equipoId){
+        const eq = DB.equipos.find(e => e.id === it.equipoId);
+        if(eq && eq.tipo === 'LIN'){
+          const numero = eq.serie; // El número está en la serie
+          if(!numero) continue;
+
+          if(!telefonos.has(numero)){
+            telefonos.set(numero, {
+              numero: numero,
+              linId: eq.id,
+              equipoNombre: eq.nombre,
+              estado: eq.estado,
+              usuarioActual: eq.usuarioActual,
+              area: eq.area,
+              contador: 0,
+              actas: [],
+              trabajadores: [],
+              areas: []
+            });
+          }
+          const t = telefonos.get(numero);
+          t.contador++;
+          if(!t.actas.includes(mov.id)) t.actas.push(mov.id);
+          if(!t.trabajadores.includes(mov.trabajador)) t.trabajadores.push(mov.trabajador);
+          if(!t.areas.includes(mov.area)) t.areas.push(mov.area);
+        }
+      }
+    }
+  }
+
+  // Convertir a array y filtrar
+  let items = Array.from(telefonos.values());
+  if(q){
+    items = items.filter(t =>
+      t.numero.includes(q) ||
+      t.actas.some(id => {
+        const mov = movimientosMap.get(id);
+        return mov && (
+          (mov.trabajador||'').toLowerCase().includes(q) ||
+          (mov.area||'').toLowerCase().includes(q) ||
+          (mov.sede||'').toLowerCase().includes(q)
+        );
+      })
+    );
+  }
+
+  // Ordenar por cantidad de uso (descendente)
+  items.sort((a,b) => b.contador - a.contador);
+
+  // Construir tabla
+  let html = '<tr><th>Número Telefónico</th><th>Equipo</th><th>Asignado a</th><th>Área</th><th>Estado</th><th>Veces Registrado</th><th></th></tr>';
+  for(const t of items){
+    const trabajadoresStr = t.trabajadores.length > 0 ? t.trabajadores.filter(Boolean).join(', ') : (t.usuarioActual || '—');
+    const areasStr = t.areas.length > 0 ? t.areas.filter(Boolean).join(', ') : (t.area || '—');
+    const estadoBadge = t.estado === 'Asignado' ? `<badge style="background:var(--verde);">${t.estado}</badge>` : `<badge>${t.estado}</badge>`;
+
+    html += `<tr>
+      <td><strong>${escapeHtml(t.numero)}</strong></td>
+      <td>${escapeHtml(t.equipoNombre)}</td>
+      <td>${escapeHtml(trabajadoresStr)}</td>
+      <td>${escapeHtml(areasStr)}</td>
+      <td>${estadoBadge}</td>
+      <td style="text-align:center;"><badge>${t.contador}</badge></td>
+      <td><button class="btn-sm" onclick="verDetalleLinea('${t.linId}')">Ver</button></td>
+    </tr>`;
+  }
+
+  document.getElementById('telefonoDirectorioTable').innerHTML = html;
+  document.getElementById('telefonoDirectorioCount').textContent = `Total: ${items.length} números únicos`;
+}
+
+document.getElementById('telefonoDirectorioSearch').addEventListener('input', renderDirectorioTelefonos);
+
+function verDetalleLinea(linId){
+  const lin = DB.equipos.find(e => e.id === linId);
+  if(!lin) return alert('Linea no encontrada');
+  const msg = `LIN: ${lin.nombre}\nTelefono: ${lin.serie}\nEstado: ${lin.estado}\nUsuario: ${lin.usuarioActual || 'Sin asignar'}`;
+  alert(msg);
+}
+
+// ---------- SOLICITUDES DE COMPRA ----------
+let solicitudActualId = null;
+let itemRowSeq = 0;
+
+function renderSolicitudes(){
+  const solicitudes = DB.solicitudesCompra || [];
+  let html = '<tr><th>Numero</th><th>Usuario</th><th>Fecha</th><th>Items</th><th>Estado</th><th>Acciones</th></tr>';
+
+  for(const sol of solicitudes){
+    html += `<tr>
+      <td><strong>${escapeHtml(sol.numero)}</strong></td>
+      <td>${escapeHtml(sol.usuario)}</td>
+      <td>${sol.fecha ? new Date(sol.fecha).toLocaleDateString('es-PE') : '—'}</td>
+      <td>${sol.items?.length || 0} items</td>
+      <td><badge style="background: ${sol.estado==='entregado'?'var(--verde)':sol.estado==='recibido'?'var(--azul)':'var(--gris)'}">${sol.estado}</badge></td>
+      <td>
+        <button class="btn-icon" onclick="editarSolicitud('${sol.id}')" title="Editar">✏️</button>
+        <button class="btn-icon" onclick="generarExcelSolicitud('${sol.id}')" title="Excel">📊</button>
+        <button class="btn-icon" onclick="abrirOutlookSolicitud('${sol.id}')" title="Enviar Email">📧</button>
+        <button class="btn-icon" onclick="eliminarSolicitud('${sol.id}')" title="Eliminar">🗑️</button>
+      </td>
+    </tr>`;
+  }
+
+  document.getElementById('solicitudesTable').innerHTML = html;
+}
+
+function abrirNuevaSolicitud(){
+  solicitudActualId = null;
+  document.getElementById('solicitudItems').innerHTML = '';
+  agregarItemSolicitud();
+  document.getElementById('solicitudFormModal').classList.add('active');
+}
+
+function agregarItemSolicitud(item = {}){
+  const rowId = 'solItem' + (itemRowSeq++);
+  const row = document.createElement('div');
+  row.setAttribute('data-row', rowId);
+  row.style.cssText = 'display:grid; grid-template-columns:0.8fr 2fr 0.6fr 1.5fr auto; gap:8px; margin-bottom:8px; align-items:end;';
+
+  const datalistId = 'usuariosList-' + rowId;
+  const usuariosOptions = (DB.trabajadores || [])
+    .filter(t => t.activo === 1)
+    .map(t => `<option value="${escapeHtml(t.nombre)}">`)
+    .join('');
+
+  row.innerHTML = `
+    <div class="field"><label>Tipo</label><select class="solTipo"><option value="bien" ${item.tipo === 'bien' ? 'selected' : ''}>Bien</option><option value="servicio" ${item.tipo === 'servicio' ? 'selected' : ''}>Servicio</option></select></div>
+    <div class="field"><label>Descripción</label><input type="text" class="solDesc" value="${escapeHtml(item.descripcion || '')}" placeholder="Descripción del item"></div>
+    <div class="field"><label>Cantidad</label><input type="number" class="solCant" value="${item.cantidad || 1}" min="1"></div>
+    <div class="field"><label>Usuario Destino</label><input type="text" class="solUsuario" list="${datalistId}" value="${escapeHtml(item.usuarioDestino || '')}" placeholder="Buscar usuario..."><datalist id="${datalistId}">${usuariosOptions}</datalist></div>
+    <button class="btn-sm" onclick="this.closest('[data-row]').remove()">Quitar</button>
+  `;
+  document.getElementById('solicitudItems').appendChild(row);
+}
+
+async function guardarSolicitud(){
+  const items = [];
+  for(const row of document.querySelectorAll('#solicitudItems [data-row]')){
+    const tipo = row.querySelector('.solTipo').value;
+    const desc = row.querySelector('.solDesc').value.trim();
+    const cant = parseInt(row.querySelector('.solCant').value) || 1;
+    const usuarioDestino = row.querySelector('.solUsuario').value.trim();
+
+    if(desc) items.push({tipo, descripcion: desc, cantidad: cant, usuarioDestino, observaciones: ''});
+  }
+
+  if(items.length === 0){
+    alert('Agrega al menos un item');
+    return;
+  }
+
+  const sol = {
+    fecha: new Date().toISOString(),
+    usuario: currentUsername,
+    descripcion: 'Solicitud de compra',
+    observaciones: '',
+    estado: 'pendiente',
+    items
+  };
+
+  try{
+    if(solicitudActualId){
+      await apiPut(`/api/solicitudes-compra/${solicitudActualId}`, sol);
+    } else {
+      await apiPost('/api/solicitudes-compra', sol);
+    }
+    await refreshState();
+    cerrarSolicitudForm();
+  }catch(err){
+    alert('Error: ' + err.message);
+  }
+}
+
+function editarSolicitud(solId){
+  const sol = DB.solicitudesCompra?.find(s => s.id === solId);
+  if(!sol) return;
+
+  solicitudActualId = solId;
+  document.getElementById('solicitudItems').innerHTML = '';
+
+  for(const item of sol.items || []){
+    agregarItemSolicitud(item);
+  }
+
+  document.getElementById('solicitudFormModal').classList.add('active');
+}
+
+function cerrarSolicitudForm(){
+  document.getElementById('solicitudFormModal').classList.remove('active');
+  solicitudActualId = null;
+}
+
+async function eliminarSolicitud(solId){
+  if(!confirm('Eliminar esta solicitud?')) return;
+  try{
+    await apiDelete(`/api/solicitudes-compra/${solId}`);
+    await refreshState();
+  }catch(err){
+    alert('Error: ' + err.message);
+  }
+}
+
+async function generarExcelSolicitud(solId){
+  const sol = DB.solicitudesCompra?.find(s => s.id === solId);
+  if(!sol) return alert('Solicitud no encontrada');
+
+  try {
+    const res = await fetch(`/api/solicitudes-compra/${solId}/excel`);
+    if(!res.ok) {
+      const err = await res.json().catch(() => ({error: res.statusText}));
+      throw new Error(err.error || 'Error al generar Excel');
+    }
+
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Pedido_Compra_${sol.numero}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+
+    console.log('Excel descargado exitosamente');
+  }catch(err){
+    console.error('Error generando Excel:', err);
+    alert('Error al descargar Excel: ' + err.message);
+  }
+}
+
+async function abrirOutlookSolicitud(solId){
+  const sol = DB.solicitudesCompra?.find(s => s.id === solId);
+  if(!sol) return alert('Solicitud no encontrada');
+
+  try {
+    console.log('Abriendo Outlook con solicitud:', solId);
+
+    const res = await fetch(`/api/solicitudes-compra/${solId}/email`);
+    if(!res.ok) throw new Error('Error al generar email');
+
+    const data = await res.json();
+
+    if(data.success) {
+      alert('✅ Outlook se está abriendo con el archivo adjunto.\n\nPor favor:\n1. Ingresa el email de destino (compras@axis-gl.com)\n2. Completa el cuerpo del mensaje\n3. Envía el correo');
+    } else {
+      throw new Error(data.error || 'Error desconocido');
+    }
+  }catch(err){
+    console.error('Error abriendo Outlook:', err);
+    alert('Error: ' + err.message);
+  }
+}
+
+// ---------- INVENTARIOS REALIZADOS ----------
+async function renderInventarios(){
+  try{
+    const res = await apiGet('/api/inventario/ultimos?limite=50');
+    const reportes = res.reportes || [];
+    let html = '<tr><th>Fecha</th><th>Hostname</th><th>Usuario Windows</th><th>SO</th><th>CPU</th><th>RAM (GB)</th><th>Disco (GB)</th><th></th></tr>';
+    for(const r of reportes.slice(0, 50)){
+      const fecha = new Date(r.timestamp).toLocaleString('es-ES');
+      const ram = `${r.ram_usado_gb}/${r.ram_total_gb}`;
+      const disco = `${r.disco_usado_gb}/${r.disco_total_gb}`;
+      html += `<tr>
+        <td>${fecha}</td>
+        <td><strong>${escapeHtml(r.dispositivo_ip || '—')}</strong></td>
+        <td>${escapeHtml(r.usuario_windows || '—')}</td>
+        <td>${escapeHtml((r.so || '').substring(0, 30))}</td>
+        <td>${escapeHtml((r.cpu || '').substring(0, 25))}</td>
+        <td>${ram}</td>
+        <td>${disco}</td>
+        <td><div class="btn-group"><button class="btn-icon primary" title="Ver detalles" onclick="verDetalleInventario('${escapeHtml(r.id)}')">👁️</button></div></td>
+      </tr>`;
+    }
+    document.getElementById('inventariosTable').innerHTML = html;
+  }catch(err){
+    alert('Error al cargar inventarios: ' + err.message);
+  }
+}
+
+function verDetalleInventario(id){
+  const res = DB.inventarioReportes?.find(r=>r.id===id);
+  if(!res) return alert('Inventario no encontrado');
+  const msg = `
+📊 DETALLE DE INVENTARIO
+
+Fecha: ${new Date(res.timestamp).toLocaleString('es-ES')}
+Hostname: ${res.dispositivo_ip}
+Usuario: ${res.usuario_windows}
+
+🖥️ SISTEMA
+SO: ${res.so}
+CPU: ${res.cpu}
+
+💾 MEMORIA RAM
+Total: ${res.ram_total_gb} GB
+Usado: ${res.ram_usado_gb} GB
+Disponible: ${res.ram_disponible_gb} GB
+
+💿 DISCO
+Total: ${res.disco_total_gb} GB
+Usado: ${res.disco_usado_gb} GB
+Disponible: ${res.disco_disponible_gb} GB
+  `;
+  alert(msg);
+}
+
+function verEspecificacionesTecnicas(equipoId){
+  const eq = DB.equipos.find(e=>e.id===equipoId);
+  if(!eq) return alert('Equipo no encontrado');
+
+  let especificacionesText = '';
+  if(eq.especificaciones_tecnicas){
+    try{
+      const specs = JSON.parse(eq.especificaciones_tecnicas);
+      especificacionesText = `
+🖥️ ESPECIFICACIONES TÉCNICAS
+Reporte: ${new Date(specs.timestamp).toLocaleString('es-ES')}
+
+Hostname: ${specs.hostname}
+SO: ${specs.so}
+CPU: ${specs.cpu}
+Usuario Windows: ${specs.usuario_windows}
+
+💾 MEMORIA RAM
+Total: ${specs.ram_total_gb} GB
+Usado: ${specs.ram_usado_gb} GB
+Disponible: ${specs.ram_disponible_gb} GB
+Utilización: ${(specs.ram_usado_gb * 100 / specs.ram_total_gb).toFixed(1)}%
+
+💿 DISCO C:/
+Total: ${specs.disco_total_gb} GB
+Usado: ${specs.disco_usado_gb} GB
+Disponible: ${specs.disco_disponible_gb} GB
+Utilización: ${(specs.disco_usado_gb * 100 / specs.disco_total_gb).toFixed(1)}%
+      `;
+    }catch(e){
+      especificacionesText = '❌ No se pudo procesar las especificaciones técnicas';
+    }
+  } else {
+    especificacionesText = '⚠️ Sin datos de inventario disponibles (el agente no ha reportado aún)';
+  }
+
+  const msg = `
+📊 EQUIPO: ${eq.nombre} (${eq.id})
+Tipo: ${eq.tipo}
+Marca/Modelo: ${eq.marca} ${eq.modelo}
+Serie: ${eq.serie}
+Usuario: ${eq.usuarioActual || '(sin asignar)'}
+${especificacionesText}
+  `;
+  alert(msg);
+}
+
+// ---------- REPORTES DE AGENTES ----------
+async function renderAgentesReportes(){
+  try{
+    const res = await apiGet('/api/agentes/reportes');
+    const reportes = res.reportes || [];
+
+    const noEnlazados = reportes.filter(r => !r.equipoId).length;
+    const enlazados = reportes.filter(r => r.equipoId).length;
+
+    document.getElementById('agentesNoEnlazados').textContent = `⚠️ Sin enlazar: ${noEnlazados}`;
+    document.getElementById('agentesEnlazados').textContent = `✅ Enlazados: ${enlazados}`;
+
+    let html = '<tr><th>Identificador</th><th>Primer Reporte</th><th>Última Actualización</th><th>Hostname</th><th>Usuario</th><th>Serie Disco</th><th>RAM</th><th>Disco</th><th>Equipo</th><th>Acciones</th></tr>';
+
+    for(const r of reportes){
+      const identificador = r.identificador || 'N/A';
+      const fechaCreacion = r.fecha_primer_reporte ? new Date(r.fecha_primer_reporte).toLocaleString('es-ES') : '—';
+      const fechaActualizacion = r.fecha_ultima_actualizacion ? new Date(r.fecha_ultima_actualizacion).toLocaleString('es-ES') : '—';
+      const ram = `${r.ram_usado_gb}/${r.ram_total_gb}GB`;
+      const disco = `${r.disco_usado_gb}/${r.disco_total_gb}GB`;
+      const equipo = r.nombre_equipo ? `<strong>${escapeHtml(r.nombre_equipo)}</strong>` : '<span class="muted">—</span>';
+      const actualizado = r.fecha_ultima_actualizacion && r.fecha_primera_reporte !== r.fecha_ultima_actualizacion;
+
+      html += `<tr style="background:${r.equipoId?'#f0fff4':'#fff5f5'};">
+        <td><code style="font-size:10px; background:var(--gris-100); padding:2px 6px; border-radius:3px;">${escapeHtml(identificador)}</code></td>
+        <td><small style="color:var(--gris-500);">${fechaCreacion}</small></td>
+        <td><small>${actualizado ? '🔄 ' : ''}${fechaActualizacion}</small></td>
+        <td><strong>${escapeHtml(r.hostname)}</strong></td>
+        <td>${escapeHtml(r.usuario_windows || '—')}</td>
+        <td><code style="font-size:11px;">${escapeHtml(r.numero_serie_disco)}</code></td>
+        <td>${ram}</td>
+        <td>${disco}</td>
+        <td>${equipo}</td>
+        <td><div class="btn-group">
+          <button class="btn-icon secondary" title="Ver detalles" onclick="verDetalleAgente('${r.id}')">👁️</button>
+          ${!r.equipoId ? `<button class="btn-icon primary" title="Enlazar con equipo" onclick="abrirSelectorEquipo('${r.id}')">🔗</button>` : `<button class="btn-icon danger" title="Desenlazar" onclick="desenlazarAgente('${r.id}')">✂️</button>`}
+          <button class="btn-icon danger" title="Eliminar agente" onclick="eliminarAgente('${r.id}', '${escapeHtml(identificador)}')">🗑️</button>
+        </div></td>
+      </tr>`;
+    }
+
+    document.getElementById('agentesTable').innerHTML = html;
+  }catch(err){
+    alert('Error al cargar reportes: ' + err.message);
+  }
+}
+
+function verDetalleAgente(reporteId){
+  const reporte = DB.agentesReportes.find(r => r.id === reporteId);
+  if(!reporte) return alert('Reporte no encontrado');
+
+  const msg = `
+📊 REPORTE DETALLADO DE AGENTE
+
+🖥️ EQUIPO
+Hostname: ${reporte.hostname}
+Usuario Windows: ${reporte.usuario_windows}
+Número Serie Disco: ${reporte.numero_serie_disco}
+
+📅 SISTEMA OPERATIVO
+${reporte.so}
+Uptime: ${reporte.uptime}
+
+⚙️ PROCESADOR (CPU)
+Modelo: ${reporte.cpu}
+Núcleos: ${reporte.cpu_nucleos}
+Threads: ${reporte.cpu_threads}
+Frecuencia: ${reporte.cpu_frecuencia}
+
+💾 MEMORIA RAM
+Total: ${reporte.ram_total_gb} GB
+Usado: ${reporte.ram_usado_gb} GB
+Disponible: ${reporte.ram_disponible_gb} GB
+Utilización: ${reporte.ram_porcentaje}%
+
+💿 DISCO C:/
+Total: ${reporte.disco_total_gb} GB
+Usado: ${reporte.disco_usado_gb} GB
+Disponible: ${reporte.disco_disponible_gb} GB
+Utilización: ${reporte.disco_porcentaje}%
+
+🎮 HARDWARE ADICIONAL
+Placa Madre: ${reporte.placa_madre}
+GPU: ${reporte.gpu}
+Monitor: ${reporte.monitor}
+
+🌐 RED
+IPs: ${reporte.ips}
+MACs: ${reporte.macs}
+
+⏰ INFORMACIÓN DEL REPORTE
+Fecha: ${new Date(reporte.timestamp).toLocaleString('es-ES')}
+${reporte.equipoId ? '✅ Enlazado con: ' + reporte.nombre_equipo : '⚠️ Sin enlazar'}
+  `;
+  alert(msg);
+}
+
+function abrirSelectorEquipo(reporteId){
+  const equipos = DB.equipos.filter(e => e.estado === 'Asignado');
+
+  if(equipos.length === 0){
+    alert('No hay equipos asignados disponibles para enlazar');
+    return;
+  }
+
+  document.getElementById('enlazarAgenteReporteId').value = reporteId;
+  document.getElementById('enlazarAgenteSearch').value = '';
+  document.getElementById('btnEnlazarAgenteConfirm').disabled = true;
+  window.enlazarAgenteSeleccionado = null;
+
+  renderEnlazarAgenteList(equipos, '');
+  document.getElementById('enlazarAgenteModalBg').classList.add('active');
+
+  document.getElementById('enlazarAgenteSearch').addEventListener('input', (e) => {
+    const q = e.target.value.toLowerCase();
+    renderEnlazarAgenteList(equipos, q);
+  });
+}
+
+function renderEnlazarAgenteList(equipos, query){
+  const filtered = equipos.filter(e => {
+    const blob = `${e.id} ${e.nombre} ${e.tipo} ${e.serie}`.toLowerCase();
+    return blob.includes(query);
+  });
+
+  const html = filtered.map(e => `
+    <div style="padding:10px; border-bottom:1px solid var(--borde); cursor:pointer; transition:all 0.2s;"
+         onmouseover="this.style.background='white'"
+         onmouseout="this.style.background='transparent'"
+         onclick="seleccionarEquipoEnlace('${e.id}', '${escapeHtml(e.nombre)}', this)">
+      <div style="font-weight:600;">${escapeHtml(e.nombre)} <span style="color:var(--gris-500); font-weight:normal;">(${e.id})</span></div>
+      <div style="font-size:12px; color:var(--gris-500);">
+        ${escapeHtml(e.tipo)} · ${escapeHtml(e.marca)} ${escapeHtml(e.modelo)} · Serie: ${escapeHtml(e.serie)}
+      </div>
+    </div>
+  `).join('');
+
+  document.getElementById('enlazarAgenteList').innerHTML = html || '<div style="padding:12px; color:var(--gris-500); text-align:center;">No hay equipos que coincidan</div>';
+}
+
+function seleccionarEquipoEnlace(equipoId, equipoNombre, elemento){
+  // Desmarcar anterior si existe
+  document.querySelectorAll('#enlazarAgenteList > div').forEach(el => {
+    el.style.background = 'transparent';
+    el.style.borderLeft = 'none';
+  });
+
+  // Marcar actual
+  elemento.style.background = '#f0fff4';
+  elemento.style.borderLeft = '4px solid var(--verde)';
+
+  window.enlazarAgenteSeleccionado = equipoId;
+  document.getElementById('btnEnlazarAgenteConfirm').disabled = false;
+}
+
+function confirmarEnlaceAgente(){
+  if(!window.enlazarAgenteSeleccionado){
+    alert('Selecciona un equipo primero');
+    return;
+  }
+
+  const reporteId = document.getElementById('enlazarAgenteReporteId').value;
+  closeModal('enlazarAgenteModalBg');
+  enlazarAgente(reporteId, window.enlazarAgenteSeleccionado);
+}
+
+async function enlazarAgente(reporteId, equipoId){
+  try{
+    await apiPost(`/api/agentes/reportes/${reporteId}/enlazar`, {equipoId});
+    alert('✅ Reporte enlazado correctamente');
+    await refreshState();
+    renderAgentesReportes();
+  }catch(err){
+    alert('Error al enlazar: ' + err.message);
+  }
+}
+
+async function desenlazarAgente(reporteId){
+  if(!confirm('¿Desenlazar este reporte del equipo?')) return;
+  try{
+    await apiPost(`/api/agentes/reportes/${reporteId}/desenlazar`, {});
+    alert('✅ Reporte desenlazado correctamente');
+    await refreshState();
+    renderAgentesReportes();
+  }catch(err){
+    alert('Error al desenlazar: ' + err.message);
+  }
+}
+
+async function eliminarAgente(reporteId, identificador){
+  const confirmacion = confirm(`¿Está seguro de que desea ELIMINAR el agente?\n\n${identificador}\n\nEsta acción es IRREVERSIBLE.`);
+  if(!confirmacion) return;
+
+  try{
+    const response = await fetch(`/api/agentes/reportes/${reporteId}`, { method: 'DELETE' });
+    if(!response.ok) throw new Error('Error en servidor');
+    const data = await response.json();
+    alert(`✅ Agente ELIMINADO: ${data.eliminado}`);
+    await refreshState();
+    renderAgentesReportes();
+  }catch(err){
+    alert('Error al eliminar: ' + err.message);
+  }
+}
+
+// ---------- USUARIOS (mantenimiento de trabajadores) ----------
+function esTrabajadorActivo(t){ return !(t.activo===0 || t.activo===false); }
+function renderUsuarios(){
+  const q = (document.getElementById('usrSearch').value||'').toLowerCase();
+  const estadoFraw = (document.getElementById('usrEstadoFilter').value||'').trim().toLowerCase();
+  let rows = (DB.trabajadores||[]).slice().sort((a,b)=>a.nombre.localeCompare(b.nombre));
+  rows = rows.filter(t=>{
+    if(q){
+      const blob = [t.nombre,t.dni,t.area,t.sede].join(' ').toLowerCase();
+      if(!blob.includes(q)) return false;
+    }
+    const activo = esTrabajadorActivo(t);
+    if(estadoFraw.startsWith('activ') && !estadoFraw.startsWith('inactiv') && !activo) return false;
+    if(estadoFraw.startsWith('inactiv') && activo) return false;
+    return true;
+  });
+  document.getElementById('usrCount').textContent = rows.length + ' usuarios';
+  let html = '<tr><th>Nombre</th><th>DNI</th><th>Área</th><th>Sede</th><th>Estado</th><th>Equipos asignados</th><th></th></tr>';
+  if(rows.length===0) html += '<tr><td colspan="7" class="muted">Sin resultados</td></tr>';
+  for(const t of rows){
+    const activo = esTrabajadorActivo(t);
+    const asignados = DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual===t.nombre).length;
+    const nombreEnc = encodeURIComponent(t.nombre);
+    html += `<tr>
+      <td>${escapeHtml(t.nombre)}</td><td>${escapeHtml(t.dni)}</td><td>${escapeHtml(t.area)}</td><td>${escapeHtml(t.sede)}</td>
+      <td>${activo? '<span class="tag ok">Activo</span>' : '<span class="tag bad">Inactivo</span>'}</td>
+      <td>${asignados}</td>
+      <td><div class="btn-group"><button class="btn-icon primary" title="Editar" onclick="openUsuarioModal('${nombreEnc}')">✏️</button><button class="btn-icon secondary" title="${activo?'Desactivar':'Activar'}" onclick="toggleUsuarioActivo('${nombreEnc}', ${activo? 'false':'true'})">${activo?'✓':'🔓'}</button></div></td>
+    </tr>`;
+  }
+  document.getElementById('usuariosTable').innerHTML = html;
+}
+document.getElementById('usrSearch').addEventListener('input', renderUsuarios);
+document.getElementById('usrEstadoFilter').addEventListener('input', renderUsuarios);
+document.getElementById('usrEstadoFilter').addEventListener('change', renderUsuarios);
+
+function openUsuarioModal(nombreEnc){
+  document.getElementById('usuarioModalBg').classList.add('active');
+  if(nombreEnc){
+    const nombre = decodeURIComponent(nombreEnc);
+    const t = (DB.trabajadores||[]).find(x=>x.nombre===nombre);
+    if(!t) return;
+    document.getElementById('usuarioModalTitle').textContent = 'Editar usuario';
+    document.getElementById('usrOrigNombre').value = t.nombre;
+    document.getElementById('usrNombre').value = t.nombre;
+    document.getElementById('usrDni').value = t.dni||'';
+    document.getElementById('usrArea').value = t.area||'';
+    document.getElementById('usrSede').value = t.sede||'';
+    document.getElementById('usrActivo').checked = esTrabajadorActivo(t);
+  } else {
+    document.getElementById('usuarioModalTitle').textContent = 'Nuevo usuario';
+    document.getElementById('usrOrigNombre').value = '';
+    ['usrNombre','usrDni','usrArea','usrSede'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('usrActivo').checked = true;
+  }
+}
+async function saveUsuario(){
+  const origNombre = document.getElementById('usrOrigNombre').value;
+  const nombre = document.getElementById('usrNombre').value.trim();
+  if(!nombre){ alert('Ingresa el nombre del usuario'); return; }
+  const obj = {
+    nombre, dni: document.getElementById('usrDni').value.trim(),
+    area: document.getElementById('usrArea').value.trim(),
+    sede: document.getElementById('usrSede').value.trim(),
+    activo: document.getElementById('usrActivo').checked ? 1 : 0
+  };
+  try{
+    if(origNombre) await apiPut('/api/trabajadores/'+encodeURIComponent(origNombre), obj);
+    else await apiPost('/api/trabajadores', obj);
+    closeModal('usuarioModalBg');
+    await refreshState();
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+}
+async function toggleUsuarioActivo(nombreEnc, nuevoActivo){
+  const nombre = decodeURIComponent(nombreEnc);
+  try{
+    await apiPut('/api/trabajadores/'+encodeURIComponent(nombre), {activo: nuevoActivo ? 1 : 0});
+    await refreshState();
+  }catch(err){ alert('Error: ' + err.message); }
+}
+
+// ---------- USUARIOS DEL SISTEMA (cuentas de acceso) ----------
+let sysUsersCache = [];
+async function loadSystemUsers(){
+  try{
+    sysUsersCache = await apiGet('/api/system-users');
+    renderSystemUsersTable(sysUsersCache);
+  }catch(e){ /* si falla, se deja la tabla como estaba */ }
+}
+function renderSystemUsersTable(list){
+  let html = '<tr><th>Usuario</th><th>Correo de recuperación</th><th>Estado</th><th></th></tr>';
+  for(const u of list){
+    html += `<tr>
+      <td>${escapeHtml(u.username)}</td>
+      <td>${u.email? escapeHtml(u.email) : '<span class="muted">— sin definir —</span>'}</td>
+      <td>${u.mustChangePassword? '<span class="tag warn">Contraseña temporal pendiente</span>' : '<span class="tag ok">Activo</span>'}</td>
+      <td><div class="btn-group"><button class="btn-icon primary" title="Editar" onclick="openSysUserModal('${encodeURIComponent(u.username)}')">✏️</button><button class="btn-icon secondary" title="Restablecer contraseña" onclick="resetSystemUserPassword('${encodeURIComponent(u.username)}')">🔑</button><button class="btn-icon danger" title="Eliminar" onclick="deleteSystemUser('${encodeURIComponent(u.username)}')">🗑️</button></div></td>
+    </tr>`;
+  }
+  document.getElementById('sysUsersTable').innerHTML = html;
+}
+function openSysUserModal(usernameEnc){
+  document.getElementById('sysUserResult').innerHTML = '';
+  document.getElementById('sysUserModalBg').classList.add('active');
+  if(usernameEnc){
+    const username = decodeURIComponent(usernameEnc);
+    const u = sysUsersCache.find(x=>x.username===username) || {};
+    document.getElementById('sysUserModalTitle').textContent = 'Editar usuario del sistema';
+    document.getElementById('sysUserOrigName').value = username;
+    document.getElementById('sysUserName').value = username;
+    document.getElementById('sysUserName').disabled = true;
+    document.getElementById('sysUserEmail').value = u.email || '';
+    document.getElementById('sysUserPassword').value = '';
+    document.getElementById('sysUserPassLabel').textContent = 'Nueva contraseña (opcional — déjalo en blanco para no cambiarla)';
+    document.getElementById('sysUserSaveBtn').textContent = 'Guardar cambios';
+  } else {
+    document.getElementById('sysUserModalTitle').textContent = 'Nuevo usuario del sistema';
+    document.getElementById('sysUserOrigName').value = '';
+    document.getElementById('sysUserName').value = '';
+    document.getElementById('sysUserName').disabled = false;
+    document.getElementById('sysUserEmail').value = '';
+    document.getElementById('sysUserPassword').value = '';
+    document.getElementById('sysUserPassLabel').textContent = 'Contraseña (opcional — si la dejas en blanco se genera una temporal)';
+    document.getElementById('sysUserSaveBtn').textContent = 'Crear usuario';
+  }
+}
+async function saveSystemUser(){
+  const origName = document.getElementById('sysUserOrigName').value;
+  const username = document.getElementById('sysUserName').value.trim();
+  const email = document.getElementById('sysUserEmail').value.trim();
+  const password = document.getElementById('sysUserPassword').value;
+  if(!origName && !username){ alert('Ingresa el nombre de usuario'); return; }
+  try{
+    if(origName){
+      await apiPut(`/api/system-users/${encodeURIComponent(origName)}`, {email, password: password||undefined});
+      document.getElementById('sysUserResult').innerHTML = 'Cambios guardados.';
+      document.getElementById('sysUserPassword').value = '';
+    } else {
+      const res = await apiPost('/api/system-users', {username, email, password: password||undefined});
+      if(res.tempPassword){
+        document.getElementById('sysUserResult').innerHTML = `Usuario <b>${escapeHtml(res.username)}</b> creado.<br>Contraseña temporal: <b>${escapeHtml(res.tempPassword)}</b><br>Anótala y entrégala de forma segura — no se volverá a mostrar.`;
+      } else {
+        document.getElementById('sysUserResult').innerHTML = `Usuario <b>${escapeHtml(res.username)}</b> creado con la contraseña que definiste.`;
+      }
+      document.getElementById('sysUserName').value = '';
+      document.getElementById('sysUserEmail').value = '';
+      document.getElementById('sysUserPassword').value = '';
+    }
+    loadSystemUsers();
+  }catch(err){ alert('Error al guardar: ' + err.message); }
+}
+async function resetSystemUserPassword(usernameEnc){
+  const username = decodeURIComponent(usernameEnc);
+  if(!confirm(`¿Restablecer la contraseña de "${username}"? Se generará una contraseña temporal nueva.`)) return;
+  try{
+    const res = await apiPost(`/api/system-users/${encodeURIComponent(username)}/reset-password`, {});
+    alert(`Nueva contraseña temporal para ${username}: ${res.tempPassword}\n\nAnótala y entrégala de forma segura — no se volverá a mostrar.`);
+    loadSystemUsers();
+  }catch(err){ alert('Error: ' + err.message); }
+}
+async function deleteSystemUser(usernameEnc){
+  const username = decodeURIComponent(usernameEnc);
+  if(!confirm(`¿Eliminar el acceso del usuario "${username}"? Ya no podrá iniciar sesión.`)) return;
+  try{
+    await apiDelete(`/api/system-users/${encodeURIComponent(username)}`);
+    loadSystemUsers();
+  }catch(err){ alert('Error: ' + err.message); }
+}
+
+// ---------- BACKUP / IMPORT ----------
+function exportBackup(){
+  window.open('/api/backup', '_blank');
+}
+async function importBackup(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  if(!confirm('Esto reemplazará TODOS los datos actuales del servidor (afecta a todos los dispositivos). ¿Continuar?')) { ev.target.value=''; return; }
+  const text = await file.text();
+  try{
+    const data = JSON.parse(text);
+    await apiPost('/api/restore', data);
+    await refreshState();
+    alert('Backup restaurado correctamente');
+  }catch(err){ alert('Error al restaurar: ' + err.message); }
+  ev.target.value='';
+}
+async function importSpecs(ev){
+  const file = ev.target.files[0];
+  if(!file) return;
+  const text = await file.text();
+  try{
+    const data = JSON.parse(text);
+    const res = await apiPost('/api/import-specs', data);
+    await refreshState();
+    document.getElementById('specsImportResult').textContent = `Importado: ${res.matched} equipos actualizados, ${res.creados} equipos nuevos creados.`;
+  }catch(err){ alert('Error al importar: ' + err.message); }
+  ev.target.value='';
+}
+
+// ---------- CONFIGURACIÓN DEL AGENTE DE INVENTARIO ----------
+async function cargarConfigAgente(){
+  try{
+    const config = await apiGet('/api/config-agente');
+    document.getElementById('agenteServidor').value = config.servidor || 'http://localhost:3335';
+    document.getElementById('agenteIntervalo').value = config.intervalo_segundos || 3600;
+    document.getElementById('agenteConfigMsg').textContent = '✅ Configuración cargada';
+  }catch(err){
+    document.getElementById('agenteConfigMsg').textContent = '❌ Error al cargar: ' + err.message;
+  }
+}
+
+async function guardarConfigAgente(){
+  try{
+    const servidor = document.getElementById('agenteServidor').value.trim();
+    const intervalo = parseInt(document.getElementById('agenteIntervalo').value);
+
+    if(!servidor){ alert('Ingresa la URL del servidor'); return; }
+    if(!intervalo || intervalo < 60){ alert('El intervalo debe ser al menos 60 segundos'); return; }
+
+    await apiPut('/api/config-agente', {servidor, intervalo_segundos: intervalo});
+    document.getElementById('agenteConfigMsg').textContent = '✅ Configuración guardada correctamente. Los cambios se aplicarán en la próxima ejecución del agente.';
+  }catch(err){
+    document.getElementById('agenteConfigMsg').textContent = '❌ Error al guardar: ' + err.message;
+  }
+}
+
+function exportCSV(kind){
+  let rows, headers;
+  if(kind==='equipos'){
+    headers = ['id','tipo','marca','modelo','serie','fechaCompra','sede','estado','usuarioActual','area','observaciones','cpu','ram','disco'];
+    rows = DB.equipos.map(e=>[e.id,e.tipo,e.marca,e.modelo,e.serie,e.fechaCompra,e.sede,e.estado,e.usuarioActual,e.area,e.observaciones,(e.specs&&e.specs.cpu)||'',(e.specs&&e.specs.ram)||'',(e.specs&&e.specs.disco)||'']);
+  } else {
+    headers = ['id','tipo','fecha','trabajador','dni','area','sede','items','observaciones'];
+    rows = DB.movimientos.map(m=>[m.id,m.tipo,m.fecha,m.trabajador,m.dni,m.area,m.sede,m.items.map(i=>i.descripcion).join(' | '),m.observaciones]);
+  }
+  const csv = [headers.join(',')].concat(rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(','))).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = kind + '_' + todayISO() + '.csv';
+  a.click();
+}
+async function resetToSeed(){
+  if(!confirm('Esto borrará todos los cambios guardados en el servidor y restaurará los datos originales migrados del Excel, para TODOS los dispositivos. ¿Continuar?')) return;
+  try{
+    await apiPost('/api/reseed', {});
+    await refreshState();
+  }catch(err){ alert('Error: ' + err.message); }
+}
+
+// ---------- RENDER ALL ----------
+function renderAll(){
+  console.log('[RENDER ALL] Iniciando');
+  try{
+    if(!DB || !DB.equipos) {
+      console.error('[RENDER ALL] DB no inicializado');
+      return;
+    }
+
+    renderDashboard();
+    renderInventario();
+    renderUsuarios();
+    populateTrabajadoresDatalist();
+    refreshCargoItemDatalists();
+    renderDevoluciones();
+    renderBajas();
+    renderMantenimiento();
+    renderCargos();
+    renderDirectorioTelefonos();
+    renderSolicitudes();
+    loadSystemUsers();
+
+    renderInventarios().catch(e => console.error('[ERROR] renderInventarios:', e));
+    renderAgentesReportes().catch(e => console.error('[ERROR] renderAgentesReportes:', e));
+
+    console.log('[RENDER ALL] Completado');
+  }catch(err){
+    console.error('[RENDER ALL ERROR]', err);
+  }
+}
+document.getElementById('cFecha').value = todayISO();
+document.getElementById('devFecha').value = todayISO();
+document.getElementById('bajaFecha').value = todayISO();
+document.getElementById('mFecha').value = todayISO();
+addCargoItemRow();
+
+// Inicializar - ESPERAR A QUE CARGUEN LOS DATOS ANTES DE RENDERIZAR
+console.log('[INIT] Iniciando aplicacion');
+console.log('[INIT] DB inicial:', DB);
+
+(async () => {
+  try {
+    console.log('[INIT] Cargando datos desde servidor');
+
+    await refreshState();
+
+    console.log('[INIT] Datos cargados correctamente');
+    console.log('[INIT] DB equipos:', DB.equipos?.length, 'movimientos:', DB.movimientos?.length);
+
+    setInterval(()=>refreshState(true), 20000);
+    console.log('[INIT] Intervalo configurado');
+
+  } catch(err) {
+    console.error('[INIT ERROR]', err);
+    alert('Error: ' + err.message);
+  }
+})();
+
+loadMe().catch(e => console.error('[INIT loadMe error]', e));
+</script>
+</body>
+</html>

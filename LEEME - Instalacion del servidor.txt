@@ -1,0 +1,181 @@
+============================================================================
+ Gestion de Activos TI - Axis Group
+ Guia de instalacion del servidor (equipo fisico compartido en red)
+============================================================================
+
+Que es esto
+-----------
+La carpeta "servidor" contiene una aplicacion web con su propia base de
+datos (SQLite, archivo activos.db). Se instala UNA sola vez en el equipo
+que hara de servidor (una PC o mini PC que se quede siempre encendida y
+conectada a la red de la oficina). Desde cualquier otro dispositivo
+(PC, laptop, celular) conectado a esa misma red, se accede escribiendo
+la direccion IP del servidor en el navegador. Todos ven y editan los
+mismos datos en tiempo (casi) real.
+
+
+Usuarios y contraseñas iniciales
+--------------------------------
+La aplicacion ahora pide iniciar sesion. Hay dos usuarios creados:
+
+    Usuario: cmore        Contraseña temporal: srTD5mLnFdVs
+    Usuario: dvalnecia    Contraseña temporal: RG5jSubaXDBE
+
+Ambas son temporales: la primera vez que cada uno inicie sesion, la app
+pedira obligatoriamente definir una contraseña nueva antes de continuar.
+Guarda estas contraseñas temporales en un lugar seguro y compartelas por
+un canal privado (no por este chat) con quien corresponda.
+
+Recuperacion de contraseña (sin correo electronico):
+Si alguien olvida su contraseña, en la pantalla de login puede hacer clic
+en "¿Olvidaste tu contraseña?" e ingresar su usuario. Esto genera un
+codigo de un solo uso, valido por 30 minutos, que queda registrado en:
+    C:\ActivosTI\servidor\codigos-recuperacion.txt
+(y tambien se imprime en la ventana donde corre "node server.js").
+Alguien con acceso al equipo servidor debe abrir ese archivo, copiar el
+codigo correspondiente y pasarselo a la persona que lo solicito. Con ese
+codigo, en la misma pantalla de login (opcion "Ya tengo un código"),
+puede definir su nueva contraseña.
+
+
+PASO 1 - Elegir el equipo servidor
+-----------------------------------
+Debe ser un equipo Windows que permanezca encendido durante el horario
+de oficina (o 24/7 si quieres acceso en cualquier momento), conectado
+por cable o wifi a la misma red que los demas dispositivos.
+
+
+PASO 2 - Instalar Node.js
+--------------------------
+1. En el equipo servidor, ir a https://nodejs.org
+2. Descargar e instalar la version "LTS" (recomendada), 22.x o superior.
+3. Dejar todas las opciones por defecto durante la instalacion.
+4. Para confirmar que quedo instalado, abrir "Simbolo del sistema" (cmd)
+   y escribir:
+        node --version
+   Debe mostrar algo como v22.x.x o superior (24.x tambien sirve).
+
+
+PASO 3 - Copiar la carpeta del servidor
+-----------------------------------------
+1. Copia toda la carpeta "servidor" (la que viene junto a este archivo)
+   a una ubicacion permanente del equipo servidor, por ejemplo:
+        C:\ActivosTI\servidor
+2. Esta carpeta ya incluye:
+   - server.js          (el programa del servidor)
+   - seed.json           (los datos migrados de tu Excel actual, se
+                          cargan automaticamente la primera vez)
+   - public\index.html   (la aplicacion web)
+   - activos.db se creara solo la primera vez que enciendas el servidor
+
+
+PASO 4 - Iniciar el servidor
+------------------------------
+1. Abrir "Simbolo del sistema" (cmd) o PowerShell.
+2. Ir a la carpeta copiada, por ejemplo:
+        cd C:\ActivosTI\servidor
+3. Ejecutar:
+        node server.js
+4. Debe aparecer un mensaje como:
+        Servidor de Gestion de Activos TI escuchando en el puerto 3335
+        Abre http://localhost:3335 en este equipo,
+        o http://<IP-de-este-equipo>:3335 desde otros dispositivos de la red.
+5. Deja esa ventana abierta: mientras este abierta, el servidor sigue
+   funcionando. Si la cierras, el servidor se detiene (ver Paso 6 para
+   dejarlo funcionando siempre).
+
+
+PASO 5 - Averiguar la direccion IP del servidor
+--------------------------------------------------
+1. En el mismo equipo servidor, abrir cmd y escribir:
+        ipconfig
+2. Buscar el valor "Direccion IPv4" de la red en uso (ejemplo: 192.168.1.50).
+3. Desde CUALQUIER OTRO dispositivo conectado a la misma red (PC, laptop,
+   celular con wifi de la oficina), abrir un navegador y visitar:
+        http://192.168.1.50:3335
+   (reemplazando por la IP real de tu servidor)
+4. Puedes guardar esa direccion como favorito/marcador en cada dispositivo
+   para acceder rapido despues.
+
+Nota: si el equipo servidor cambia de IP (por ejemplo, se reinicia el
+router), la direccion puede variar. Para evitarlo, configura una IP fija
+para ese equipo en el router (DHCP reservado), o dale un nombre de host
+fijo si tu red lo permite.
+
+
+PASO 6 - Dejar el servidor funcionando siempre (recomendado)
+----------------------------------------------------------------
+Opcion simple: dejar la ventana de cmd abierta mientras el equipo este
+encendido (funciona, pero se detiene si cierras la ventana o reinicias
+el equipo).
+
+Opcion recomendada (arranque automatico con el Programador de tareas):
+1. Abrir "Programador de tareas" de Windows (buscar "Task Scheduler").
+2. Crear tarea basica:
+   - Nombre: "Servidor Activos TI"
+   - Desencadenador: "Al iniciar sesion" (o "Al iniciar el equipo")
+   - Accion: "Iniciar un programa"
+     - Programa/script: la ruta completa a node.exe
+       (normalmente: C:\Program Files\nodejs\node.exe)
+     - Argumentos: server.js
+     - Iniciar en: C:\ActivosTI\servidor   (la carpeta donde copiaste todo)
+3. Guardar. A partir de ahora, el servidor arrancara solo cada vez que
+   el equipo se encienda, sin necesidad de dejar ninguna ventana abierta.
+
+
+PASO 7 - Permitir el acceso en el Firewall de Windows
+-----------------------------------------------------------
+La primera vez que ejecutes "node server.js", es posible que Windows
+muestre un aviso de Firewall preguntando si permites el acceso a Node.js
+en redes privadas: elige "Permitir acceso".
+
+Si no aparece el aviso, o si otros dispositivos no logran conectarse,
+abre PowerShell COMO ADMINISTRADOR y ejecuta:
+
+    netsh advfirewall firewall add rule name="Activos TI" dir=in action=allow protocol=TCP localport=3335
+
+
+PASO 8 - Respaldo de la base de datos
+-----------------------------------------
+Todos los datos viven en un solo archivo:
+    C:\ActivosTI\servidor\activos.db
+
+Recomendaciones:
+- Copia periodicamente ese archivo a otra ubicacion (USB, otra carpeta,
+  la nube) como respaldo.
+- Ademas, dentro de la app, en la pestana "Backup / Importar specs" hay
+  un boton "Descargar copia de seguridad (JSON)" que genera un respaldo
+  legible de todos los equipos y movimientos, util para revisar datos o
+  restaurar si algo sale mal (boton "Restaurar desde copia de seguridad").
+
+
+Preguntas frecuentes
+---------------------
+- Necesito internet para que funcione: No. Todo funciona dentro de tu
+  red local (LAN/wifi de la oficina), sin depender de internet.
+
+- Puedo acceder desde fuera de la oficina (celular con datos moviles,
+  casa, etc.): No con esta configuracion basica, ya que el servidor solo
+  es visible dentro de la red local. Para acceso remoto se necesitaria
+  configurar una VPN hacia la red de la oficina, o exponer el servidor a
+  internet con medidas de seguridad adicionales (HTTPS, etc.) - recomendable
+  evaluarlo con tu equipo de TI/seguridad antes de hacerlo. La app ya pide
+  usuario y contraseña, pero eso no reemplaza tener HTTPS si se expone a
+  internet abiertamente.
+
+- Como agrego mas usuarios: por ahora los usuarios se crean directamente
+  en la base de datos. Pideme y te preparo el comando o una pantalla para
+  hacerlo desde la propia app.
+
+- Que pasa si cierro el servidor con sesiones abiertas: las sesiones viven
+  en memoria, asi que al reiniciar el servidor todos deberan volver a
+  iniciar sesion (sus datos y contraseñas no se pierden, eso vive en
+  activos.db).
+
+- Como detengo el servidor: cierra la ventana de cmd, o presiona Ctrl+C
+  dentro de ella. Los datos quedan guardados en activos.db, asi que al
+  volver a ejecutar "node server.js" continua donde quedo.
+
+- Como actualizo la aplicacion mas adelante: reemplaza los archivos
+  server.js y la carpeta public por una version nueva, sin tocar el
+  archivo activos.db (ahi estan tus datos).

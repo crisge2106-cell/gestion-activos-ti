@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "host": "smtp.tudominio.com",
+  "port": 587,
+  "secure": false,
+  "user": "correo@tudominio.com",
+  "pass": "TU_CONTRASEÑA_O_CONTRASEÑA_DE_APLICACION",
+  "from": "Gestión de Activos TI <correo@tudominio.com>"
+}

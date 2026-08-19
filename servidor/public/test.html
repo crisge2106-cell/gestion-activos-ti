@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Test de Diagnóstico</title>
+  <style>
+    body { font-family: monospace; margin: 20px; }
+    .ok { color: green; }
+    .error { color: red; }
+    .info { color: blue; }
+    pre { background: #f0f0f0; padding: 10px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+  <h1>🔧 DIAGNÓSTICO DE SERVIDOR</h1>
+  <div id="results"></div>
+
+  <script>
+    const results = document.getElementById('results');
+
+    async function test() {
+      // Test 1: Conectividad básica
+      log('Testing server connectivity...');
+      try {
+        const health = await fetch('/api/health').then(r => r.json());
+        logOk('✅ Servidor responde: ' + JSON.stringify(health));
+      } catch(e) {
+        logError('❌ No se puede conectar al servidor: ' + e.message);
+        return;
+      }
+
+      // Test 2: /api/state sin autenticación
+      log('Testing /api/state without authentication...');
+      try {
+        const state = await fetch('/api/state').then(r => {
+          if(!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+          return r.json();
+        });
+        logOk('✅ /api/state accesible');
+        logOk(`   - ${state.equipos?.length || 0} equipos`);
+        logOk(`   - ${state.movimientos?.length || 0} movimientos`);
+        logOk(`   - ${state.trabajadores?.length || 0} trabajadores`);
+      } catch(e) {
+        logError('❌ Error en /api/state: ' + e.message);
+      }
+
+      // Test 3: /api/me (requiere autenticación)
+      log('Testing /api/me (requires auth)...');
+      try {
+        const me = await fetch('/api/me').then(r => {
+          if(!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+          return r.json();
+        });
+        logOk('✅ Usuario autenticado: ' + me.username);
+      } catch(e) {
+        logError('⚠️  No autenticado (esperado): ' + e.message);
+      }
+
+      // Test 4: Verificar index.html
+      log('Testing index.html access...');
+      try {
+        const res = await fetch('/index.html');
+        if(res.status === 302) {
+          logError('❌ index.html redirige a login (debe estar autenticado)');
+        } else if(res.ok) {
+          logOk('✅ index.html accesible sin autenticación');
+        } else {
+          logError('❌ index.html retorna: ' + res.status);
+        }
+      } catch(e) {
+        logError('❌ Error accediendo index.html: ' + e.message);
+      }
+    }
+
+    function log(msg) {
+      results.innerHTML += '<div class="info">' + msg + '</div>';
+    }
+
+    function logOk(msg) {
+      results.innerHTML += '<div class="ok">' + msg + '</div>';
+    }
+
+    function logError(msg) {
+      results.innerHTML += '<div class="error">' + msg + '</div>';
+    }
+
+    test();
+  </script>
+</body>
+</html>
