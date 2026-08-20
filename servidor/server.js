@@ -27,13 +27,25 @@ const RESET_LOG_PATH = path.join(__dirname, 'codigos-recuperacion.txt');
 const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 
 // ---------------------------------------------------------------------------
+// Detección de entorno (LOCAL vs VERCEL/SERVERLESS)
+// ---------------------------------------------------------------------------
+const isVercel = process.env.VERCEL === 'true';
+const isProduction = process.env.NODE_ENV === 'production';
+const isServerless = isVercel || isProduction;
+
+console.log(`🌍 Entorno: ${isServerless ? 'VERCEL/SERVERLESS' : 'LOCAL'}`);
+console.log(`📦 BD será: ${process.env.MONGODB_URI ? 'MongoDB' : 'SQLite'}`);
+
+// ---------------------------------------------------------------------------
 // Base de datos
 // ---------------------------------------------------------------------------
-(async () => {
-  // Inicializar BD (detecta SQLite o MongoDB automáticamente)
-  await db.init();
+// Variables de estado de la BD
+let dbReady = false;
+let dbPromise = null;
+let ensureDBReady = null;
 
-  await db.exec(`
+// Función auxiliar para crear tablas
+const CREATE_TABLES_SQL = `
   CREATE TABLE IF NOT EXISTS equipos (
     id TEXT PRIMARY KEY,
     tipo TEXT, marca TEXT, modelo TEXT, serie TEXT, fechaCompra TEXT,
@@ -136,30 +148,55 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
     observaciones TEXT,
     FOREIGN KEY (solicitudId) REFERENCES solicitudes_compra(id)
   );
-`);
+`;
 
-// Migracion: agrega la columna 'email' (correo de recuperacion) a users si la base de
-// datos fue creada por una version anterior del servidor (que no la tenia).
-// Migración PRAGMA no aplica a MongoDB
+if (!isServerless) {
+  // LOCAL: Inicializar inmediatamente
+  (async () => {
+    try {
+      console.log('🔄 Inicializando BD (LOCAL)...');
+      await db.init();
 
-// Migracion: agrega la columna 'activo' a trabajadores si la base de datos
-// fue creada por una version anterior del servidor (que no la tenia).
-// Migración PRAGMA no aplica a MongoDB
+      await db.exec(CREATE_TABLES_SQL);
 
-// Migración PRAGMA no aplica a MongoDB
+      await seedIfEmpty();
+      await backfillTrabajadoresIfEmpty();
+      await seedUsersIfEmpty();
 
-// Migración PRAGMA no aplica a MongoDB
+      console.log('✅ BD inicializada (LOCAL)');
+      dbReady = true;
+    } catch (err) {
+      console.error('❌ Error inicializando BD (LOCAL):', err.message);
+    }
+  })();
+} else {
+  // VERCEL: Lazy initialization
+  ensureDBReady = async function() {
+    if (dbReady) return;
+    if (dbPromise) return dbPromise;
 
-// Migración PRAGMA no aplica a MongoDB
+    dbPromise = (async () => {
+      try {
+        console.log('🔄 Inicializando BD (VERCEL - lazy)...');
+        await db.init();
 
-// Migración PRAGMA no aplica a MongoDB
+        await db.exec(CREATE_TABLES_SQL);
 
-// Migración PRAGMA no aplica a MongoDB
+        await seedIfEmpty();
+        await backfillTrabajadoresIfEmpty();
+        await seedUsersIfEmpty();
 
-  await seedIfEmpty();
-  await backfillTrabajadoresIfEmpty();
-  await seedUsersIfEmpty();
-})(); // Fin del async IIFE de inicialización de BD
+        console.log('✅ BD inicializada (VERCEL)');
+        dbReady = true;
+      } catch (err) {
+        console.error('❌ Error inicializando BD (VERCEL):', err.message);
+        throw err;
+      }
+    })();
+
+    return dbPromise;
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Contadores y IDs
@@ -1676,17 +1713,30 @@ const server = http.createServer(async (req, res)=>{
 });
 
 // Exportar para Vercel (serverless) o escuchar localmente
-if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-  // Para Vercel: exportar la función handler, no el servidor
-  // Vercel llamará esta función para cada request
+if (isServerless) {
+  // VERCEL: Handler con lazy init
   const requestHandler = async (req, res) => {
-    server.emit('request', req, res);
+    try {
+      // Asegurar que BD esté lista
+      if (ensureDBReady) {
+        await ensureDBReady();
+      }
+
+      // Delegar al servidor
+      server.emit('request', req, res);
+    } catch (err) {
+      console.error('❌ Handler error:', err.message);
+      res.writeHead(500, {'Content-Type': 'application/json'});
+      res.end(JSON.stringify({error: err.message}));
+    }
   };
+
   module.exports = requestHandler;
 } else {
+  // LOCAL: Escuchar en puerto
   server.listen(PORT, ()=>{
-    console.log(`Servidor de Gestion de Activos TI escuchando en el puerto ${PORT}`);
-    console.log(`Abre http://localhost:${PORT} en este equipo,`);
-    console.log(`o http://<IP-de-este-equipo>:${PORT} desde otros dispositivos de la red.`);
+    console.log(`✅ Servidor escuchando en puerto ${PORT}`);
+    console.log(`Abre http://localhost:${PORT} en este equipo`);
+    console.log(`o http://<IP-de-este-equipo>:${PORT} desde otros dispositivos`);
   });
 }

@@ -56,7 +56,9 @@
       "Bash(git commit *)",
       "Bash(git push *)",
       "Bash(node -c db-factory.js)",
-      "Bash(node -c server.js)"
+      "Bash(node -c server.js)",
+      "Bash(grep -n \"^\\\\`\\\\\\)\\\\;\" server.js)",
+      "Bash(grep -n '`\\);' server.js)"
     ]
   }
 }
