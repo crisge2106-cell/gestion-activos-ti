@@ -54,7 +54,9 @@
       "Bash(sed -i '205,213s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
       "Bash(git add *)",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(node -c db-factory.js)",
+      "Bash(node -c server.js)"
     ]
   }
 }

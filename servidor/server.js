@@ -15,7 +15,7 @@ const path = require('path');
 const crypto = require('crypto');
 const net = require('net');
 const tls = require('tls');
-const dbAdapter = require('./db-adapter');
+const db = require('./db-factory');
 const { execSync, spawn } = require('child_process');
 const ExcelJS = require('exceljs');
 
@@ -30,7 +30,10 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 // Base de datos
 // ---------------------------------------------------------------------------
 (async () => {
-  await dbAdapter.exec(`
+  // Inicializar BD (detecta SQLite o MongoDB automáticamente)
+  await db.init();
+
+  await db.exec(`
   CREATE TABLE IF NOT EXISTS equipos (
     id TEXT PRIMARY KEY,
     tipo TEXT, marca TEXT, modelo TEXT, serie TEXT, fechaCompra TEXT,
@@ -154,13 +157,13 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 // Migración PRAGMA no aplica a MongoDB
 
 async function getCounter(name){
-  const row = await dbAdapter.prepare('SELECT value FROM counters WHERE name = ?').get(name);
+  const row = await db.prepare('SELECT value FROM counters WHERE name = ?').get(name);
   if(row) return row.value;
-  await dbAdapter.prepare('INSERT INTO counters (name, value) VALUES (?, 1)').run(name);
+  await db.prepare('INSERT INTO counters (name, value) VALUES (?, 1)').run(name);
   return 1;
 }
 async function setCounter(name, value){
-  await dbAdapter.prepare('INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET value = ?').run(name, value, value);
+  await db.prepare('INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET value = ?').run(name, value, value);
 }
 async function nextId(prefix, counterName){
   const n = await getCounter(counterName);
@@ -170,57 +173,57 @@ async function nextId(prefix, counterName){
 async function upsertTrabajador(t){
   const nombre = (t.nombre||'').trim();
   if(!nombre) return;
-  const existing = await dbAdapter.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
+  const existing = await db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
   if(existing){
-    await dbAdapter.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede) WHERE nombre = ? COLLATE NOCASE`)
+    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede) WHERE nombre = ? COLLATE NOCASE`)
       .run(t.dni||'', t.area||'', t.sede||'', nombre);
   } else {
-    await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede) VALUES (?,?,?,?)').run(nombre, t.dni||'', t.area||'', t.sede||'');
+    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede) VALUES (?,?,?,?)').run(nombre, t.dni||'', t.area||'', t.sede||'');
   }
 }
 async function getTrabajadores(){
-  return await dbAdapter.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
+  return await db.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
 }
 async function getTrabajador(nombre){
-  return await dbAdapter.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get((nombre||'').trim());
+  return await db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get((nombre||'').trim());
 }
 async function setTrabajadorActivo(nombre, activo){
   const n = (nombre||'').trim();
   if(!n) return;
   const existing = await getTrabajador(n);
   if(existing){
-    await dbAdapter.prepare('UPDATE trabajadores SET activo=? WHERE nombre = ? COLLATE NOCASE').run(activo?1:0, n);
+    await db.prepare('UPDATE trabajadores SET activo=? WHERE nombre = ? COLLATE NOCASE').run(activo?1:0, n);
   } else {
-    await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
+    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
   }
 }
 
 // ---- SOLICITUDES DE COMPRA ----
 async function getSolicitudesCompra(){
-  const solicitudes = await dbAdapter.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC').all();
+  const solicitudes = await db.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC').all();
   const solicitudesMap = {};
   for(const sol of solicitudes){
-    const items = await dbAdapter.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(sol.id);
+    const items = await db.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(sol.id);
     solicitudesMap[sol.id] = {...sol, items};
   }
   return solicitudes.map(s => solicitudesMap[s.id]);
 }
 
 async function getSolicitudCompra(id){
-  const sol = await dbAdapter.prepare('SELECT * FROM solicitudes_compra WHERE id = ?').get(id);
+  const sol = await db.prepare('SELECT * FROM solicitudes_compra WHERE id = ?').get(id);
   if(!sol) return null;
-  const items = await dbAdapter.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(id);
+  const items = await db.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(id);
   return {...sol, items};
 }
 
 async function insertSolicitudCompra(s){
   const id = await nextId('SOL', 'sol');
   const numero = await nextId('SOL-', 'sol_numero');
-  await dbAdapter.prepare(`INSERT INTO solicitudes_compra (id, numero, fecha, usuario, descripcion, estado, observaciones, createdAt)
+  await db.prepare(`INSERT INTO solicitudes_compra (id, numero, fecha, usuario, descripcion, estado, observaciones, createdAt)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
     .run(id, numero, s.fecha||new Date().toISOString(), s.usuario||'', s.descripcion||'', s.estado||'pendiente', s.observaciones||'', new Date().toISOString());
 
-  const insItem = dbAdapter.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
+  const insItem = db.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
     VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
   for(const item of (s.items||[])){
@@ -231,12 +234,12 @@ async function insertSolicitudCompra(s){
 }
 
 async function updateSolicitudCompra(id, s){
-  await dbAdapter.prepare(`UPDATE solicitudes_compra SET fecha=?, usuario=?, descripcion=?, estado=?, observaciones=? WHERE id=?`)
+  await db.prepare(`UPDATE solicitudes_compra SET fecha=?, usuario=?, descripcion=?, estado=?, observaciones=? WHERE id=?`)
     .run(s.fecha||'', s.usuario||'', s.descripcion||'', s.estado||'pendiente', s.observaciones||'', id);
 
   // Eliminar items anteriores y crear nuevos
-  await dbAdapter.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
-  const insItem = dbAdapter.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
+  await db.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
+  const insItem = db.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
     VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
   for(const item of (s.items||[])){
@@ -257,16 +260,16 @@ function maxSuffix(ids, prefix){
 
 // --- Carga masiva (usada por la semilla inicial y por "restaurar backup") ---
 async function bulkLoad(data){
-  const insEq = dbAdapter.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+  const insEq = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (@id,@tipo,@marca,@modelo,@serie,@fechaCompra,@sede,@estado,@usuarioActual,@area,@observaciones,@cpu,@ram,@disco,@origen)`);
-  const insMv = dbAdapter.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
+  const insMv = db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
     VALUES (@id,@tipo,@fecha,@trabajador,@dni,@area,@sede,@observaciones,@origen)`);
-  const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
+  const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
     VALUES (@movimientoId,@equipoId,@cantidad,@descripcion,@marcaModelo,@serieEstado)`);
-  const insMt = dbAdapter.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
+  const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
     VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion)`);
 
-  await dbAdapter.exec('BEGIN');
+  await db.exec('BEGIN');
   try{
     for(const e of (data.equipos||[])){
       await insEq.run({
@@ -295,9 +298,9 @@ async function bulkLoad(data){
         realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
       });
     }
-    await dbAdapter.exec('COMMIT');
+    await db.exec('COMMIT');
   }catch(err){
-    await dbAdapter.exec('ROLLBACK');
+    await db.exec('ROLLBACK');
     throw err;
   }
   await setCounter('eq', Math.max(maxSuffix((data.equipos||[]).map(e=>e.id), 'EQ'), data.nextEqId||0) + 1);
@@ -313,10 +316,10 @@ async function bulkLoad(data){
   }
 }
 async function clearAllTables(){
-  await dbAdapter.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
+  await db.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
 }
 async function seedIfEmpty(){
-  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM equipos').get()).c;
+  const count = (await db.prepare('SELECT COUNT(*) AS c FROM equipos').get()).c;
   if(count > 0) return;
   if(!fs.existsSync(SEED_PATH)){
     console.log('No hay seed.json, se inicia con base de datos vacia.');
@@ -330,7 +333,7 @@ async function seedIfEmpty(){
 await seedIfEmpty();
 
 async function backfillTrabajadoresIfEmpty(){
-  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM trabajadores').get()).c;
+  const count = (await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get()).c;
   if(count > 0) return;
   for(const m of await getMovimientos()){
     if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
@@ -356,14 +359,14 @@ function verifyPassword(pw, salt, hash){
   }catch(e){ return false; }
 }
 async function seedUsersIfEmpty(){
-  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
+  const count = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
   if(count > 0) return;
   // Usuarios iniciales con contraseñas temporales (deben cambiarla al ingresar)
   const defaults = [
     {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
     {username:'dvalnecia', salt:'960284915d484ffe07c5e65dd6087cfe', hash:'8d0bc56a9834741c7166d550c1f82b23090a4abb754d33ed9ddfba69497346613d6cd19eedc02461242249019dc894c3037f27adeebd6bcb4dfc917523159989'}
   ];
-  const ins = dbAdapter.prepare('INSERT INTO users (username, salt, hash, mustChangePassword) VALUES (?,?,?,1)');
+  const ins = db.prepare('INSERT INTO users (username, salt, hash, mustChangePassword) VALUES (?,?,?,1)');
   for(const u of defaults) await ins.run(u.username, u.salt, u.hash);
   console.log('Usuarios iniciales creados: cmore, dvalnecia (contraseñas temporales entregadas por separado).');
 }
@@ -403,7 +406,7 @@ function clearSessionCookie(res){
   res.setHeader('Set-Cookie', `sid=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`);
 }
 async function getUser(username){
-  return await dbAdapter.prepare('SELECT * FROM users WHERE username = ?').get(username);
+  return await db.prepare('SELECT * FROM users WHERE username = ?').get(username);
 }
 
 // ---------------------------------------------------------------------------
@@ -505,15 +508,15 @@ const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celul
 // Helpers de datos (equipos / movimientos / mantenimientos)
 // ---------------------------------------------------------------------------
 async function getEquipos(){
-  return (await dbAdapter.prepare('SELECT * FROM equipos ORDER BY id').all()).map(e=>({
+  return (await db.prepare('SELECT * FROM equipos ORDER BY id').all()).map(e=>({
     id:e.id, nombre:e.nombre, tipo:e.tipo, marca:e.marca, modelo:e.modelo, serie:e.serie, fechaCompra:e.fechaCompra,
     sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
     specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen
   }));
 }
 async function getMovimientos(){
-  const movs = await dbAdapter.prepare('SELECT * FROM movimientos ORDER BY fecha DESC, id DESC').all();
-  const items = await dbAdapter.prepare('SELECT * FROM movimiento_items').all();
+  const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC, id DESC').all();
+  const items = await db.prepare('SELECT * FROM movimiento_items').all();
   const byMov = {};
   for(const it of items){
     (byMov[it.movimientoId] = byMov[it.movimientoId] || []).push({
@@ -527,10 +530,10 @@ async function getMovimientos(){
   }));
 }
 async function getMantenimientos(){
-  return await dbAdapter.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
+  return await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
 }
 async function getEquipo(id){
-  const e = await dbAdapter.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
+  const e = await db.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
   if(!e) return null;
   return {id:e.id, nombre:e.nombre, tipo:e.tipo, marca:e.marca, modelo:e.modelo, serie:e.serie, fechaCompra:e.fechaCompra,
     sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
@@ -545,10 +548,10 @@ async function updateEquipoFields(id, fields){
     const nombre = (fields.nombre||'').trim();
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
     // Validar nombre duplicado
-    const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
+    const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
-  await dbAdapter.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
+  await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
     .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.sede, merged.estado,
       merged.usuarioActual, merged.area, merged.observaciones, merged.specs.cpu, merged.specs.ram, merged.specs.disco, id);
   return getEquipo(id);
@@ -571,7 +574,7 @@ async function insertEquipo(e){
 
     // Asegurar que sea único
     let intento = 0;
-    while(await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
+    while(await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
       contador++;
       candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
       intento++;
@@ -582,12 +585,12 @@ async function insertEquipo(e){
     await setCounter(contadorName, contador + 1);
   } else {
     // Si hay nombre, validar que sea único
-    const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
+    const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
 
   const id = await nextId('EQ','eq');
-  await dbAdapter.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+  await db.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
     id, nombre, e.tipo||'', e.marca||'', e.modelo||'', e.serie||'', e.fechaCompra||null, e.sede||'', e.estado||'Disponible',
     e.usuarioActual||'', e.area||'', e.observaciones||'', (e.specs&&e.specs.cpu)||'', (e.specs&&e.specs.ram)||'',
@@ -597,9 +600,9 @@ async function insertEquipo(e){
 }
 async function insertMovimiento(m){
   const id = await nextId('MV','mv');
-  await dbAdapter.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
+  await db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
     .run(id, m.tipo, m.fecha||null, m.trabajador||'', m.dni||'', m.area||'', m.sede||'', m.observaciones||'', m.origen||'Manual');
-  const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
+  const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
   for(const it of (m.items||[])){
     await insIt.run(id, it.equipoId||null, it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
   }
@@ -724,11 +727,11 @@ const server = http.createServer(async (req, res)=>{
       const email = (body.email||'').trim();
       const mensajeGenerico = 'Si el correo está registrado, se envió una contraseña temporal. Revisa tu bandeja de entrada (y spam).';
       if(!email) return sendJson(res, 400, {error:'Ingresa tu correo de recuperación'});
-      const user = email ? await dbAdapter.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email) : null;
+      const user = email ? await db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email) : null;
       if(user){
         const tempPassword = crypto.randomBytes(5).toString('hex');
         const {salt, hash} = hashPassword(tempPassword);
-        await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, user.username);
+        await db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, user.username);
         const asunto = 'Contraseña temporal — Gestión de Activos TI';
         const cuerpo = `Hola,\n\nSe generó una contraseña temporal para tu usuario "${user.username}" en Gestión de Activos TI:\n\n${tempPassword}\n\nInicia sesión con ella; el sistema te pedirá definir una nueva contraseña de inmediato.\n\nSi no solicitaste esto, contacta a un administrador del sistema.`;
         try{
@@ -785,13 +788,13 @@ const server = http.createServer(async (req, res)=>{
       }
       if(!body.newPassword || body.newPassword.length < 6) return sendJson(res, 400, {error:'La nueva contraseña debe tener al menos 6 caracteres'});
       const {salt, hash} = hashPassword(body.newPassword);
-      await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=0 WHERE username=?').run(salt, hash, session.username);
+      await db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=0 WHERE username=?').run(salt, hash, session.username);
       return sendJson(res, 200, {ok:true});
     }
 
     function validEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
     if(pathname === '/api/system-users' && req.method === 'GET'){
-      const rows = await dbAdapter.prepare('SELECT username, email, mustChangePassword FROM users ORDER BY username COLLATE NOCASE').all();
+      const rows = await db.prepare('SELECT username, email, mustChangePassword FROM users ORDER BY username COLLATE NOCASE').all();
       return sendJson(res, 200, rows.map(u=>({username:u.username, email:u.email||'', mustChangePassword: !!u.mustChangePassword})));
     }
     if(pathname === '/api/system-users' && req.method === 'POST'){
@@ -807,7 +810,7 @@ const server = http.createServer(async (req, res)=>{
       if(!password){ password = crypto.randomBytes(5).toString('hex'); generated = true; }
       else if(password.length < 6) return sendJson(res, 400, {error:'La contraseña debe tener al menos 6 caracteres'});
       const {salt, hash} = hashPassword(password);
-      await dbAdapter.prepare('INSERT INTO users (username, email, salt, hash, mustChangePassword) VALUES (?,?,?,?,1)').run(username, email||null, salt, hash);
+      await db.prepare('INSERT INTO users (username, email, salt, hash, mustChangePassword) VALUES (?,?,?,?,1)').run(username, email||null, salt, hash);
       return sendJson(res, 200, {username, email, tempPassword: generated ? password : undefined});
     }
     if(pathname.startsWith('/api/system-users/') && pathname.endsWith('/reset-password') && req.method === 'POST'){
@@ -815,7 +818,7 @@ const server = http.createServer(async (req, res)=>{
       if(!await getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
       const tempPassword = crypto.randomBytes(5).toString('hex');
       const {salt, hash} = hashPassword(tempPassword);
-      await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
+      await db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
       return sendJson(res, 200, {username, tempPassword});
     }
     if(pathname.startsWith('/api/system-users/') && !pathname.endsWith('/reset-password') && req.method === 'PUT'){
@@ -826,12 +829,12 @@ const server = http.createServer(async (req, res)=>{
       if(body.email !== undefined){
         const email = (body.email||'').trim();
         if(email && !validEmail(email)) return sendJson(res, 400, {error:'El correo de recuperación no es válido'});
-        await dbAdapter.prepare('UPDATE users SET email=? WHERE username=?').run(email||null, username);
+        await db.prepare('UPDATE users SET email=? WHERE username=?').run(email||null, username);
       }
       if(body.password){
         if(body.password.length < 6) return sendJson(res, 400, {error:'La contraseña debe tener al menos 6 caracteres'});
         const {salt, hash} = hashPassword(body.password);
-        await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
+        await db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
       }
       return sendJson(res, 200, {ok:true});
     }
@@ -839,15 +842,15 @@ const server = http.createServer(async (req, res)=>{
       const username = decodeURIComponent(pathname.split('/').pop());
       if(!await getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
       if(username === session.username) return sendJson(res, 400, {error:'No puedes eliminar tu propio usuario mientras tienes la sesión activa'});
-      const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
+      const count = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
       if(count <= 1) return sendJson(res, 400, {error:'Debe existir al menos un usuario del sistema'});
-      await dbAdapter.prepare('DELETE FROM users WHERE username=?').run(username);
+      await db.prepare('DELETE FROM users WHERE username=?').run(username);
       return sendJson(res, 200, {ok:true});
     }
 
     if(pathname === '/api/state' && req.method === 'GET'){
-      const inventarioReportes = await dbAdapter.prepare(`SELECT * FROM inventario_reportes ORDER BY timestamp DESC LIMIT 50`).all();
-      const agentesReportes = await dbAdapter.prepare(`
+      const inventarioReportes = await db.prepare(`SELECT * FROM inventario_reportes ORDER BY timestamp DESC LIMIT 50`).all();
+      const agentesReportes = await db.prepare(`
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
         FROM agentes_reportes ar
         LEFT JOIN equipos eq ON ar.equipoId = eq.id
@@ -871,7 +874,7 @@ const server = http.createServer(async (req, res)=>{
       const id = decodeURIComponent(pathname.split('/').pop());
       const equipo = await getEquipo(id);
       if(!equipo) return sendJson(res, 404, {error:'Equipo no encontrado'});
-      await dbAdapter.prepare('DELETE FROM equipos WHERE id = ?').run(id);
+      await db.prepare('DELETE FROM equipos WHERE id = ?').run(id);
       return sendJson(res, 200, {ok:true, message:'Equipo eliminado'});
     }
     if(pathname === '/api/trabajadores' && req.method === 'POST'){
@@ -879,7 +882,7 @@ const server = http.createServer(async (req, res)=>{
       const nombre = (body.nombre||'').trim();
       if(!nombre) return sendJson(res, 400, {error:'El nombre es obligatorio'});
       if(await getTrabajador(nombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-      await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)')
+      await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)')
         .run(nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
       return sendJson(res, 200, await getTrabajador(nombre));
     }
@@ -895,14 +898,14 @@ const server = http.createServer(async (req, res)=>{
       const activo = body.activo!==undefined ? (body.activo?1:0) : existing.activo;
       if(nuevoNombre.toLowerCase() !== existing.nombre.toLowerCase()){
         if(await getTrabajador(nuevoNombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-        await dbAdapter.exec('BEGIN');
+        await db.exec('BEGIN');
         try{
-          await dbAdapter.prepare('DELETE FROM trabajadores WHERE nombre = ? COLLATE NOCASE').run(existing.nombre);
-          await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(nuevoNombre, dni, area, sede, activo);
-          await dbAdapter.exec('COMMIT');
-        }catch(err){ await dbAdapter.exec('ROLLBACK'); throw err; }
+          await db.prepare('DELETE FROM trabajadores WHERE nombre = ? COLLATE NOCASE').run(existing.nombre);
+          await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(nuevoNombre, dni, area, sede, activo);
+          await db.exec('COMMIT');
+        }catch(err){ await db.exec('ROLLBACK'); throw err; }
       } else {
-        await dbAdapter.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE').run(dni, area, sede, activo, existing.nombre);
+        await db.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE').run(dni, area, sede, activo, existing.nombre);
       }
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
@@ -926,7 +929,7 @@ const server = http.createServer(async (req, res)=>{
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
@@ -985,7 +988,7 @@ const server = http.createServer(async (req, res)=>{
           }
         } else {
           // Validar que el equipo no esté ya asignado
-          const equipoExistente = await dbAdapter.prepare('SELECT estado, usuarioActual FROM equipos WHERE id=?').get(equipoId);
+          const equipoExistente = await db.prepare('SELECT estado, usuarioActual FROM equipos WHERE id=?').get(equipoId);
           if(equipoExistente && equipoExistente.estado === 'Asignado'){
             return sendJson(res, 400, {error: `El equipo ya está asignado a ${equipoExistente.usuarioActual}. Debe devolverse primero.`});
           }
@@ -1000,23 +1003,23 @@ const server = http.createServer(async (req, res)=>{
     }
     if(pathname.startsWith('/api/cargos/') && req.method === 'PUT'){
       const movId = pathname.split('/').pop();
-      const movimiento = await dbAdapter.prepare('SELECT * FROM movimientos WHERE id=?').get(movId);
+      const movimiento = await db.prepare('SELECT * FROM movimientos WHERE id=?').get(movId);
       if(!movimiento) return sendJson(res, 404, {error:'Cargo no encontrado'});
       const body = await readBody(req);
       // Actualizar movimiento
-      await dbAdapter.prepare(`UPDATE movimientos SET fecha=?, trabajador=?, dni=?, area=?, sede=?, observaciones=? WHERE id=?`)
+      await db.prepare(`UPDATE movimientos SET fecha=?, trabajador=?, dni=?, area=?, sede=?, observaciones=? WHERE id=?`)
         .run(body.fecha||movimiento.fecha, body.trabajador||movimiento.trabajador, body.dni||movimiento.dni,
           body.area||movimiento.area, body.sede||movimiento.sede, body.observaciones||movimiento.observaciones, movId);
       // Actualizar items si se proporcionan
       if(body.items && Array.isArray(body.items)){
-        await dbAdapter.prepare('DELETE FROM movimiento_items WHERE movimientoId=?').run(movId);
-        const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
+        await db.prepare('DELETE FROM movimiento_items WHERE movimientoId=?').run(movId);
+        const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
         for(const it of body.items){
           let equipoId = it.equipoId;
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(!equipoId && it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
@@ -1092,7 +1095,7 @@ const server = http.createServer(async (req, res)=>{
     if(pathname === '/api/mantenimientos' && req.method === 'POST'){
       const body = await readBody(req);
       const id = await nextId('MT','mt');
-      await dbAdapter.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion) VALUES (?,?,?,?,?,?)`)
+      await db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion) VALUES (?,?,?,?,?,?)`)
         .run(id, body.equipoId, body.fecha, body.tipo, body.realizadoPor||'', body.descripcion||'');
       return sendJson(res, 200, {id});
     }
@@ -1251,8 +1254,8 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname.startsWith('/api/solicitudes-compra/') && req.method === 'DELETE'){
       const id = decodeURIComponent(pathname.split('/').pop());
-      await dbAdapter.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
-      await dbAdapter.prepare('DELETE FROM solicitudes_compra WHERE id = ?').run(id);
+      await db.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
+      await db.prepare('DELETE FROM solicitudes_compra WHERE id = ?').run(id);
       return sendJson(res, 200, {ok:true});
     }
 
@@ -1262,7 +1265,7 @@ const server = http.createServer(async (req, res)=>{
       let matched=0, creados=0;
       for(const s of list){
         const serie = (s.serie||s.Serie||s.SerialNumber||'').toString().trim();
-        const existing = serie ? await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(serie)=LOWER(?)').get(serie) : null;
+        const existing = serie ? await db.prepare('SELECT id FROM equipos WHERE LOWER(serie)=LOWER(?)').get(serie) : null;
         const specs = {cpu: s.procesador||s.CPU||'', ram: s.ram||s.RAM||'', disco: s.almacenamiento||s.Disco||''};
         if(existing){
           await updateEquipoFields(existing.id, {
@@ -1310,7 +1313,7 @@ const server = http.createServer(async (req, res)=>{
       const body = await readBody(req);
       if(!body.timestamp) body.timestamp = new Date().toISOString();
       const id = crypto.randomBytes(12).toString('hex');
-      const stmt = dbAdapter.prepare(`INSERT INTO inventario_reportes (
+      const stmt = db.prepare(`INSERT INTO inventario_reportes (
         id, timestamp, dispositivo_ip, tipo_dispositivo, so, usuario_windows, cpu,
         ram_total_gb, ram_usado_gb, ram_disponible_gb,
         disco_total_gb, disco_usado_gb, disco_disponible_gb,
@@ -1343,7 +1346,7 @@ const server = http.createServer(async (req, res)=>{
       const identificador = `AGENTE-${(body.hostname || 'DESCONOCIDO').toUpperCase()}-${numeroSerieDisco.substring(numeroSerieDisco.length - 4).toUpperCase()}`;
 
       // Buscar si ya existe un reporte para este disco
-      const reporteExistente = await dbAdapter.prepare('SELECT id FROM agentes_reportes WHERE numero_serie_disco = ?')
+      const reporteExistente = await db.prepare('SELECT id FROM agentes_reportes WHERE numero_serie_disco = ?')
         .get(numeroSerieDisco);
 
       let reporteId;
@@ -1352,7 +1355,7 @@ const server = http.createServer(async (req, res)=>{
       if(reporteExistente){
         // Actualizar reporte existente
         reporteId = reporteExistente.id;
-        await dbAdapter.prepare(`
+        await db.prepare(`
           UPDATE agentes_reportes SET
             tipo_dispositivo = ?, hostname = ?, so = ?, usuario_windows = ?, cpu = ?,
             cpu_nucleos = ?, cpu_threads = ?, cpu_frecuencia = ?,
@@ -1391,7 +1394,7 @@ const server = http.createServer(async (req, res)=>{
       } else {
         // Crear nuevo reporte
         reporteId = crypto.randomBytes(8).toString('hex');
-        await dbAdapter.prepare(`
+        await db.prepare(`
           INSERT INTO agentes_reportes (
             id, identificador, numero_serie_disco, tipo_dispositivo, hostname, so, usuario_windows, cpu,
             cpu_nucleos, cpu_threads, cpu_frecuencia,
@@ -1441,7 +1444,7 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname === '/api/inventario/ultimos' && req.method === 'GET'){
       const limite = req.url.includes('?') ? new URLSearchParams(req.url.split('?')[1]).get('limite') || 50 : 50;
-      const reportes = await dbAdapter.prepare(`
+      const reportes = await db.prepare(`
         SELECT * FROM inventario_reportes
         ORDER BY timestamp DESC
         LIMIT ?
@@ -1450,7 +1453,7 @@ const server = http.createServer(async (req, res)=>{
     }
 
     if(pathname === '/api/inventario/stats' && req.method === 'GET'){
-      const stats = await dbAdapter.prepare(`
+      const stats = await db.prepare(`
         SELECT
           COUNT(*) as total_reportes,
           MAX(timestamp) as ultimo_reporte,
@@ -1490,7 +1493,7 @@ const server = http.createServer(async (req, res)=>{
 
     // ---- Gestión de Agentes y Reportes ----
     if(pathname === '/api/agentes/reportes' && req.method === 'GET'){
-      const reportes = await dbAdapter.prepare(`
+      const reportes = await db.prepare(`
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
         FROM agentes_reportes ar
         LEFT JOIN equipos eq ON ar.equipoId = eq.id
@@ -1510,19 +1513,19 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Verificar que el reporte existe
-      const reporte = await dbAdapter.prepare('SELECT * FROM agentes_reportes WHERE id = ?').get(reporteId);
+      const reporte = await db.prepare('SELECT * FROM agentes_reportes WHERE id = ?').get(reporteId);
       if(!reporte){
         return sendJson(res, 404, {error: 'Reporte no encontrado'});
       }
 
       // Verificar que el equipo existe
-      const equipo = await dbAdapter.prepare('SELECT * FROM equipos WHERE id = ?').get(equipoId);
+      const equipo = await db.prepare('SELECT * FROM equipos WHERE id = ?').get(equipoId);
       if(!equipo){
         return sendJson(res, 404, {error: 'Equipo no encontrado'});
       }
 
       // Enlazar el reporte con el equipo
-      await dbAdapter.prepare('UPDATE agentes_reportes SET equipoId = ?, enlazado_timestamp = ? WHERE id = ?')
+      await db.prepare('UPDATE agentes_reportes SET equipoId = ?, enlazado_timestamp = ? WHERE id = ?')
         .run(equipoId, new Date().toISOString(), reporteId);
 
       // Actualizar especificaciones técnicas del equipo
@@ -1541,7 +1544,7 @@ const server = http.createServer(async (req, res)=>{
         timestamp: reporte.timestamp
       };
 
-      await dbAdapter.prepare('UPDATE equipos SET especificaciones_tecnicas = ?, ultima_actualizacion_inventario = ? WHERE id = ?')
+      await db.prepare('UPDATE equipos SET especificaciones_tecnicas = ?, ultima_actualizacion_inventario = ? WHERE id = ?')
         .run(JSON.stringify(especificaciones), reporte.timestamp, equipoId);
 
       console.log(`✅ Reporte ${reporteId} enlazado con equipo ${equipoId}`);
@@ -1556,7 +1559,7 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Desenlazar el reporte
-      await dbAdapter.prepare('UPDATE agentes_reportes SET equipoId = NULL, enlazado_timestamp = NULL WHERE id = ?')
+      await db.prepare('UPDATE agentes_reportes SET equipoId = NULL, enlazado_timestamp = NULL WHERE id = ?')
         .run(reporteId);
 
       console.log(`✅ Reporte ${reporteId} desenlazado`);
@@ -1571,13 +1574,13 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Obtener información del reporte antes de eliminarlo
-      const reporte = await dbAdapter.prepare('SELECT identificador FROM agentes_reportes WHERE id = ?').get(reporteId);
+      const reporte = await db.prepare('SELECT identificador FROM agentes_reportes WHERE id = ?').get(reporteId);
       if(!reporte){
         return sendJson(res, 404, {error: 'Reporte no encontrado'});
       }
 
       // Eliminar el reporte
-      await dbAdapter.prepare('DELETE FROM agentes_reportes WHERE id = ?').run(reporteId);
+      await db.prepare('DELETE FROM agentes_reportes WHERE id = ?').run(reporteId);
 
       console.log(`✅ Reporte de agente ELIMINADO: ${reporteId} (${reporte.identificador})`);
       return sendJson(res, 200, {ok: true, reporteId, eliminado: reporte.identificador});
@@ -1593,14 +1596,14 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Actualizar equipo con teléfono
-      await dbAdapter.prepare('UPDATE equipos SET telefonoAsignado = ? WHERE id = ?').run(numeroTelefonico, equipoId);
+      await db.prepare('UPDATE equipos SET telefonoAsignado = ? WHERE id = ?').run(numeroTelefonico, equipoId);
 
       return sendJson(res, 200, {ok: true, equipoId, numeroTelefonico});
     }
 
     if(pathname === '/api/directorio-celulares' && req.method === 'GET'){
       // Obtener directorio de celulares asignados
-      const celulares = await dbAdapter.prepare(`
+      const celulares = await db.prepare(`
         SELECT
           id, nombre, marca, modelo, serie, usuarioActual, area, sede,
           estado, telefonoAsignado, fechaCompra
@@ -1614,7 +1617,7 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname === '/api/directorio-celulares/export-csv' && req.method === 'GET'){
       // Exportar directorio como CSV
-      const celulares = await dbAdapter.prepare(`
+      const celulares = await db.prepare(`
         SELECT
           id, nombre, marca, modelo, usuarioActual, area, telefonoAsignado
         FROM equipos
@@ -1631,8 +1634,8 @@ const server = http.createServer(async (req, res)=>{
     }
 
     if(pathname === '/api/stats-celulares' && req.method === 'GET'){
-      const total = (await dbAdapter.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado')).c;
-      const conTel = (await dbAdapter.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado')).c;
+      const total = (await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado')).c;
+      const conTel = (await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado')).c;
       const sinTel = total - conTel;
 
       return sendJson(res, 200, {total, conTel, sinTel, porcentaje: total > 0 ? Math.round((conTel/total)*100) : 0});

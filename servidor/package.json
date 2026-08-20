@@ -10,5 +10,8 @@
   "dependencies": {
     "exceljs": "^4.3.0",
     "mongodb": "^6.3.0"
+  },
+  "optionalDependencies": {
+    "better-sqlite3": "^9.0.0"
   }
 }
