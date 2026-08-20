@@ -46,7 +46,8 @@ function createSQLiteAdapter() {
   let Database;
   try {
     // En Node 22.5+ está disponible sqlite como built-in
-    Database = require('sqlite').DatabaseSync;
+    const { DatabaseSync } = require('node:sqlite');
+    Database = DatabaseSync;
   } catch (e) {
     // Fallback a better-sqlite3 si está disponible
     try {

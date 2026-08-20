@@ -156,6 +156,14 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 
 // Migración PRAGMA no aplica a MongoDB
 
+  await seedIfEmpty();
+  await backfillTrabajadoresIfEmpty();
+  await seedUsersIfEmpty();
+})(); // Fin del async IIFE de inicialización de BD
+
+// ---------------------------------------------------------------------------
+// Contadores y IDs
+// ---------------------------------------------------------------------------
 async function getCounter(name){
   const row = await db.prepare('SELECT value FROM counters WHERE name = ?').get(name);
   if(row) return row.value;
@@ -170,6 +178,10 @@ async function nextId(prefix, counterName){
   await setCounter(counterName, n+1);
   return prefix + '-' + String(n).padStart(4, '0');
 }
+
+// ---------------------------------------------------------------------------
+// Trabajadores
+// ---------------------------------------------------------------------------
 async function upsertTrabajador(t){
   const nombre = (t.nombre||'').trim();
   if(!nombre) return;
@@ -198,7 +210,9 @@ async function setTrabajadorActivo(nombre, activo){
   }
 }
 
-// ---- SOLICITUDES DE COMPRA ----
+// ---------------------------------------------------------------------------
+// Solicitudes de compra
+// ---------------------------------------------------------------------------
 async function getSolicitudesCompra(){
   const solicitudes = await db.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC').all();
   const solicitudesMap = {};
@@ -237,7 +251,6 @@ async function updateSolicitudCompra(id, s){
   await db.prepare(`UPDATE solicitudes_compra SET fecha=?, usuario=?, descripcion=?, estado=?, observaciones=? WHERE id=?`)
     .run(s.fecha||'', s.usuario||'', s.descripcion||'', s.estado||'pendiente', s.observaciones||'', id);
 
-  // Eliminar items anteriores y crear nuevos
   await db.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
   const insItem = db.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
     VALUES (?, ?, ?, ?, ?, ?, ?)`);
@@ -248,6 +261,7 @@ async function updateSolicitudCompra(id, s){
 
   return getSolicitudCompra(id);
 }
+
 function maxSuffix(ids, prefix){
   let max = 0;
   for(const id of ids){
@@ -258,7 +272,9 @@ function maxSuffix(ids, prefix){
   return max;
 }
 
-// --- Carga masiva (usada por la semilla inicial y por "restaurar backup") ---
+// ---------------------------------------------------------------------------
+// Carga masiva de datos
+// ---------------------------------------------------------------------------
 async function bulkLoad(data){
   const insEq = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (@id,@tipo,@marca,@modelo,@serie,@fechaCompra,@sede,@estado,@usuarioActual,@area,@observaciones,@cpu,@ram,@disco,@origen)`);
@@ -307,7 +323,6 @@ async function bulkLoad(data){
   await setCounter('mv', Math.max(maxSuffix((data.movimientos||[]).map(m=>m.id), 'MV'), data.nextMvId||0) + 1);
   await setCounter('mt', Math.max(maxSuffix((data.mantenimientos||[]).map(m=>m.id), 'MT'), data.nextMantId||0) + 1);
 
-  // Rellena el catalogo de trabajadores (reutilizable en formularios) a partir de lo migrado
   for(const m of (data.movimientos||[])){
     if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
   }
@@ -315,9 +330,11 @@ async function bulkLoad(data){
     if(e.usuarioActual && e.estado==='Asignado') await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
   }
 }
+
 async function clearAllTables(){
   await db.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
 }
+
 async function seedIfEmpty(){
   const count = (await db.prepare('SELECT COUNT(*) AS c FROM equipos').get()).c;
   if(count > 0) return;
@@ -330,7 +347,6 @@ async function seedIfEmpty(){
   await bulkLoad(seed);
   console.log(`Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
 }
-await seedIfEmpty();
 
 async function backfillTrabajadoresIfEmpty(){
   const count = (await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get()).c;
@@ -342,26 +358,26 @@ async function backfillTrabajadoresIfEmpty(){
     if(e.usuarioActual && e.estado==='Asignado') await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
   }
 }
-await backfillTrabajadoresIfEmpty();
 
 // ---------------------------------------------------------------------------
-// Usuarios / autenticacion
+// Autenticacion y usuarios
 // ---------------------------------------------------------------------------
 function hashPassword(pw, salt){
   salt = salt || crypto.randomBytes(16).toString('hex');
   const hash = crypto.scryptSync(pw, salt, 64).toString('hex');
   return {salt, hash};
 }
+
 function verifyPassword(pw, salt, hash){
   const check = crypto.scryptSync(pw, salt, 64).toString('hex');
   try{
     return crypto.timingSafeEqual(Buffer.from(check,'hex'), Buffer.from(hash,'hex'));
   }catch(e){ return false; }
 }
+
 async function seedUsersIfEmpty(){
   const count = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
   if(count > 0) return;
-  // Usuarios iniciales con contraseñas temporales (deben cambiarla al ingresar)
   const defaults = [
     {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
     {username:'dvalnecia', salt:'960284915d484ffe07c5e65dd6087cfe', hash:'8d0bc56a9834741c7166d550c1f82b23090a4abb754d33ed9ddfba69497346613d6cd19eedc02461242249019dc894c3037f27adeebd6bcb4dfc917523159989'}
@@ -370,15 +386,22 @@ async function seedUsersIfEmpty(){
   for(const u of defaults) await ins.run(u.username, u.salt, u.hash);
   console.log('Usuarios iniciales creados: cmore, dvalnecia (contraseñas temporales entregadas por separado).');
 }
-await seedUsersIfEmpty();
 
-// --- Sesiones en memoria ---
-const sessions = new Map(); // sid -> {username, createdAt}
+async function getUser(username){
+  return await db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+}
+
+// ---------------------------------------------------------------------------
+// Sesiones en memoria
+// ---------------------------------------------------------------------------
+const sessions = new Map();
+
 function createSession(username){
   const sid = crypto.randomBytes(24).toString('hex');
   sessions.set(sid, {username, createdAt: Date.now()});
   return sid;
 }
+
 function getSession(req){
   const cookies = parseCookies(req);
   const sid = cookies['sid'];
@@ -387,6 +410,7 @@ function getSession(req){
   if(!s) return null;
   return {sid, ...s};
 }
+
 function parseCookies(req){
   const header = req.headers['cookie'] || '';
   const out = {};
@@ -399,19 +423,17 @@ function parseCookies(req){
   });
   return out;
 }
+
 function setSessionCookie(res, sid){
   res.setHeader('Set-Cookie', `sid=${sid}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${60*60*12}`);
 }
+
 function clearSessionCookie(res){
   res.setHeader('Set-Cookie', `sid=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`);
 }
-async function getUser(username){
-  return await db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-}
 
 // ---------------------------------------------------------------------------
-// Envio de correo (cliente SMTP minimo, sin dependencias externas)
-// Configuracion en smtp-config.json (ver smtp-config.example.json)
+// Correo SMTP
 // ---------------------------------------------------------------------------
 function smtpReadResponse(socket){
   return new Promise((resolve, reject)=>{
@@ -431,7 +453,9 @@ function smtpReadResponse(socket){
     socket.once('error', onError);
   });
 }
+
 function smtpSend(socket, line){ socket.write(line + '\r\n'); }
+
 async function sendMailSMTP({to, subject, text}){
   if(!fs.existsSync(SMTP_CONFIG_PATH)){
     throw new Error('No existe smtp-config.json. Copia smtp-config.example.json a smtp-config.json y completa los datos del servidor de correo.');
@@ -447,7 +471,7 @@ async function sendMailSMTP({to, subject, text}){
     socket.once(cfg.secure ? 'secureConnect' : 'connect', resolve);
     socket.once('error', reject);
   });
-  await smtpReadResponse(socket); // saludo del servidor
+  await smtpReadResponse(socket);
 
   smtpSend(socket, 'EHLO localhost');
   const ehloResp = await smtpReadResponse(socket);
@@ -505,7 +529,7 @@ async function sendMailSMTP({to, subject, text}){
 const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celular':24 };
 
 // ---------------------------------------------------------------------------
-// Helpers de datos (equipos / movimientos / mantenimientos)
+// Helpers de datos (equipos, movimientos, mantenimientos)
 // ---------------------------------------------------------------------------
 async function getEquipos(){
   return (await db.prepare('SELECT * FROM equipos ORDER BY id').all()).map(e=>({
@@ -514,6 +538,7 @@ async function getEquipos(){
     specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen
   }));
 }
+
 async function getMovimientos(){
   const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC, id DESC').all();
   const items = await db.prepare('SELECT * FROM movimiento_items').all();
@@ -529,9 +554,11 @@ async function getMovimientos(){
     observaciones:m.observaciones, origen:m.origen, items: byMov[m.id]||[]
   }));
 }
+
 async function getMantenimientos(){
   return await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
 }
+
 async function getEquipo(id){
   const e = await db.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
   if(!e) return null;
@@ -539,15 +566,14 @@ async function getEquipo(id){
     sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
     specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen};
 }
+
 async function updateEquipoFields(id, fields){
   const cur = await getEquipo(id);
   if(!cur) return null;
   const merged = Object.assign({}, cur, fields, {specs: Object.assign({}, cur.specs, fields.specs||{})});
-  // Validar nombre no vacío
   if(fields.nombre !== undefined){
     const nombre = (fields.nombre||'').trim();
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
-    // Validar nombre duplicado
     const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
@@ -556,23 +582,17 @@ async function updateEquipoFields(id, fields){
       merged.usuarioActual, merged.area, merged.observaciones, merged.specs.cpu, merged.specs.ram, merged.specs.disco, id);
   return getEquipo(id);
 }
+
 async function insertEquipo(e){
   let nombre = (e.nombre||'').trim();
 
-  // Si no hay nombre, generar automáticamente
   if(!nombre){
-    // Usar tipo como base, o 'ACCE' si no hay tipo
     const tipoBase = (e.tipo||'ACCESORIO').toUpperCase();
     const tipoCorto = tipoBase.substring(0, 4);
-
-    // Contador específico para cada tipo
     const contadorName = 'eq_contador_' + tipoCorto;
     let contador = await getCounter(contadorName);
-
-    // Generar nombre candidato
     let candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
 
-    // Asegurar que sea único
     let intento = 0;
     while(await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
       contador++;
@@ -584,7 +604,6 @@ async function insertEquipo(e){
     nombre = candidato;
     await setCounter(contadorName, contador + 1);
   } else {
-    // Si hay nombre, validar que sea único
     const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
@@ -598,6 +617,7 @@ async function insertEquipo(e){
   );
   return getEquipo(id);
 }
+
 async function insertMovimiento(m){
   const id = await nextId('MV','mv');
   await db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
@@ -610,7 +630,7 @@ async function insertMovimiento(m){
 }
 
 // ---------------------------------------------------------------------------
-// Generacion de Acta (HTML imprimible) - server side
+// Generacion de actas
 // ---------------------------------------------------------------------------
 function escapeHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtDate(iso){ if(!iso) return '—'; const d = new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
@@ -674,13 +694,14 @@ async function renderActaHtml(movId){
 }
 
 // ---------------------------------------------------------------------------
-// Servidor HTTP
+// Helpers HTTP
 // ---------------------------------------------------------------------------
 function sendJson(res, status, obj){
   const body = JSON.stringify(obj);
   res.writeHead(status, {'Content-Type':'application/json; charset=utf-8', 'Content-Length': Buffer.byteLength(body)});
   res.end(body);
 }
+
 function readBody(req){
   return new Promise((resolve, reject)=>{
     let data = '';
@@ -692,7 +713,9 @@ function readBody(req){
     req.on('error', reject);
   });
 }
+
 const MIME = {'.html':'text/html; charset=utf-8', '.js':'text/javascript; charset=utf-8', '.css':'text/css; charset=utf-8', '.json':'application/json'};
+
 function serveStatic(req, res, pathname){
   let filePath = path.join(PUBLIC_DIR, pathname === '/' ? 'index.html' : pathname);
   if(!filePath.startsWith(PUBLIC_DIR)){ res.writeHead(403); res.end(); return; }
@@ -1652,8 +1675,13 @@ const server = http.createServer(async (req, res)=>{
   }
 });
 
-server.listen(PORT, ()=>{
-  console.log(`Servidor de Gestion de Activos TI escuchando en el puerto ${PORT}`);
-  console.log(`Abre http://localhost:${PORT} en este equipo,`);
-  console.log(`o http://<IP-de-este-equipo>:${PORT} desde otros dispositivos de la red.`);
-});
+// Exportar para Vercel (serverless) o escuchar localmente
+if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
+  module.exports = server;
+} else {
+  server.listen(PORT, ()=>{
+    console.log(`Servidor de Gestion de Activos TI escuchando en el puerto ${PORT}`);
+    console.log(`Abre http://localhost:${PORT} en este equipo,`);
+    console.log(`o http://<IP-de-este-equipo>:${PORT} desde otros dispositivos de la red.`);
+  });
+}
