@@ -48,7 +48,10 @@
       "Bash(powershell -NoProfile -Command \"Stop-Process -Id 29864,18180 -Force\")",
       "Bash(powershell -NoProfile -Command 'Get-CimInstance Win32_Process -Filter \"Name='\\\\''node.exe'\\\\''\" | Where-Object { $_.CommandLine -match '\\\\''servidor_test3'\\\\'' } | ForEach-Object { Stop-Process -Id $_.ProcessId -Force } ')",
       "Bash(powershell -NoProfile -Command \"Stop-Process -Id 33420 -Force\")",
-      "Read(//tmp/**)"
+      "Read(//tmp/**)",
+      "Bash(sed -i '154,192s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
+      "Bash(sed -i '194,203s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
+      "Bash(sed -i '205,213s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)"
     ]
   }
 }

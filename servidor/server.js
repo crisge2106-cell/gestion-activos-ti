@@ -15,7 +15,7 @@ const path = require('path');
 const crypto = require('crypto');
 const net = require('net');
 const tls = require('tls');
-const { DatabaseSync } = require('node:sqlite');
+const dbAdapter = require('./db-adapter');
 const { execSync, spawn } = require('child_process');
 const ExcelJS = require('exceljs');
 
@@ -29,9 +29,8 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 // ---------------------------------------------------------------------------
 // Base de datos
 // ---------------------------------------------------------------------------
-const db = new DatabaseSync(DB_PATH);
-
-db.exec(`
+(async () => {
+  await dbAdapter.exec(`
   CREATE TABLE IF NOT EXISTS equipos (
     id TEXT PRIMARY KEY,
     tipo TEXT, marca TEXT, modelo TEXT, serie TEXT, fechaCompra TEXT,
@@ -138,113 +137,21 @@ db.exec(`
 
 // Migracion: agrega la columna 'email' (correo de recuperacion) a users si la base de
 // datos fue creada por una version anterior del servidor (que no la tenia).
-(function migrateUsersEmail(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(users)").all();
-    if(!cols.some(c=>c.name==='email')){
-      db.exec('ALTER TABLE users ADD COLUMN email TEXT');
-    }
-  }catch(e){ console.error('No se pudo migrar la columna email en users:', e.message); }
-})();
+// Migración PRAGMA no aplica a MongoDB
 
 // Migracion: agrega la columna 'activo' a trabajadores si la base de datos
 // fue creada por una version anterior del servidor (que no la tenia).
-(function migrateTrabajadoresActivo(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(trabajadores)").all();
-    if(!cols.some(c=>c.name==='activo')){
-      db.exec('ALTER TABLE trabajadores ADD COLUMN activo INTEGER DEFAULT 1');
-      db.exec('UPDATE trabajadores SET activo=1 WHERE activo IS NULL');
-    }
-  }catch(e){ console.error('No se pudo migrar la columna activo en trabajadores:', e.message); }
-})();
+// Migración PRAGMA no aplica a MongoDB
 
-(function migrateEquiposNombre(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(equipos)").all();
-    if(!cols.some(c=>c.name==='nombre')){
-      db.exec('ALTER TABLE equipos ADD COLUMN nombre TEXT');
-      // Generar nombres automáticos para equipos sin nombre
-      const equipos = db.prepare('SELECT id FROM equipos WHERE nombre IS NULL').all();
-      for(const eq of equipos){
-        const nuevoNombre = 'Equipo-' + eq.id;
-        db.prepare('UPDATE equipos SET nombre = ? WHERE id = ?').run(nuevoNombre, eq.id);
-      }
-    }
-  }catch(e){ console.error('No se pudo migrar la columna nombre en equipos:', e.message); }
-})();
+// Migración PRAGMA no aplica a MongoDB
 
-(function migrateEquiposEspecificaciones(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(equipos)").all();
-    if(!cols.some(c=>c.name==='especificaciones_tecnicas')){
-      db.exec('ALTER TABLE equipos ADD COLUMN especificaciones_tecnicas TEXT');
-      db.exec('ALTER TABLE equipos ADD COLUMN ultima_actualizacion_inventario TEXT');
-      console.log('✅ Migración: Columnas especificaciones_tecnicas y ultima_actualizacion_inventario agregadas a equipos');
-    }
-  }catch(e){ console.error('No se pudo migrar especificaciones en equipos:', e.message); }
-})();
+// Migración PRAGMA no aplica a MongoDB
 
-(function migrateAgentesReportes(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(agentes_reportes)").all();
-    const colNames = cols.map(c => c.name);
+// Migración PRAGMA no aplica a MongoDB
 
-    if(cols.length > 0){
-      // Agregar todas las columnas faltantes
-      const columnasRequeridas = [
-        {name: 'tipo_dispositivo', sql: 'ALTER TABLE agentes_reportes ADD COLUMN tipo_dispositivo TEXT'},
-        {name: 'cpu_nucleos', sql: 'ALTER TABLE agentes_reportes ADD COLUMN cpu_nucleos INTEGER'},
-        {name: 'cpu_threads', sql: 'ALTER TABLE agentes_reportes ADD COLUMN cpu_threads INTEGER'},
-        {name: 'cpu_frecuencia', sql: 'ALTER TABLE agentes_reportes ADD COLUMN cpu_frecuencia TEXT'},
-        {name: 'ram_porcentaje', sql: 'ALTER TABLE agentes_reportes ADD COLUMN ram_porcentaje REAL'},
-        {name: 'disco_porcentaje', sql: 'ALTER TABLE agentes_reportes ADD COLUMN disco_porcentaje REAL'},
-        {name: 'placa_madre', sql: 'ALTER TABLE agentes_reportes ADD COLUMN placa_madre TEXT'},
-        {name: 'gpu', sql: 'ALTER TABLE agentes_reportes ADD COLUMN gpu TEXT'},
-        {name: 'uptime', sql: 'ALTER TABLE agentes_reportes ADD COLUMN uptime TEXT'},
-        {name: 'ips', sql: 'ALTER TABLE agentes_reportes ADD COLUMN ips TEXT'},
-        {name: 'macs', sql: 'ALTER TABLE agentes_reportes ADD COLUMN macs TEXT'},
-        {name: 'monitor', sql: 'ALTER TABLE agentes_reportes ADD COLUMN monitor TEXT'},
-        {name: 'identificador', sql: 'ALTER TABLE agentes_reportes ADD COLUMN identificador TEXT'},
-        {name: 'fecha_primer_reporte', sql: 'ALTER TABLE agentes_reportes ADD COLUMN fecha_primer_reporte TEXT'},
-        {name: 'fecha_ultima_actualizacion', sql: 'ALTER TABLE agentes_reportes ADD COLUMN fecha_ultima_actualizacion TEXT'},
-        {name: 'enlazado_timestamp', sql: 'ALTER TABLE agentes_reportes ADD COLUMN enlazado_timestamp TEXT'}
-      ];
+// Migración PRAGMA no aplica a MongoDB
 
-      for(const col of columnasRequeridas){
-        if(!colNames.includes(col.name)){
-          db.exec(col.sql);
-        }
-      }
-
-      // Generar identificadores para reportes existentes sin identificador
-      db.exec(`UPDATE agentes_reportes SET identificador = 'AGENTE-' || substr(id, 1, 8) WHERE identificador IS NULL`);
-
-      console.log('✅ Migración: Columnas completadas en agentes_reportes');
-    }
-  }catch(e){ console.error('No se pudo migrar agentes_reportes:', e.message); }
-})();
-
-(function migrateMovimientoItemsTelefono(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(movimiento_items)").all();
-    if(!cols.some(c=>c.name==='numeroTelefonico1')){
-      db.exec('ALTER TABLE movimiento_items ADD COLUMN numeroTelefonico1 TEXT');
-      db.exec('ALTER TABLE movimiento_items ADD COLUMN numeroTelefonico2 TEXT');
-      console.log('✅ Migración: Columnas numeroTelefonico1 y numeroTelefonico2 agregadas a movimiento_items');
-    }
-  }catch(e){ console.error('No se pudo migrar columnas de teléfono en movimiento_items:', e.message); }
-})();
-
-(function migrateSolicitudesItemsUsuarioDestino(){
-  try{
-    const cols = db.prepare("PRAGMA table_info(solicitudes_items)").all();
-    if(!cols.some(c=>c.name==='usuarioDestino')){
-      db.exec('ALTER TABLE solicitudes_items ADD COLUMN usuarioDestino TEXT');
-      console.log('✅ Migración: Columna usuarioDestino agregada a solicitudes_items');
-    }
-  }catch(e){ console.error('No se pudo migrar columna usuarioDestino en solicitudes_items:', e.message); }
-})();
+// Migración PRAGMA no aplica a MongoDB
 
 function getCounter(name){
   const row = db.prepare('SELECT value FROM counters WHERE name = ?').get(name);
