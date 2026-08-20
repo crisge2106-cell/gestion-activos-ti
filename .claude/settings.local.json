@@ -51,7 +51,10 @@
       "Read(//tmp/**)",
       "Bash(sed -i '154,192s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
       "Bash(sed -i '194,203s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
-      "Bash(sed -i '205,213s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)"
+      "Bash(sed -i '205,213s/^/\\(\\\\/\\\\/ MIGRACIÓN COMENTADA: PRAGMA no aplica a MongoDB\\\\n\\\\/\\\\/ /' server.js)",
+      "Bash(git add *)",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }

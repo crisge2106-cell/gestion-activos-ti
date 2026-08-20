@@ -153,94 +153,94 @@ const SMTP_CONFIG_PATH = path.join(__dirname, 'smtp-config.json');
 
 // Migración PRAGMA no aplica a MongoDB
 
-function getCounter(name){
-  const row = db.prepare('SELECT value FROM counters WHERE name = ?').get(name);
+async function getCounter(name){
+  const row = await dbAdapter.prepare('SELECT value FROM counters WHERE name = ?').get(name);
   if(row) return row.value;
-  db.prepare('INSERT INTO counters (name, value) VALUES (?, 1)').run(name);
+  await dbAdapter.prepare('INSERT INTO counters (name, value) VALUES (?, 1)').run(name);
   return 1;
 }
-function setCounter(name, value){
-  db.prepare('INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET value = ?').run(name, value, value);
+async function setCounter(name, value){
+  await dbAdapter.prepare('INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET value = ?').run(name, value, value);
 }
-function nextId(prefix, counterName){
-  const n = getCounter(counterName);
-  setCounter(counterName, n+1);
+async function nextId(prefix, counterName){
+  const n = await getCounter(counterName);
+  await setCounter(counterName, n+1);
   return prefix + '-' + String(n).padStart(4, '0');
 }
-function upsertTrabajador(t){
+async function upsertTrabajador(t){
   const nombre = (t.nombre||'').trim();
   if(!nombre) return;
-  const existing = db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
+  const existing = await dbAdapter.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
   if(existing){
-    db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede) WHERE nombre = ? COLLATE NOCASE`)
+    await dbAdapter.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede) WHERE nombre = ? COLLATE NOCASE`)
       .run(t.dni||'', t.area||'', t.sede||'', nombre);
   } else {
-    db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede) VALUES (?,?,?,?)').run(nombre, t.dni||'', t.area||'', t.sede||'');
+    await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede) VALUES (?,?,?,?)').run(nombre, t.dni||'', t.area||'', t.sede||'');
   }
 }
-function getTrabajadores(){
-  return db.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
+async function getTrabajadores(){
+  return await dbAdapter.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
 }
-function getTrabajador(nombre){
-  return db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get((nombre||'').trim());
+async function getTrabajador(nombre){
+  return await dbAdapter.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get((nombre||'').trim());
 }
-function setTrabajadorActivo(nombre, activo){
+async function setTrabajadorActivo(nombre, activo){
   const n = (nombre||'').trim();
   if(!n) return;
-  const existing = getTrabajador(n);
+  const existing = await getTrabajador(n);
   if(existing){
-    db.prepare('UPDATE trabajadores SET activo=? WHERE nombre = ? COLLATE NOCASE').run(activo?1:0, n);
+    await dbAdapter.prepare('UPDATE trabajadores SET activo=? WHERE nombre = ? COLLATE NOCASE').run(activo?1:0, n);
   } else {
-    db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
+    await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
   }
 }
 
 // ---- SOLICITUDES DE COMPRA ----
-function getSolicitudesCompra(){
-  const solicitudes = db.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC').all();
+async function getSolicitudesCompra(){
+  const solicitudes = await dbAdapter.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC').all();
   const solicitudesMap = {};
   for(const sol of solicitudes){
-    const items = db.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(sol.id);
+    const items = await dbAdapter.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(sol.id);
     solicitudesMap[sol.id] = {...sol, items};
   }
   return solicitudes.map(s => solicitudesMap[s.id]);
 }
 
-function getSolicitudCompra(id){
-  const sol = db.prepare('SELECT * FROM solicitudes_compra WHERE id = ?').get(id);
+async function getSolicitudCompra(id){
+  const sol = await dbAdapter.prepare('SELECT * FROM solicitudes_compra WHERE id = ?').get(id);
   if(!sol) return null;
-  const items = db.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(id);
+  const items = await dbAdapter.prepare('SELECT * FROM solicitudes_items WHERE solicitudId = ?').all(id);
   return {...sol, items};
 }
 
-function insertSolicitudCompra(s){
-  const id = nextId('SOL', 'sol');
-  const numero = nextId('SOL-', 'sol_numero');
-  db.prepare(`INSERT INTO solicitudes_compra (id, numero, fecha, usuario, descripcion, estado, observaciones, createdAt)
+async function insertSolicitudCompra(s){
+  const id = await nextId('SOL', 'sol');
+  const numero = await nextId('SOL-', 'sol_numero');
+  await dbAdapter.prepare(`INSERT INTO solicitudes_compra (id, numero, fecha, usuario, descripcion, estado, observaciones, createdAt)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`)
     .run(id, numero, s.fecha||new Date().toISOString(), s.usuario||'', s.descripcion||'', s.estado||'pendiente', s.observaciones||'', new Date().toISOString());
 
-  const insItem = db.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
+  const insItem = dbAdapter.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
     VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
   for(const item of (s.items||[])){
-    insItem.run(id, item.tipo||'bien', item.descripcion||'', item.cantidad||1, 0, item.usuarioDestino||'', item.observaciones||'');
+    await insItem.run(id, item.tipo||'bien', item.descripcion||'', item.cantidad||1, 0, item.usuarioDestino||'', item.observaciones||'');
   }
 
   return getSolicitudCompra(id);
 }
 
-function updateSolicitudCompra(id, s){
-  db.prepare(`UPDATE solicitudes_compra SET fecha=?, usuario=?, descripcion=?, estado=?, observaciones=? WHERE id=?`)
+async function updateSolicitudCompra(id, s){
+  await dbAdapter.prepare(`UPDATE solicitudes_compra SET fecha=?, usuario=?, descripcion=?, estado=?, observaciones=? WHERE id=?`)
     .run(s.fecha||'', s.usuario||'', s.descripcion||'', s.estado||'pendiente', s.observaciones||'', id);
 
   // Eliminar items anteriores y crear nuevos
-  db.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
-  const insItem = db.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
+  await dbAdapter.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
+  const insItem = dbAdapter.prepare(`INSERT INTO solicitudes_items (solicitudId, tipo, descripcion, cantidad, precioUnitario, usuarioDestino, observaciones)
     VALUES (?, ?, ?, ?, ?, ?, ?)`);
 
   for(const item of (s.items||[])){
-    insItem.run(id, item.tipo||'bien', item.descripcion||'', item.cantidad||1, 0, item.usuarioDestino||'', item.observaciones||'');
+    await insItem.run(id, item.tipo||'bien', item.descripcion||'', item.cantidad||1, 0, item.usuarioDestino||'', item.observaciones||'');
   }
 
   return getSolicitudCompra(id);
@@ -256,20 +256,20 @@ function maxSuffix(ids, prefix){
 }
 
 // --- Carga masiva (usada por la semilla inicial y por "restaurar backup") ---
-function bulkLoad(data){
-  const insEq = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+async function bulkLoad(data){
+  const insEq = dbAdapter.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (@id,@tipo,@marca,@modelo,@serie,@fechaCompra,@sede,@estado,@usuarioActual,@area,@observaciones,@cpu,@ram,@disco,@origen)`);
-  const insMv = db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
+  const insMv = dbAdapter.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
     VALUES (@id,@tipo,@fecha,@trabajador,@dni,@area,@sede,@observaciones,@origen)`);
-  const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
+  const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
     VALUES (@movimientoId,@equipoId,@cantidad,@descripcion,@marcaModelo,@serieEstado)`);
-  const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
+  const insMt = dbAdapter.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
     VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion)`);
 
-  db.exec('BEGIN');
+  await dbAdapter.exec('BEGIN');
   try{
     for(const e of (data.equipos||[])){
-      insEq.run({
+      await insEq.run({
         id: e.id, tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
         fechaCompra: e.fechaCompra||null, sede: e.sede||'', estado: e.estado||'Disponible',
         usuarioActual: e.usuarioActual||'', area: e.area||'', observaciones: e.observaciones||'',
@@ -278,45 +278,45 @@ function bulkLoad(data){
       });
     }
     for(const m of (data.movimientos||[])){
-      insMv.run({
+      await insMv.run({
         id: m.id, tipo: m.tipo||'', fecha: m.fecha||null, trabajador: m.trabajador||'', dni: m.dni||'',
         area: m.area||'', sede: m.sede||'', observaciones: m.observaciones||'', origen: m.origen||''
       });
       for(const it of (m.items||[])){
-        insIt.run({
+        await insIt.run({
           movimientoId: m.id, equipoId: it.equipoId||null, cantidad: it.cantidad||1,
           descripcion: it.descripcion||'', marcaModelo: it.marcaModelo||'', serieEstado: it.serieEstado||''
         });
       }
     }
     for(const mt of (data.mantenimientos||[])){
-      insMt.run({
+      await insMt.run({
         id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
         realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
       });
     }
-    db.exec('COMMIT');
+    await dbAdapter.exec('COMMIT');
   }catch(err){
-    db.exec('ROLLBACK');
+    await dbAdapter.exec('ROLLBACK');
     throw err;
   }
-  setCounter('eq', Math.max(maxSuffix((data.equipos||[]).map(e=>e.id), 'EQ'), data.nextEqId||0) + 1);
-  setCounter('mv', Math.max(maxSuffix((data.movimientos||[]).map(m=>m.id), 'MV'), data.nextMvId||0) + 1);
-  setCounter('mt', Math.max(maxSuffix((data.mantenimientos||[]).map(m=>m.id), 'MT'), data.nextMantId||0) + 1);
+  await setCounter('eq', Math.max(maxSuffix((data.equipos||[]).map(e=>e.id), 'EQ'), data.nextEqId||0) + 1);
+  await setCounter('mv', Math.max(maxSuffix((data.movimientos||[]).map(m=>m.id), 'MV'), data.nextMvId||0) + 1);
+  await setCounter('mt', Math.max(maxSuffix((data.mantenimientos||[]).map(m=>m.id), 'MT'), data.nextMantId||0) + 1);
 
   // Rellena el catalogo de trabajadores (reutilizable en formularios) a partir de lo migrado
   for(const m of (data.movimientos||[])){
-    if(m.trabajador) upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
+    if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
   }
   for(const e of (data.equipos||[])){
-    if(e.usuarioActual && e.estado==='Asignado') upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
+    if(e.usuarioActual && e.estado==='Asignado') await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
   }
 }
-function clearAllTables(){
-  db.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
+async function clearAllTables(){
+  await dbAdapter.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
 }
-function seedIfEmpty(){
-  const count = db.prepare('SELECT COUNT(*) AS c FROM equipos').get().c;
+async function seedIfEmpty(){
+  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM equipos').get()).c;
   if(count > 0) return;
   if(!fs.existsSync(SEED_PATH)){
     console.log('No hay seed.json, se inicia con base de datos vacia.');
@@ -324,22 +324,22 @@ function seedIfEmpty(){
   }
   console.log('Base de datos vacia: cargando datos migrados desde seed.json ...');
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
-  bulkLoad(seed);
+  await bulkLoad(seed);
   console.log(`Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
 }
-seedIfEmpty();
+await seedIfEmpty();
 
-function backfillTrabajadoresIfEmpty(){
-  const count = db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get().c;
+async function backfillTrabajadoresIfEmpty(){
+  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM trabajadores').get()).c;
   if(count > 0) return;
-  for(const m of getMovimientos()){
-    if(m.trabajador) upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
+  for(const m of await getMovimientos()){
+    if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
   }
-  for(const e of getEquipos()){
-    if(e.usuarioActual && e.estado==='Asignado') upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
+  for(const e of await getEquipos()){
+    if(e.usuarioActual && e.estado==='Asignado') await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
   }
 }
-backfillTrabajadoresIfEmpty();
+await backfillTrabajadoresIfEmpty();
 
 // ---------------------------------------------------------------------------
 // Usuarios / autenticacion
@@ -355,19 +355,19 @@ function verifyPassword(pw, salt, hash){
     return crypto.timingSafeEqual(Buffer.from(check,'hex'), Buffer.from(hash,'hex'));
   }catch(e){ return false; }
 }
-function seedUsersIfEmpty(){
-  const count = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
+async function seedUsersIfEmpty(){
+  const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
   if(count > 0) return;
   // Usuarios iniciales con contraseñas temporales (deben cambiarla al ingresar)
   const defaults = [
     {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
     {username:'dvalnecia', salt:'960284915d484ffe07c5e65dd6087cfe', hash:'8d0bc56a9834741c7166d550c1f82b23090a4abb754d33ed9ddfba69497346613d6cd19eedc02461242249019dc894c3037f27adeebd6bcb4dfc917523159989'}
   ];
-  const ins = db.prepare('INSERT INTO users (username, salt, hash, mustChangePassword) VALUES (?,?,?,1)');
-  for(const u of defaults) ins.run(u.username, u.salt, u.hash);
+  const ins = dbAdapter.prepare('INSERT INTO users (username, salt, hash, mustChangePassword) VALUES (?,?,?,1)');
+  for(const u of defaults) await ins.run(u.username, u.salt, u.hash);
   console.log('Usuarios iniciales creados: cmore, dvalnecia (contraseñas temporales entregadas por separado).');
 }
-seedUsersIfEmpty();
+await seedUsersIfEmpty();
 
 // --- Sesiones en memoria ---
 const sessions = new Map(); // sid -> {username, createdAt}
@@ -402,8 +402,8 @@ function setSessionCookie(res, sid){
 function clearSessionCookie(res){
   res.setHeader('Set-Cookie', `sid=; HttpOnly; Path=/; SameSite=Lax; Max-Age=0`);
 }
-function getUser(username){
-  return db.prepare('SELECT * FROM users WHERE username = ?').get(username);
+async function getUser(username){
+  return await dbAdapter.prepare('SELECT * FROM users WHERE username = ?').get(username);
 }
 
 // ---------------------------------------------------------------------------
@@ -504,16 +504,16 @@ const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celul
 // ---------------------------------------------------------------------------
 // Helpers de datos (equipos / movimientos / mantenimientos)
 // ---------------------------------------------------------------------------
-function getEquipos(){
-  return db.prepare('SELECT * FROM equipos ORDER BY id').all().map(e=>({
+async function getEquipos(){
+  return (await dbAdapter.prepare('SELECT * FROM equipos ORDER BY id').all()).map(e=>({
     id:e.id, nombre:e.nombre, tipo:e.tipo, marca:e.marca, modelo:e.modelo, serie:e.serie, fechaCompra:e.fechaCompra,
     sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
     specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen
   }));
 }
-function getMovimientos(){
-  const movs = db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC, id DESC').all();
-  const items = db.prepare('SELECT * FROM movimiento_items').all();
+async function getMovimientos(){
+  const movs = await dbAdapter.prepare('SELECT * FROM movimientos ORDER BY fecha DESC, id DESC').all();
+  const items = await dbAdapter.prepare('SELECT * FROM movimiento_items').all();
   const byMov = {};
   for(const it of items){
     (byMov[it.movimientoId] = byMov[it.movimientoId] || []).push({
@@ -526,18 +526,18 @@ function getMovimientos(){
     observaciones:m.observaciones, origen:m.origen, items: byMov[m.id]||[]
   }));
 }
-function getMantenimientos(){
-  return db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
+async function getMantenimientos(){
+  return await dbAdapter.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
 }
-function getEquipo(id){
-  const e = db.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
+async function getEquipo(id){
+  const e = await dbAdapter.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
   if(!e) return null;
   return {id:e.id, nombre:e.nombre, tipo:e.tipo, marca:e.marca, modelo:e.modelo, serie:e.serie, fechaCompra:e.fechaCompra,
     sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
     specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen};
 }
-function updateEquipoFields(id, fields){
-  const cur = getEquipo(id);
+async function updateEquipoFields(id, fields){
+  const cur = await getEquipo(id);
   if(!cur) return null;
   const merged = Object.assign({}, cur, fields, {specs: Object.assign({}, cur.specs, fields.specs||{})});
   // Validar nombre no vacío
@@ -545,15 +545,15 @@ function updateEquipoFields(id, fields){
     const nombre = (fields.nombre||'').trim();
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
     // Validar nombre duplicado
-    const existente = db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
+    const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
-  db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
+  await dbAdapter.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
     .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.sede, merged.estado,
       merged.usuarioActual, merged.area, merged.observaciones, merged.specs.cpu, merged.specs.ram, merged.specs.disco, id);
   return getEquipo(id);
 }
-function insertEquipo(e){
+async function insertEquipo(e){
   let nombre = (e.nombre||'').trim();
 
   // Si no hay nombre, generar automáticamente
@@ -564,14 +564,14 @@ function insertEquipo(e){
 
     // Contador específico para cada tipo
     const contadorName = 'eq_contador_' + tipoCorto;
-    let contador = getCounter(contadorName);
+    let contador = await getCounter(contadorName);
 
     // Generar nombre candidato
     let candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
 
     // Asegurar que sea único
     let intento = 0;
-    while(db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
+    while(await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
       contador++;
       candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
       intento++;
@@ -579,15 +579,15 @@ function insertEquipo(e){
     }
 
     nombre = candidato;
-    setCounter(contadorName, contador + 1);
+    await setCounter(contadorName, contador + 1);
   } else {
     // Si hay nombre, validar que sea único
-    const existente = db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
+    const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
 
-  const id = nextId('EQ','eq');
-  db.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+  const id = await nextId('EQ','eq');
+  await dbAdapter.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
     id, nombre, e.tipo||'', e.marca||'', e.modelo||'', e.serie||'', e.fechaCompra||null, e.sede||'', e.estado||'Disponible',
     e.usuarioActual||'', e.area||'', e.observaciones||'', (e.specs&&e.specs.cpu)||'', (e.specs&&e.specs.ram)||'',
@@ -595,13 +595,13 @@ function insertEquipo(e){
   );
   return getEquipo(id);
 }
-function insertMovimiento(m){
-  const id = nextId('MV','mv');
-  db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
+async function insertMovimiento(m){
+  const id = await nextId('MV','mv');
+  await dbAdapter.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
     .run(id, m.tipo, m.fecha||null, m.trabajador||'', m.dni||'', m.area||'', m.sede||'', m.observaciones||'', m.origen||'Manual');
-  const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
+  const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
   for(const it of (m.items||[])){
-    insIt.run(id, it.equipoId||null, it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
+    await insIt.run(id, it.equipoId||null, it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
   }
   return id;
 }
@@ -612,8 +612,8 @@ function insertMovimiento(m){
 function escapeHtml(s){ return (s==null?'':String(s)).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 function fmtDate(iso){ if(!iso) return '—'; const d = new Date(iso+'T00:00:00'); if(isNaN(d)) return iso; return d.toLocaleDateString('es-PE',{day:'2-digit',month:'2-digit',year:'numeric'}); }
 
-function renderActaHtml(movId){
-  const movs = getMovimientos();
+async function renderActaHtml(movId){
+  const movs = await getMovimientos();
   const m = movs.find(x=>x.id===movId);
   if(!m) return null;
   const esDevolucion = m.tipo.startsWith('Devolucion');
@@ -711,7 +711,7 @@ const server = http.createServer(async (req, res)=>{
     // ---- Rutas publicas (sin sesion) ----
     if(pathname === '/api/login' && req.method === 'POST'){
       const body = await readBody(req);
-      const user = getUser((body.username||'').trim());
+      const user = await getUser((body.username||'').trim());
       if(!user || !verifyPassword(body.password||'', user.salt, user.hash)){
         return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
       }
@@ -724,11 +724,11 @@ const server = http.createServer(async (req, res)=>{
       const email = (body.email||'').trim();
       const mensajeGenerico = 'Si el correo está registrado, se envió una contraseña temporal. Revisa tu bandeja de entrada (y spam).';
       if(!email) return sendJson(res, 400, {error:'Ingresa tu correo de recuperación'});
-      const user = email ? db.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email) : null;
+      const user = email ? await dbAdapter.prepare('SELECT * FROM users WHERE LOWER(email) = LOWER(?)').get(email) : null;
       if(user){
         const tempPassword = crypto.randomBytes(5).toString('hex');
         const {salt, hash} = hashPassword(tempPassword);
-        db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, user.username);
+        await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, user.username);
         const asunto = 'Contraseña temporal — Gestión de Activos TI';
         const cuerpo = `Hola,\n\nSe generó una contraseña temporal para tu usuario "${user.username}" en Gestión de Activos TI:\n\n${tempPassword}\n\nInicia sesión con ella; el sistema te pedirá definir una nueva contraseña de inmediato.\n\nSi no solicitaste esto, contacta a un administrador del sistema.`;
         try{
@@ -773,25 +773,25 @@ const server = http.createServer(async (req, res)=>{
       return sendJson(res, 200, {ok:true});
     }
     if(pathname === '/api/me' && req.method === 'GET'){
-      const user = getUser(session.username);
+      const user = await getUser(session.username);
       return sendJson(res, 200, {username: session.username, mustChangePassword: !!(user&&user.mustChangePassword)});
     }
     if(pathname === '/api/change-password' && req.method === 'POST'){
       const body = await readBody(req);
-      const user = getUser(session.username);
+      const user = await getUser(session.username);
       if(!user) return sendJson(res, 404, {error:'Usuario no encontrado'});
       if(!user.mustChangePassword && !verifyPassword(body.oldPassword||'', user.salt, user.hash)){
         return sendJson(res, 401, {error:'La contraseña actual no es correcta'});
       }
       if(!body.newPassword || body.newPassword.length < 6) return sendJson(res, 400, {error:'La nueva contraseña debe tener al menos 6 caracteres'});
       const {salt, hash} = hashPassword(body.newPassword);
-      db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=0 WHERE username=?').run(salt, hash, session.username);
+      await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=0 WHERE username=?').run(salt, hash, session.username);
       return sendJson(res, 200, {ok:true});
     }
 
     function validEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
     if(pathname === '/api/system-users' && req.method === 'GET'){
-      const rows = db.prepare('SELECT username, email, mustChangePassword FROM users ORDER BY username COLLATE NOCASE').all();
+      const rows = await dbAdapter.prepare('SELECT username, email, mustChangePassword FROM users ORDER BY username COLLATE NOCASE').all();
       return sendJson(res, 200, rows.map(u=>({username:u.username, email:u.email||'', mustChangePassword: !!u.mustChangePassword})));
     }
     if(pathname === '/api/system-users' && req.method === 'POST'){
@@ -800,93 +800,93 @@ const server = http.createServer(async (req, res)=>{
       const email = (body.email||'').trim();
       if(!username) return sendJson(res, 400, {error:'El usuario es obligatorio'});
       if(!/^[a-zA-Z0-9._-]{3,40}$/.test(username)) return sendJson(res, 400, {error:'El usuario debe tener 3-40 caracteres: letras, números, punto, guion o guion bajo'});
-      if(getUser(username)) return sendJson(res, 400, {error:'Ya existe un usuario del sistema con ese nombre'});
+      if(await getUser(username)) return sendJson(res, 400, {error:'Ya existe un usuario del sistema con ese nombre'});
       if(email && !validEmail(email)) return sendJson(res, 400, {error:'El correo de recuperación no es válido'});
       let password = body.password || '';
       let generated = false;
       if(!password){ password = crypto.randomBytes(5).toString('hex'); generated = true; }
       else if(password.length < 6) return sendJson(res, 400, {error:'La contraseña debe tener al menos 6 caracteres'});
       const {salt, hash} = hashPassword(password);
-      db.prepare('INSERT INTO users (username, email, salt, hash, mustChangePassword) VALUES (?,?,?,?,1)').run(username, email||null, salt, hash);
+      await dbAdapter.prepare('INSERT INTO users (username, email, salt, hash, mustChangePassword) VALUES (?,?,?,?,1)').run(username, email||null, salt, hash);
       return sendJson(res, 200, {username, email, tempPassword: generated ? password : undefined});
     }
     if(pathname.startsWith('/api/system-users/') && pathname.endsWith('/reset-password') && req.method === 'POST'){
       const username = decodeURIComponent(pathname.split('/')[3] || '');
-      if(!getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
+      if(!await getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
       const tempPassword = crypto.randomBytes(5).toString('hex');
       const {salt, hash} = hashPassword(tempPassword);
-      db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
+      await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
       return sendJson(res, 200, {username, tempPassword});
     }
     if(pathname.startsWith('/api/system-users/') && !pathname.endsWith('/reset-password') && req.method === 'PUT'){
       const username = decodeURIComponent(pathname.split('/').pop());
-      const existing = getUser(username);
+      const existing = await getUser(username);
       if(!existing) return sendJson(res, 404, {error:'Usuario no encontrado'});
       const body = await readBody(req);
       if(body.email !== undefined){
         const email = (body.email||'').trim();
         if(email && !validEmail(email)) return sendJson(res, 400, {error:'El correo de recuperación no es válido'});
-        db.prepare('UPDATE users SET email=? WHERE username=?').run(email||null, username);
+        await dbAdapter.prepare('UPDATE users SET email=? WHERE username=?').run(email||null, username);
       }
       if(body.password){
         if(body.password.length < 6) return sendJson(res, 400, {error:'La contraseña debe tener al menos 6 caracteres'});
         const {salt, hash} = hashPassword(body.password);
-        db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
+        await dbAdapter.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=1 WHERE username=?').run(salt, hash, username);
       }
       return sendJson(res, 200, {ok:true});
     }
     if(pathname.startsWith('/api/system-users/') && req.method === 'DELETE'){
       const username = decodeURIComponent(pathname.split('/').pop());
-      if(!getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
+      if(!await getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
       if(username === session.username) return sendJson(res, 400, {error:'No puedes eliminar tu propio usuario mientras tienes la sesión activa'});
-      const count = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
+      const count = (await dbAdapter.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
       if(count <= 1) return sendJson(res, 400, {error:'Debe existir al menos un usuario del sistema'});
-      db.prepare('DELETE FROM users WHERE username=?').run(username);
+      await dbAdapter.prepare('DELETE FROM users WHERE username=?').run(username);
       return sendJson(res, 200, {ok:true});
     }
 
     if(pathname === '/api/state' && req.method === 'GET'){
-      const inventarioReportes = db.prepare(`SELECT * FROM inventario_reportes ORDER BY timestamp DESC LIMIT 50`).all();
-      const agentesReportes = db.prepare(`
+      const inventarioReportes = await dbAdapter.prepare(`SELECT * FROM inventario_reportes ORDER BY timestamp DESC LIMIT 50`).all();
+      const agentesReportes = await dbAdapter.prepare(`
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
         FROM agentes_reportes ar
         LEFT JOIN equipos eq ON ar.equipoId = eq.id
         ORDER BY ar.timestamp DESC
         LIMIT 100
       `).all();
-      return sendJson(res, 200, { equipos: getEquipos(), movimientos: getMovimientos(), mantenimientos: getMantenimientos(), trabajadores: getTrabajadores(), solicitudesCompra: getSolicitudesCompra(), inventarioReportes, agentesReportes });
+      return sendJson(res, 200, { equipos: await getEquipos(), movimientos: await getMovimientos(), mantenimientos: await getMantenimientos(), trabajadores: await getTrabajadores(), solicitudesCompra: await getSolicitudesCompra(), inventarioReportes, agentesReportes });
     }
     if(pathname === '/api/equipos' && req.method === 'POST'){
       const body = await readBody(req);
-      return sendJson(res, 200, insertEquipo(body));
+      return sendJson(res, 200, await insertEquipo(body));
     }
     if(pathname.startsWith('/api/equipos/') && req.method === 'PUT'){
       const id = decodeURIComponent(pathname.split('/').pop());
       const body = await readBody(req);
-      const updated = updateEquipoFields(id, body);
+      const updated = await updateEquipoFields(id, body);
       if(!updated) return sendJson(res, 404, {error:'Equipo no encontrado'});
       return sendJson(res, 200, updated);
     }
     if(pathname.startsWith('/api/equipos/') && req.method === 'DELETE'){
       const id = decodeURIComponent(pathname.split('/').pop());
-      const equipo = getEquipo(id);
+      const equipo = await getEquipo(id);
       if(!equipo) return sendJson(res, 404, {error:'Equipo no encontrado'});
-      db.prepare('DELETE FROM equipos WHERE id = ?').run(id);
+      await dbAdapter.prepare('DELETE FROM equipos WHERE id = ?').run(id);
       return sendJson(res, 200, {ok:true, message:'Equipo eliminado'});
     }
     if(pathname === '/api/trabajadores' && req.method === 'POST'){
       const body = await readBody(req);
       const nombre = (body.nombre||'').trim();
       if(!nombre) return sendJson(res, 400, {error:'El nombre es obligatorio'});
-      if(getTrabajador(nombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-      db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)')
+      if(await getTrabajador(nombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
+      await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)')
         .run(nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
-      return sendJson(res, 200, getTrabajador(nombre));
+      return sendJson(res, 200, await getTrabajador(nombre));
     }
     if(pathname.startsWith('/api/trabajadores/') && req.method === 'PUT'){
       const nombreOrig = decodeURIComponent(pathname.split('/').pop());
       const body = await readBody(req);
-      const existing = getTrabajador(nombreOrig);
+      const existing = await getTrabajador(nombreOrig);
       if(!existing) return sendJson(res, 404, {error:'Usuario no encontrado'});
       const nuevoNombre = (body.nombre||existing.nombre).trim();
       const dni = body.dni!==undefined ? body.dni : existing.dni;
@@ -894,21 +894,21 @@ const server = http.createServer(async (req, res)=>{
       const sede = body.sede!==undefined ? body.sede : existing.sede;
       const activo = body.activo!==undefined ? (body.activo?1:0) : existing.activo;
       if(nuevoNombre.toLowerCase() !== existing.nombre.toLowerCase()){
-        if(getTrabajador(nuevoNombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-        db.exec('BEGIN');
+        if(await getTrabajador(nuevoNombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
+        await dbAdapter.exec('BEGIN');
         try{
-          db.prepare('DELETE FROM trabajadores WHERE nombre = ? COLLATE NOCASE').run(existing.nombre);
-          db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(nuevoNombre, dni, area, sede, activo);
-          db.exec('COMMIT');
-        }catch(err){ db.exec('ROLLBACK'); throw err; }
+          await dbAdapter.prepare('DELETE FROM trabajadores WHERE nombre = ? COLLATE NOCASE').run(existing.nombre);
+          await dbAdapter.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(nuevoNombre, dni, area, sede, activo);
+          await dbAdapter.exec('COMMIT');
+        }catch(err){ await dbAdapter.exec('ROLLBACK'); throw err; }
       } else {
-        db.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE').run(dni, area, sede, activo, existing.nombre);
+        await dbAdapter.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE').run(dni, area, sede, activo, existing.nombre);
       }
-      return sendJson(res, 200, getTrabajador(nuevoNombre));
+      return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
     if(pathname === '/api/cargos' && req.method === 'POST'){
       const body = await readBody(req);
-      const trabajadorExistente = getTrabajador(body.trabajador);
+      const trabajadorExistente = await getTrabajador(body.trabajador);
       if(trabajadorExistente && trabajadorExistente.activo === 0){
         return sendJson(res, 400, {error:'Este trabajador figura como inactivo (tiene una devolución por salida registrada). Actívalo en la pestaña Usuarios antes de asignarle un equipo.'});
       }
@@ -926,14 +926,14 @@ const server = http.createServer(async (req, res)=>{
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
-              updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador, area: body.area, sede: body.sede});
+              await updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador, area: body.area, sede: body.sede});
             } else {
               // Crear nuevo equipo LIN
-              const created = insertEquipo({
+              const created = await insertEquipo({
                 // Nombre se auto-genera como "LIN-XXXX"
                 tipo: 'LIN',
                 marca:'',
@@ -951,7 +951,7 @@ const server = http.createServer(async (req, res)=>{
             }
           } else if(it.equipoNombre){
             // Si hay nombre de equipo, crear con ese nombre
-            const created = insertEquipo({
+            const created = await insertEquipo({
               nombre: it.equipoNombre,
               tipo: 'Accesorio',
               marca:'',
@@ -968,7 +968,7 @@ const server = http.createServer(async (req, res)=>{
             equipoId = created.id;
           } else {
             // Sin nombre, crear automáticamente (generará nombre según tipo)
-            const created = insertEquipo({
+            const created = await insertEquipo({
               tipo:'Accesorio',
               marca:'',
               modelo: it.descripcion||'',
@@ -985,45 +985,45 @@ const server = http.createServer(async (req, res)=>{
           }
         } else {
           // Validar que el equipo no esté ya asignado
-          const equipoExistente = db.prepare('SELECT estado, usuarioActual FROM equipos WHERE id=?').get(equipoId);
+          const equipoExistente = await dbAdapter.prepare('SELECT estado, usuarioActual FROM equipos WHERE id=?').get(equipoId);
           if(equipoExistente && equipoExistente.estado === 'Asignado'){
             return sendJson(res, 400, {error: `El equipo ya está asignado a ${equipoExistente.usuarioActual}. Debe devolverse primero.`});
           }
-          updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador, area: body.area, sede: body.sede});
+          await updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador, area: body.area, sede: body.sede});
         }
         items.push({equipoId, cantidad: it.cantidad||1, descripcion: it.descripcion, marcaModelo: it.marcaModelo, serieEstado: it.serieEstado});
       }
-      const movId = insertMovimiento({tipo:'Asignacion', fecha: body.fecha, trabajador: body.trabajador, dni: body.dni,
+      const movId = await insertMovimiento({tipo:'Asignacion', fecha: body.fecha, trabajador: body.trabajador, dni: body.dni,
         area: body.area, sede: body.sede, observaciones: body.observaciones, origen:'Manual', items});
-      upsertTrabajador({nombre: body.trabajador, dni: body.dni, area: body.area, sede: body.sede});
+      await upsertTrabajador({nombre: body.trabajador, dni: body.dni, area: body.area, sede: body.sede});
       return sendJson(res, 200, {id: movId});
     }
     if(pathname.startsWith('/api/cargos/') && req.method === 'PUT'){
       const movId = pathname.split('/').pop();
-      const movimiento = db.prepare('SELECT * FROM movimientos WHERE id=?').get(movId);
+      const movimiento = await dbAdapter.prepare('SELECT * FROM movimientos WHERE id=?').get(movId);
       if(!movimiento) return sendJson(res, 404, {error:'Cargo no encontrado'});
       const body = await readBody(req);
       // Actualizar movimiento
-      db.prepare(`UPDATE movimientos SET fecha=?, trabajador=?, dni=?, area=?, sede=?, observaciones=? WHERE id=?`)
+      await dbAdapter.prepare(`UPDATE movimientos SET fecha=?, trabajador=?, dni=?, area=?, sede=?, observaciones=? WHERE id=?`)
         .run(body.fecha||movimiento.fecha, body.trabajador||movimiento.trabajador, body.dni||movimiento.dni,
           body.area||movimiento.area, body.sede||movimiento.sede, body.observaciones||movimiento.observaciones, movId);
       // Actualizar items si se proporcionan
       if(body.items && Array.isArray(body.items)){
-        db.prepare('DELETE FROM movimiento_items WHERE movimientoId=?').run(movId);
-        const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
+        await dbAdapter.prepare('DELETE FROM movimiento_items WHERE movimientoId=?').run(movId);
+        const insIt = dbAdapter.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
         for(const it of body.items){
           let equipoId = it.equipoId;
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(!equipoId && it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await dbAdapter.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
-              updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador||movimiento.trabajador, area: body.area||movimiento.area, sede: body.sede});
+              await updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador||movimiento.trabajador, area: body.area||movimiento.area, sede: body.sede});
             } else {
               // Crear nuevo equipo LIN
-              const created = insertEquipo({
+              const created = await insertEquipo({
                 // Nombre se auto-genera como "LIN-XXXX"
                 tipo: 'LIN',
                 marca:'',
@@ -1041,7 +1041,7 @@ const server = http.createServer(async (req, res)=>{
             }
           } else if(!equipoId && it.equipoNombre){
             // Si hay nombre de equipo, crear con ese nombre
-            const created = insertEquipo({
+            const created = await insertEquipo({
               nombre: it.equipoNombre,
               tipo: 'Accesorio',
               marca:'',
@@ -1057,65 +1057,65 @@ const server = http.createServer(async (req, res)=>{
             });
             equipoId = created.id;
           }
-          insIt.run(movId, equipoId||null, it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
+          await insIt.run(movId, equipoId||null, it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
         }
       }
-      upsertTrabajador({nombre: body.trabajador||movimiento.trabajador, dni: body.dni||movimiento.dni, area: body.area||movimiento.area, sede: body.sede||movimiento.sede});
+      await upsertTrabajador({nombre: body.trabajador||movimiento.trabajador, dni: body.dni||movimiento.dni, area: body.area||movimiento.area, sede: body.sede||movimiento.sede});
       return sendJson(res, 200, {id: movId});
     }
     if(pathname === '/api/devoluciones' && req.method === 'POST'){
       const body = await readBody(req);
       const ids = Array.isArray(body.equipoIds) ? body.equipoIds : (body.equipoId ? [body.equipoId] : []);
-      const equipos = ids.map(id=>getEquipo(id)).filter(Boolean);
+      const equipos = (await Promise.all(ids.map(id=>getEquipo(id)))).filter(Boolean);
       if(equipos.length===0) return sendJson(res, 404, {error:'Selecciona al menos un equipo a devolver'});
       const trabajador = body.trabajador || equipos[0].usuarioActual;
       const items = equipos.map(eq=>({equipoId: eq.id, cantidad:1, descripcion:`${eq.tipo} ${eq.marca||''} ${eq.modelo||''}`.trim(), marcaModelo:`${eq.marca||''} ${eq.modelo||''}`.trim(), serieEstado: eq.serie}));
-      const movId = insertMovimiento({tipo: body.motivo, fecha: body.fecha, trabajador, dni:'', area: equipos[0].area, sede: equipos[0].sede,
+      const movId = await insertMovimiento({tipo: body.motivo, fecha: body.fecha, trabajador, dni:'', area: equipos[0].area, sede: equipos[0].sede,
         observaciones: body.observaciones, origen:'Manual', items});
-      for(const eq of equipos) updateEquipoFields(eq.id, {estado: body.estadoNuevo, usuarioActual: ''});
+      for(const eq of equipos) await updateEquipoFields(eq.id, {estado: body.estadoNuevo, usuarioActual: ''});
       if(body.motivo === 'Devolucion por salida' && trabajador){
-        setTrabajadorActivo(trabajador, 0);
+        await setTrabajadorActivo(trabajador, 0);
       }
       return sendJson(res, 200, {id: movId});
     }
     if(pathname === '/api/bajas' && req.method === 'POST'){
       const body = await readBody(req);
-      const eq = getEquipo(body.equipoId);
+      const eq = await getEquipo(body.equipoId);
       if(!eq) return sendJson(res, 404, {error:'Equipo no encontrado'});
       const obsFull = body.motivo + (body.observaciones? ' — ' + body.observaciones : '');
-      const movId = insertMovimiento({tipo:'Baja', fecha: body.fecha, trabajador: eq.usuarioActual, dni:'', area: eq.area, sede: eq.sede,
+      const movId = await insertMovimiento({tipo:'Baja', fecha: body.fecha, trabajador: eq.usuarioActual, dni:'', area: eq.area, sede: eq.sede,
         observaciones: obsFull, origen:'Manual',
         items:[{equipoId: eq.id, cantidad:1, descripcion:`${eq.tipo} ${eq.marca||''} ${eq.modelo||''}`.trim(), marcaModelo:`${eq.marca||''} ${eq.modelo||''}`.trim(), serieEstado: eq.serie}]});
-      updateEquipoFields(eq.id, {estado:'De baja', usuarioActual:''});
+      await updateEquipoFields(eq.id, {estado:'De baja', usuarioActual:''});
       return sendJson(res, 200, {id: movId});
     }
     if(pathname === '/api/mantenimientos' && req.method === 'POST'){
       const body = await readBody(req);
-      const id = nextId('MT','mt');
-      db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion) VALUES (?,?,?,?,?,?)`)
+      const id = await nextId('MT','mt');
+      await dbAdapter.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion) VALUES (?,?,?,?,?,?)`)
         .run(id, body.equipoId, body.fecha, body.tipo, body.realizadoPor||'', body.descripcion||'');
       return sendJson(res, 200, {id});
     }
 
     // ---- SOLICITUDES DE COMPRA ----
     if(pathname === '/api/solicitudes-compra' && req.method === 'GET'){
-      return sendJson(res, 200, getSolicitudesCompra());
+      return sendJson(res, 200, await getSolicitudesCompra());
     }
     if(pathname === '/api/solicitudes-compra' && req.method === 'POST'){
       const body = await readBody(req);
-      const sol = insertSolicitudCompra(body);
+      const sol = await insertSolicitudCompra(body);
       return sendJson(res, 200, sol);
     }
     if(pathname.startsWith('/api/solicitudes-compra/') && !pathname.endsWith('/excel') && !pathname.endsWith('/email') && req.method === 'GET'){
       const id = decodeURIComponent(pathname.split('/').pop());
-      const sol = getSolicitudCompra(id);
+      const sol = await getSolicitudCompra(id);
       if(!sol) return sendJson(res, 404, {error:'Solicitud no encontrada'});
       return sendJson(res, 200, sol);
     }
     if(pathname.startsWith('/api/solicitudes-compra/') && req.method === 'PUT'){
       const id = decodeURIComponent(pathname.split('/').pop());
       const body = await readBody(req);
-      const sol = updateSolicitudCompra(id, body);
+      const sol = await updateSolicitudCompra(id, body);
       return sendJson(res, 200, sol);
     }
     if(pathname.startsWith('/api/solicitudes-compra/') && pathname.endsWith('/excel') && req.method === 'GET'){
@@ -1123,7 +1123,7 @@ const server = http.createServer(async (req, res)=>{
         try {
           const parts = pathname.split('/');
           const id = decodeURIComponent(parts[3]);
-          const sol = getSolicitudCompra(id);
+          const sol = await getSolicitudCompra(id);
           if(!sol) return sendJson(res, 404, {error:'Solicitud no encontrada'});
 
           const plantillaPath = path.join(__dirname, 'ADM-FO-01_Nuevo.xlsx');
@@ -1180,7 +1180,7 @@ const server = http.createServer(async (req, res)=>{
         try {
           const parts = pathname.split('/');
           const id = decodeURIComponent(parts[3]);
-          const sol = getSolicitudCompra(id);
+          const sol = await getSolicitudCompra(id);
           if(!sol) return sendJson(res, 404, {error:'Solicitud no encontrada'});
 
           const tempDir = path.join(__dirname, 'temp');
@@ -1251,8 +1251,8 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname.startsWith('/api/solicitudes-compra/') && req.method === 'DELETE'){
       const id = decodeURIComponent(pathname.split('/').pop());
-      db.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
-      db.prepare('DELETE FROM solicitudes_compra WHERE id = ?').run(id);
+      await dbAdapter.prepare('DELETE FROM solicitudes_items WHERE solicitudId = ?').run(id);
+      await dbAdapter.prepare('DELETE FROM solicitudes_compra WHERE id = ?').run(id);
       return sendJson(res, 200, {ok:true});
     }
 
@@ -1262,15 +1262,15 @@ const server = http.createServer(async (req, res)=>{
       let matched=0, creados=0;
       for(const s of list){
         const serie = (s.serie||s.Serie||s.SerialNumber||'').toString().trim();
-        const existing = serie ? db.prepare('SELECT id FROM equipos WHERE LOWER(serie)=LOWER(?)').get(serie) : null;
+        const existing = serie ? await dbAdapter.prepare('SELECT id FROM equipos WHERE LOWER(serie)=LOWER(?)').get(serie) : null;
         const specs = {cpu: s.procesador||s.CPU||'', ram: s.ram||s.RAM||'', disco: s.almacenamiento||s.Disco||''};
         if(existing){
-          updateEquipoFields(existing.id, {
+          await updateEquipoFields(existing.id, {
             marca: s.marca||s.Marca||undefined, modelo: s.modelo||s.Modelo||undefined, specs
           });
           matched++;
         } else {
-          insertEquipo({tipo: s.tipo||'PC', marca: s.marca||s.Marca||'', modelo: s.modelo||s.Modelo||'', serie,
+          await insertEquipo({tipo: s.tipo||'PC', marca: s.marca||s.Marca||'', modelo: s.modelo||s.Modelo||'', serie,
             fechaCompra:null, sede: s.sede||'', estado:'Disponible', usuarioActual: s.usuario||s.Usuario||'',
             area:'', observaciones:'Creado por importación de specs', specs, origen:'Script specs'});
           creados++;
@@ -1279,7 +1279,7 @@ const server = http.createServer(async (req, res)=>{
       return sendJson(res, 200, {matched, creados});
     }
     if(pathname === '/api/backup' && req.method === 'GET'){
-      const data = { equipos: getEquipos(), movimientos: getMovimientos(), mantenimientos: getMantenimientos() };
+      const data = { equipos: await getEquipos(), movimientos: await getMovimientos(), mantenimientos: await getMantenimientos() };
       const body = JSON.stringify(data, null, 1);
       res.writeHead(200, {'Content-Type':'application/json; charset=utf-8', 'Content-Disposition':'attachment; filename="backup_activos_ti.json"'});
       return res.end(body);
@@ -1287,19 +1287,19 @@ const server = http.createServer(async (req, res)=>{
     if(pathname === '/api/restore' && req.method === 'POST'){
       const body = await readBody(req);
       if(!body.equipos || !body.movimientos) return sendJson(res, 400, {error:'Archivo invalido: se esperaba equipos y movimientos'});
-      clearAllTables();
-      bulkLoad(body);
+      await clearAllTables();
+      await bulkLoad(body);
       return sendJson(res, 200, {ok:true});
     }
     if(pathname === '/api/reseed' && req.method === 'POST'){
       if(!fs.existsSync(SEED_PATH)) return sendJson(res, 400, {error:'No existe seed.json'});
-      clearAllTables();
-      bulkLoad(JSON.parse(fs.readFileSync(SEED_PATH, 'utf8')));
+      await clearAllTables();
+      await bulkLoad(JSON.parse(fs.readFileSync(SEED_PATH, 'utf8')));
       return sendJson(res, 200, {ok:true});
     }
     if(pathname.startsWith('/api/acta/') && req.method === 'GET'){
       const movId = decodeURIComponent(pathname.split('/').pop());
-      const html = renderActaHtml(movId);
+      const html = await renderActaHtml(movId);
       if(!html) { res.writeHead(404); return res.end('Acta no encontrada'); }
       res.writeHead(200, {'Content-Type':'text/html; charset=utf-8'});
       return res.end(html);
@@ -1310,14 +1310,14 @@ const server = http.createServer(async (req, res)=>{
       const body = await readBody(req);
       if(!body.timestamp) body.timestamp = new Date().toISOString();
       const id = crypto.randomBytes(12).toString('hex');
-      const stmt = db.prepare(`INSERT INTO inventario_reportes (
+      const stmt = dbAdapter.prepare(`INSERT INTO inventario_reportes (
         id, timestamp, dispositivo_ip, tipo_dispositivo, so, usuario_windows, cpu,
         ram_total_gb, ram_usado_gb, ram_disponible_gb,
         disco_total_gb, disco_usado_gb, disco_disponible_gb,
         modelo_telefono, numero_telefono, ultima_actualizacion
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`);
       const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress || '';
-      stmt.run(
+      await stmt.run(
         id,
         body.timestamp,
         ip.split(',')[0].trim(),
@@ -1343,7 +1343,7 @@ const server = http.createServer(async (req, res)=>{
       const identificador = `AGENTE-${(body.hostname || 'DESCONOCIDO').toUpperCase()}-${numeroSerieDisco.substring(numeroSerieDisco.length - 4).toUpperCase()}`;
 
       // Buscar si ya existe un reporte para este disco
-      const reporteExistente = db.prepare('SELECT id FROM agentes_reportes WHERE numero_serie_disco = ?')
+      const reporteExistente = await dbAdapter.prepare('SELECT id FROM agentes_reportes WHERE numero_serie_disco = ?')
         .get(numeroSerieDisco);
 
       let reporteId;
@@ -1352,7 +1352,7 @@ const server = http.createServer(async (req, res)=>{
       if(reporteExistente){
         // Actualizar reporte existente
         reporteId = reporteExistente.id;
-        db.prepare(`
+        await dbAdapter.prepare(`
           UPDATE agentes_reportes SET
             tipo_dispositivo = ?, hostname = ?, so = ?, usuario_windows = ?, cpu = ?,
             cpu_nucleos = ?, cpu_threads = ?, cpu_frecuencia = ?,
@@ -1391,7 +1391,7 @@ const server = http.createServer(async (req, res)=>{
       } else {
         // Crear nuevo reporte
         reporteId = crypto.randomBytes(8).toString('hex');
-        db.prepare(`
+        await dbAdapter.prepare(`
           INSERT INTO agentes_reportes (
             id, identificador, numero_serie_disco, tipo_dispositivo, hostname, so, usuario_windows, cpu,
             cpu_nucleos, cpu_threads, cpu_frecuencia,
@@ -1441,7 +1441,7 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname === '/api/inventario/ultimos' && req.method === 'GET'){
       const limite = req.url.includes('?') ? new URLSearchParams(req.url.split('?')[1]).get('limite') || 50 : 50;
-      const reportes = db.prepare(`
+      const reportes = await dbAdapter.prepare(`
         SELECT * FROM inventario_reportes
         ORDER BY timestamp DESC
         LIMIT ?
@@ -1450,7 +1450,7 @@ const server = http.createServer(async (req, res)=>{
     }
 
     if(pathname === '/api/inventario/stats' && req.method === 'GET'){
-      const stats = db.prepare(`
+      const stats = await dbAdapter.prepare(`
         SELECT
           COUNT(*) as total_reportes,
           MAX(timestamp) as ultimo_reporte,
@@ -1490,7 +1490,7 @@ const server = http.createServer(async (req, res)=>{
 
     // ---- Gestión de Agentes y Reportes ----
     if(pathname === '/api/agentes/reportes' && req.method === 'GET'){
-      const reportes = db.prepare(`
+      const reportes = await dbAdapter.prepare(`
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
         FROM agentes_reportes ar
         LEFT JOIN equipos eq ON ar.equipoId = eq.id
@@ -1510,19 +1510,19 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Verificar que el reporte existe
-      const reporte = db.prepare('SELECT * FROM agentes_reportes WHERE id = ?').get(reporteId);
+      const reporte = await dbAdapter.prepare('SELECT * FROM agentes_reportes WHERE id = ?').get(reporteId);
       if(!reporte){
         return sendJson(res, 404, {error: 'Reporte no encontrado'});
       }
 
       // Verificar que el equipo existe
-      const equipo = db.prepare('SELECT * FROM equipos WHERE id = ?').get(equipoId);
+      const equipo = await dbAdapter.prepare('SELECT * FROM equipos WHERE id = ?').get(equipoId);
       if(!equipo){
         return sendJson(res, 404, {error: 'Equipo no encontrado'});
       }
 
       // Enlazar el reporte con el equipo
-      db.prepare('UPDATE agentes_reportes SET equipoId = ?, enlazado_timestamp = ? WHERE id = ?')
+      await dbAdapter.prepare('UPDATE agentes_reportes SET equipoId = ?, enlazado_timestamp = ? WHERE id = ?')
         .run(equipoId, new Date().toISOString(), reporteId);
 
       // Actualizar especificaciones técnicas del equipo
@@ -1541,7 +1541,7 @@ const server = http.createServer(async (req, res)=>{
         timestamp: reporte.timestamp
       };
 
-      db.prepare('UPDATE equipos SET especificaciones_tecnicas = ?, ultima_actualizacion_inventario = ? WHERE id = ?')
+      await dbAdapter.prepare('UPDATE equipos SET especificaciones_tecnicas = ?, ultima_actualizacion_inventario = ? WHERE id = ?')
         .run(JSON.stringify(especificaciones), reporte.timestamp, equipoId);
 
       console.log(`✅ Reporte ${reporteId} enlazado con equipo ${equipoId}`);
@@ -1556,7 +1556,7 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Desenlazar el reporte
-      db.prepare('UPDATE agentes_reportes SET equipoId = NULL, enlazado_timestamp = NULL WHERE id = ?')
+      await dbAdapter.prepare('UPDATE agentes_reportes SET equipoId = NULL, enlazado_timestamp = NULL WHERE id = ?')
         .run(reporteId);
 
       console.log(`✅ Reporte ${reporteId} desenlazado`);
@@ -1571,13 +1571,13 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Obtener información del reporte antes de eliminarlo
-      const reporte = db.prepare('SELECT identificador FROM agentes_reportes WHERE id = ?').get(reporteId);
+      const reporte = await dbAdapter.prepare('SELECT identificador FROM agentes_reportes WHERE id = ?').get(reporteId);
       if(!reporte){
         return sendJson(res, 404, {error: 'Reporte no encontrado'});
       }
 
       // Eliminar el reporte
-      db.prepare('DELETE FROM agentes_reportes WHERE id = ?').run(reporteId);
+      await dbAdapter.prepare('DELETE FROM agentes_reportes WHERE id = ?').run(reporteId);
 
       console.log(`✅ Reporte de agente ELIMINADO: ${reporteId} (${reporte.identificador})`);
       return sendJson(res, 200, {ok: true, reporteId, eliminado: reporte.identificador});
@@ -1593,14 +1593,14 @@ const server = http.createServer(async (req, res)=>{
       }
 
       // Actualizar equipo con teléfono
-      db.prepare('UPDATE equipos SET telefonoAsignado = ? WHERE id = ?').run(numeroTelefonico, equipoId);
+      await dbAdapter.prepare('UPDATE equipos SET telefonoAsignado = ? WHERE id = ?').run(numeroTelefonico, equipoId);
 
       return sendJson(res, 200, {ok: true, equipoId, numeroTelefonico});
     }
 
     if(pathname === '/api/directorio-celulares' && req.method === 'GET'){
       // Obtener directorio de celulares asignados
-      const celulares = db.prepare(`
+      const celulares = await dbAdapter.prepare(`
         SELECT
           id, nombre, marca, modelo, serie, usuarioActual, area, sede,
           estado, telefonoAsignado, fechaCompra
@@ -1614,7 +1614,7 @@ const server = http.createServer(async (req, res)=>{
 
     if(pathname === '/api/directorio-celulares/export-csv' && req.method === 'GET'){
       // Exportar directorio como CSV
-      const celulares = db.prepare(`
+      const celulares = await dbAdapter.prepare(`
         SELECT
           id, nombre, marca, modelo, usuarioActual, area, telefonoAsignado
         FROM equipos
@@ -1631,8 +1631,8 @@ const server = http.createServer(async (req, res)=>{
     }
 
     if(pathname === '/api/stats-celulares' && req.method === 'GET'){
-      const total = db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado').c;
-      const conTel = db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado').c;
+      const total = (await dbAdapter.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado')).c;
+      const conTel = (await dbAdapter.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado')).c;
       const sinTel = total - conTel;
 
       return sendJson(res, 200, {total, conTel, sinTel, porcentaje: total > 0 ? Math.round((conTel/total)*100) : 0});
