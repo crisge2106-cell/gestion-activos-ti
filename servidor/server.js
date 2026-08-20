@@ -1677,7 +1677,12 @@ const server = http.createServer(async (req, res)=>{
 
 // Exportar para Vercel (serverless) o escuchar localmente
 if (process.env.VERCEL || process.env.NODE_ENV === 'production') {
-  module.exports = server;
+  // Para Vercel: exportar la función handler, no el servidor
+  // Vercel llamará esta función para cada request
+  const requestHandler = async (req, res) => {
+    server.emit('request', req, res);
+  };
+  module.exports = requestHandler;
 } else {
   server.listen(PORT, ()=>{
     console.log(`Servidor de Gestion de Activos TI escuchando en el puerto ${PORT}`);
