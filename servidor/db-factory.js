@@ -10,12 +10,11 @@ const path = require('path');
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_PATH = path.join(__dirname, 'activos.db');
 
-console.log('🌍 MONGODB_URI:', MONGODB_URI ? `${MONGODB_URI.substring(0, 50)}...` : 'NOT SET');
-console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
-console.log('🌍 VERCEL:', process.env.VERCEL);
-
 let dbInstance = null;
 let dbType = null;
+
+// Log env vars on first init
+let envLogged = false;
 
 // ============================================================================
 // INICIALIZACIÓN: Detectar y crear la BD correspondiente
@@ -23,6 +22,14 @@ let dbType = null;
 
 async function initializeDB() {
   if (dbInstance) return dbInstance;
+
+  // Log environment on first init
+  if (!envLogged) {
+    console.log('🌍 MONGODB_URI env:', MONGODB_URI ? `${MONGODB_URI.substring(0, 50)}...` : 'NOT SET');
+    console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
+    console.log('🌍 VERCEL:', process.env.VERCEL);
+    envLogged = true;
+  }
 
   if (MONGODB_URI) {
     console.log('🔄 Inicializando MongoDB...');
