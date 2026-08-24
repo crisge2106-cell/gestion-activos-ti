@@ -1717,9 +1717,8 @@ const server = http.createServer(async (req, res)=>{
 // ============================================================================
 
 if (isServerless) {
-  // VERCEL: Handler serverless que NO usa http.createServer()
-  // Este handler se ejecuta directamente para cada request
-
+  // VERCEL: Handler serverless
+  // Exportamos el requestListener del server directamente
   module.exports = async (req, res) => {
     try {
       // 1. Asegurar que BD esté inicializada
@@ -1733,17 +1732,26 @@ if (isServerless) {
 
       console.log(`📨 ${req.method} ${pathname}`);
 
-      // 3. DELEGAR AL CÓDIGO EXISTENTE usando server.emit
-      // Esto invoca el callback del http.createServer directamente
-      server.emit('request', req, res);
+      // 3. DELEGAR: Invocar directamente el requestListener
+      // server es http.Server, server.listeners('request')[0] es el callback
+      const requestListener = server.listeners('request')[0];
+      if (requestListener) {
+        await requestListener(req, res);
+      } else {
+        console.error('❌ No hay request listener en server');
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({error: 'Internal Server Error', message: 'No request handler'}));
+      }
 
     } catch (err) {
       console.error('❌ Handler Vercel error:', err.message, err.stack);
-      res.writeHead(500, {'Content-Type': 'application/json'});
-      res.end(JSON.stringify({
-        error: 'Internal Server Error',
-        message: err.message
-      }));
+      if (!res.headersSent) {
+        res.writeHead(500, {'Content-Type': 'application/json'});
+        res.end(JSON.stringify({
+          error: 'Internal Server Error',
+          message: err.message
+        }));
+      }
     }
   };
 
