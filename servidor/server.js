@@ -379,8 +379,13 @@ async function clearAllTables(){
 }
 
 async function seedIfEmpty(){
-  const count = (await db.prepare('SELECT COUNT(*) AS c FROM equipos').get()).c;
-  if(count > 0) return;
+  try {
+    const result = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+    const count = result?.c || 0;
+    if(count > 0) return;
+  } catch (err) {
+    console.log('No se pudo contar equipos, asumiendo BD vacía:', err.message);
+  }
   if(!fs.existsSync(SEED_PATH)){
     console.log('No hay seed.json, se inicia con base de datos vacia.');
     return;
@@ -392,8 +397,13 @@ async function seedIfEmpty(){
 }
 
 async function backfillTrabajadoresIfEmpty(){
-  const count = (await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get()).c;
-  if(count > 0) return;
+  try {
+    const result = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get();
+    const count = result?.c || 0;
+    if(count > 0) return;
+  } catch (err) {
+    console.log('No se pudo contar trabajadores, asumiendo tabla vacía:', err.message);
+  }
   for(const m of await getMovimientos()){
     if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
   }
@@ -419,7 +429,8 @@ function verifyPassword(pw, salt, hash){
 }
 
 async function seedUsersIfEmpty(){
-  const count = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
+  const result = await db.prepare('SELECT COUNT(*) AS c FROM users').get();
+  const count = result?.c || 0;
   if(count > 0) return;
   const defaults = [
     {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
@@ -940,7 +951,8 @@ async function handleRequest(req, res){
       const username = decodeURIComponent(pathname.split('/').pop());
       if(!await getUser(username)) return sendJson(res, 404, {error:'Usuario no encontrado'});
       if(username === session.username) return sendJson(res, 400, {error:'No puedes eliminar tu propio usuario mientras tienes la sesión activa'});
-      const count = (await db.prepare('SELECT COUNT(*) AS c FROM users').get()).c;
+      const result = await db.prepare('SELECT COUNT(*) AS c FROM users').get();
+  const count = result?.c || 0;
       if(count <= 1) return sendJson(res, 400, {error:'Debe existir al menos un usuario del sistema'});
       await db.prepare('DELETE FROM users WHERE username=?').run(username);
       return sendJson(res, 200, {ok:true});
@@ -1732,8 +1744,10 @@ async function handleRequest(req, res){
     }
 
     if(pathname === '/api/stats-celulares' && req.method === 'GET'){
-      const total = (await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado')).c;
-      const conTel = (await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado')).c;
+      const totalResult = await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ?').get('Celular', 'Asignado');
+      const total = totalResult?.c || 0;
+      const conTelResult = await db.prepare('SELECT COUNT(*) as c FROM equipos WHERE tipo = ? AND estado = ? AND telefonoAsignado IS NOT NULL').get('Celular', 'Asignado');
+      const conTel = conTelResult?.c || 0;
       const sinTel = total - conTel;
 
       return sendJson(res, 200, {total, conTel, sinTel, porcentaje: total > 0 ? Math.round((conTel/total)*100) : 0});
