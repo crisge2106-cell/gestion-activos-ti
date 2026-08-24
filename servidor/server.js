@@ -444,11 +444,15 @@ async function createSession(username){
   const now = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 60 * 60 * 12 * 1000).toISOString(); // 12 horas
 
+  console.log(`🔐 Creando sesión: sid=${sid}, username=${username}, dbType=${dbType}`);
+
   try {
-    await db.prepare('INSERT INTO sessions (sid, username, createdAt, expiresAt) VALUES (?, ?, ?, ?)')
+    console.log('🔐 Ejecutando INSERT INTO sessions...');
+    const result = await db.prepare('INSERT INTO sessions (sid, username, createdAt, expiresAt) VALUES (?, ?, ?, ?)')
       .run(sid, username, now, expiresAt);
+    console.log('✅ Sesión creada:', result);
   } catch (err) {
-    console.error('❌ Error creando sesión:', err.message);
+    console.error('❌ Error creando sesión:', err.message, err.stack);
     throw err;
   }
 
