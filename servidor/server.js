@@ -766,7 +766,10 @@ function serveStatic(req, res, pathname){
 
 const PUBLIC_PATHS = new Set(['/login.html', '/index.html', '/test.html', '/api/login', '/api/forgot-password', '/api/health']);
 
-const server = http.createServer(async (req, res)=>{
+// ============================================================================
+// MANEJADOR DE REQUESTS - Usado por LOCAL y VERCEL
+// ============================================================================
+async function handleRequest(req, res){
   const u = new URL(req.url, `http://${req.headers.host}`);
   const pathname = u.pathname;
 
@@ -1710,15 +1713,17 @@ const server = http.createServer(async (req, res)=>{
     console.error(err);
     sendJson(res, 500, {error: err.message});
   }
-});
+}
+
+// Crear el server con la función handleRequest
+const server = http.createServer(handleRequest);
 
 // ============================================================================
 // EXPORTACIÓN: Local vs Vercel
 // ============================================================================
 
 if (isServerless) {
-  // VERCEL: Handler serverless
-  // Exportamos el requestListener del server directamente
+  // VERCEL: Handler serverless - Usar handleRequest directamente
   module.exports = async (req, res) => {
     try {
       // 1. Asegurar que BD esté inicializada
@@ -1726,22 +1731,8 @@ if (isServerless) {
         await ensureDBReady();
       }
 
-      // 2. Crear URL desde req
-      const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
-      const pathname = url.pathname;
-
-      console.log(`📨 ${req.method} ${pathname}`);
-
-      // 3. DELEGAR: Invocar directamente el requestListener
-      // server es http.Server, server.listeners('request')[0] es el callback
-      const requestListener = server.listeners('request')[0];
-      if (requestListener) {
-        await requestListener(req, res);
-      } else {
-        console.error('❌ No hay request listener en server');
-        res.writeHead(500, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({error: 'Internal Server Error', message: 'No request handler'}));
-      }
+      // 2. Invocar el manejador
+      await handleRequest(req, res);
 
     } catch (err) {
       console.error('❌ Handler Vercel error:', err.message, err.stack);
