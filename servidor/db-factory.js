@@ -10,6 +10,10 @@ const path = require('path');
 const MONGODB_URI = process.env.MONGODB_URI;
 const DB_PATH = path.join(__dirname, 'activos.db');
 
+console.log('🌍 MONGODB_URI:', MONGODB_URI ? `${MONGODB_URI.substring(0, 50)}...` : 'NOT SET');
+console.log('🌍 NODE_ENV:', process.env.NODE_ENV);
+console.log('🌍 VERCEL:', process.env.VERCEL);
+
 let dbInstance = null;
 let dbType = null;
 
