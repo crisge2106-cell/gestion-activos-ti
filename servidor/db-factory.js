@@ -372,15 +372,6 @@ module.exports = {
   getDB: () => dbInstance,
   getType: () => dbType,
 
-  // Para MongoDB: acceder a la BD directamente
-  getConnection: async () => {
-    await initializeDB();
-    if (dbType === 'mongodb' && dbInstance.connectDB) {
-      return await dbInstance.connectDB();
-    }
-    return null;
-  },
-
   // Forward métodos a la instancia actual
   exec: async (sql) => {
     const db = await initializeDB();

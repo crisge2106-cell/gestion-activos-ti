@@ -441,25 +441,15 @@ const localSessions = new Map(); // Solo para desarrollo local
 
 async function createSession(username){
   const sid = crypto.randomBytes(24).toString('hex');
+  const now = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 60 * 60 * 12 * 1000).toISOString(); // 12 horas
 
-  if (dbType === 'mongodb') {
-    // VERCEL: Guardar en MongoDB
-    try {
-      const mongoDb = await db.getConnection();
-      const sessionsCol = mongoDb.collection('sessions');
-      await sessionsCol.insertOne({
-        sid,
-        username,
-        createdAt: new Date(),
-        expiresAt: new Date(Date.now() + 60 * 60 * 12 * 1000) // 12 horas
-      });
-    } catch (err) {
-      console.error('❌ Error creando sesión en MongoDB:', err.message);
-      throw err;
-    }
-  } else {
-    // LOCAL: Guardar en memoria
-    localSessions.set(sid, {username, createdAt: Date.now()});
+  try {
+    await db.prepare('INSERT INTO sessions (sid, username, createdAt, expiresAt) VALUES (?, ?, ?, ?)')
+      .run(sid, username, now, expiresAt);
+  } catch (err) {
+    console.error('❌ Error creando sesión:', err.message);
+    throw err;
   }
 
   return sid;
@@ -470,23 +460,14 @@ async function getSession(req){
   const sid = cookies['sid'];
   if(!sid) return null;
 
-  if (dbType === 'mongodb') {
-    // VERCEL: Buscar en MongoDB
-    try {
-      const mongoDb = await db.getConnection();
-      const sessionsCol = mongoDb.collection('sessions');
-      const s = await sessionsCol.findOne({sid, expiresAt: {$gt: new Date()}});
-      if(!s) return null;
-      return {sid, username: s.username, createdAt: s.createdAt};
-    } catch (err) {
-      console.error('❌ Error obteniendo sesión de MongoDB:', err.message);
-      return null;
-    }
-  } else {
-    // LOCAL: Buscar en memoria
-    const s = localSessions.get(sid);
+  try {
+    const s = await db.prepare('SELECT * FROM sessions WHERE sid = ? AND expiresAt > ?')
+      .get(sid, new Date().toISOString());
     if(!s) return null;
-    return {sid, ...s};
+    return {sid, username: s.username, createdAt: s.createdAt};
+  } catch (err) {
+    console.error('❌ Error obteniendo sesión:', err.message);
+    return null;
   }
 }
 
@@ -508,16 +489,10 @@ function setSessionCookie(res, sid){
 }
 
 async function deleteSession(sid){
-  if (dbType === 'mongodb') {
-    try {
-      const mongoDb = await db.getConnection();
-      const sessionsCol = mongoDb.collection('sessions');
-      await sessionsCol.deleteOne({sid});
-    } catch (err) {
-      console.error('❌ Error eliminando sesión de MongoDB:', err.message);
-    }
-  } else {
-    localSessions.delete(sid);
+  try {
+    await db.prepare('DELETE FROM sessions WHERE sid = ?').run(sid);
+  } catch (err) {
+    console.error('❌ Error eliminando sesión:', err.message);
   }
 }
 
