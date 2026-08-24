@@ -148,6 +148,12 @@ const CREATE_TABLES_SQL = `
     observaciones TEXT,
     FOREIGN KEY (solicitudId) REFERENCES solicitudes_compra(id)
   );
+  CREATE TABLE IF NOT EXISTS sessions (
+    sid TEXT PRIMARY KEY,
+    username TEXT,
+    createdAt TEXT,
+    expiresAt TEXT
+  );
 `;
 
 if (!isServerless) {
@@ -429,23 +435,59 @@ async function getUser(username){
 }
 
 // ---------------------------------------------------------------------------
-// Sesiones en memoria
+// Sesiones (en memoria para LOCAL, en MongoDB para VERCEL)
 // ---------------------------------------------------------------------------
-const sessions = new Map();
+const localSessions = new Map(); // Solo para desarrollo local
 
-function createSession(username){
+async function createSession(username){
   const sid = crypto.randomBytes(24).toString('hex');
-  sessions.set(sid, {username, createdAt: Date.now()});
+
+  if (dbType === 'mongodb') {
+    // VERCEL: Guardar en MongoDB
+    try {
+      const mongoDb = await db.getConnection();
+      const sessionsCol = mongoDb.collection('sessions');
+      await sessionsCol.insertOne({
+        sid,
+        username,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 60 * 60 * 12 * 1000) // 12 horas
+      });
+    } catch (err) {
+      console.error('❌ Error creando sesión en MongoDB:', err.message);
+      throw err;
+    }
+  } else {
+    // LOCAL: Guardar en memoria
+    localSessions.set(sid, {username, createdAt: Date.now()});
+  }
+
   return sid;
 }
 
-function getSession(req){
+async function getSession(req){
   const cookies = parseCookies(req);
   const sid = cookies['sid'];
   if(!sid) return null;
-  const s = sessions.get(sid);
-  if(!s) return null;
-  return {sid, ...s};
+
+  if (dbType === 'mongodb') {
+    // VERCEL: Buscar en MongoDB
+    try {
+      const mongoDb = await db.getConnection();
+      const sessionsCol = mongoDb.collection('sessions');
+      const s = await sessionsCol.findOne({sid, expiresAt: {$gt: new Date()}});
+      if(!s) return null;
+      return {sid, username: s.username, createdAt: s.createdAt};
+    } catch (err) {
+      console.error('❌ Error obteniendo sesión de MongoDB:', err.message);
+      return null;
+    }
+  } else {
+    // LOCAL: Buscar en memoria
+    const s = localSessions.get(sid);
+    if(!s) return null;
+    return {sid, ...s};
+  }
 }
 
 function parseCookies(req){
@@ -463,6 +505,20 @@ function parseCookies(req){
 
 function setSessionCookie(res, sid){
   res.setHeader('Set-Cookie', `sid=${sid}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${60*60*12}`);
+}
+
+async function deleteSession(sid){
+  if (dbType === 'mongodb') {
+    try {
+      const mongoDb = await db.getConnection();
+      const sessionsCol = mongoDb.collection('sessions');
+      await sessionsCol.deleteOne({sid});
+    } catch (err) {
+      console.error('❌ Error eliminando sesión de MongoDB:', err.message);
+    }
+  } else {
+    localSessions.delete(sid);
+  }
 }
 
 function clearSessionCookie(res){
@@ -781,7 +837,7 @@ async function handleRequest(req, res){
       if(!user || !verifyPassword(body.password||'', user.salt, user.hash)){
         return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
       }
-      const sid = createSession(user.username);
+      const sid = await createSession(user.username);
       setSessionCookie(res, sid);
       return sendJson(res, 200, {ok:true, username:user.username, mustChangePassword: !!user.mustChangePassword});
     }
@@ -823,7 +879,7 @@ async function handleRequest(req, res){
     const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state'];
     const esPublico = endpointsPublicos.some(ep => pathname === ep || pathname.startsWith(ep + '/'));
 
-    const session = getSession(req);
+    const session = await getSession(req);
     if(!session && !esPublico){
       if(pathname.startsWith('/api/')) return sendJson(res, 401, {error:'No autenticado'});
       if(req.method === 'GET'){
@@ -834,7 +890,7 @@ async function handleRequest(req, res){
     }
 
     if(pathname === '/api/logout' && req.method === 'POST'){
-      sessions.delete(session.sid);
+      await deleteSession(session.sid);
       clearSessionCookie(res);
       return sendJson(res, 200, {ok:true});
     }
