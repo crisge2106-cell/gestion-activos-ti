@@ -1712,31 +1712,47 @@ const server = http.createServer(async (req, res)=>{
   }
 });
 
-// Exportar para Vercel (serverless) o escuchar localmente
+// ============================================================================
+// EXPORTACIÓN: Local vs Vercel
+// ============================================================================
+
 if (isServerless) {
-  // VERCEL: Handler con lazy init
-  const requestHandler = async (req, res) => {
+  // VERCEL: Handler serverless que NO usa http.createServer()
+  // Este handler se ejecuta directamente para cada request
+
+  module.exports = async (req, res) => {
     try {
-      // Asegurar que BD esté lista
+      // 1. Asegurar que BD esté inicializada
       if (ensureDBReady) {
         await ensureDBReady();
       }
 
-      // Delegar al servidor
+      // 2. Crear URL desde req
+      const url = new URL(req.url || '/', `http://${req.headers.host || 'localhost'}`);
+      const pathname = url.pathname;
+
+      console.log(`📨 ${req.method} ${pathname}`);
+
+      // 3. DELEGAR AL CÓDIGO EXISTENTE usando server.emit
+      // Esto invoca el callback del http.createServer directamente
       server.emit('request', req, res);
+
     } catch (err) {
-      console.error('❌ Handler error:', err.message);
+      console.error('❌ Handler Vercel error:', err.message, err.stack);
       res.writeHead(500, {'Content-Type': 'application/json'});
-      res.end(JSON.stringify({error: err.message}));
+      res.end(JSON.stringify({
+        error: 'Internal Server Error',
+        message: err.message
+      }));
     }
   };
 
-  module.exports = requestHandler;
+  console.log('✅ Vercel handler exportado correctamente');
+
 } else {
-  // LOCAL: Escuchar en puerto
-  server.listen(PORT, ()=>{
-    console.log(`✅ Servidor escuchando en puerto ${PORT}`);
-    console.log(`Abre http://localhost:${PORT} en este equipo`);
-    console.log(`o http://<IP-de-este-equipo>:${PORT} desde otros dispositivos`);
+  // LOCAL: Usar http.createServer() normalmente
+  server.listen(PORT, () => {
+    console.log(`✅ LOCAL: Servidor escuchando en http://localhost:${PORT}`);
+    console.log(`   Abre en este equipo, o accede desde: http://<IP-de-este-equipo>:${PORT}`);
   });
 }
