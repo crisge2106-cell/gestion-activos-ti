@@ -443,27 +443,29 @@ async function clearAllTables(){
 }
 
 async function seedIfEmpty(){
-  try {
-    // Verificar si ya hay datos
-    const result = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
-    const count = result?.c || 0;
-    if(count > 0) {
-      console.log(`✅ Base de datos ya tiene ${count} equipos, skipeando carga de datos.`);
-      return;
-    }
-  } catch (err) {
-    console.log('No se pudo contar equipos, asumiendo BD vacía:', err.message);
-  }
-
   if(!fs.existsSync(SEED_PATH)){
     console.log('No hay seed.json, se inicia con base de datos vacia.');
     return;
   }
 
-  console.log('Base de datos vacia: cargando datos migrados desde seed.json ...');
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
+
+  try {
+    // Verificar si ya hay datos válidos (verificamos estructura, no solo conteo)
+    const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
+    if(result && result.id && typeof result.id === 'string') {
+      // Datos válidos encontrados
+      const count = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+      console.log(`✅ Base de datos ya tiene ${count?.c || 0} equipos válidos, skipeando carga de datos.`);
+      return;
+    }
+  } catch (err) {
+    console.log('No se pudo verificar equipos:', err.message);
+  }
+
+  console.log('Base de datos vacia o corrompida: limpiando y cargando datos migrados desde seed.json ...');
   await bulkLoad(seed);
-  console.log(`Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
+  console.log(`✅ Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
 }
 
 async function backfillTrabajadoresIfEmpty(){
