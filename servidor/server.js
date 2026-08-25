@@ -470,6 +470,12 @@ async function isFreshStartNeeded(){
       return true;
     }
 
+    // EN VERCEL: Si tiene más de 250 equipos, sincronizar con seed.json
+    if(isVercel && count > 250) {
+      console.log(`[SEED] → VERCEL tiene ${count} equipos (esperaba ~228), SINCRONIZANDO con seed.json`);
+      return true;
+    }
+
     // Verificar estructura del primer equipo
     const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
     console.log(`[SEED] Primer equipo estructura:`, {
