@@ -477,7 +477,7 @@ async function isFreshStartNeeded(){
 
     // EN VERCEL: Sincronizar con seed.json actualizado
     if(isVercel) {
-      const trabCount = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=1').get();
+      const trabCount = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=?').get(1);
       const trabTotal = trabCount?.c || 0;
       console.log(`[SEED] VERCEL: ${count} equipos, ${trabTotal} trabajadores`);
 
@@ -544,7 +544,7 @@ async function seedIfEmpty(){
     // Verificar que se insertó correctamente
     const verifyCountEquipos = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
     const verifyCountTrabajadores = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get();
-    const verifyCountTrabajadoresActivos = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=1').get();
+    const verifyCountTrabajadoresActivos = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=?').get(1);
     console.log(`[SEED] ✅ Verificación después de bulkLoad:`);
     console.log(`[SEED]    - ${verifyCountEquipos?.c || 0} equipos en BD`);
     console.log(`[SEED]    - ${verifyCountTrabajadores?.c || 0} trabajadores TOTAL en BD`);
@@ -1265,7 +1265,7 @@ async function handleRequest(req, res){
         .filter(m => m && typeof m === 'object')
         .map(m => ({id: m.id || m._id, equipoId: m.equipoId || '', fecha: m.fecha || '', tipo: m.tipo || '', realizadoPor: m.realizadoPor || '', descripcion: m.descripcion || ''}));
 
-      const trabajadoresRaw = await db.prepare('SELECT * FROM trabajadores WHERE activo=1 ORDER BY nombre LIMIT 300').all() || [];
+      const trabajadoresRaw = await db.prepare('SELECT * FROM trabajadores WHERE activo=? ORDER BY nombre LIMIT 300').all(1) || [];
       console.log(`📊 /api/state: ${trabajadoresRaw?.length || 0} trabajadores cargados`);
       if (trabajadoresRaw?.length > 0) {
         console.log(`   [DEBUG] Primer trabajador RAW:`, JSON.stringify(trabajadoresRaw[0]));
