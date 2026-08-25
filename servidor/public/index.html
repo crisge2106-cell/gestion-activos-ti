@@ -682,6 +682,12 @@ async function refreshState(silent){
   try{
     DB = await apiGet('/api/state');
     console.log('[REFRESH STATE] Datos recibidos');
+    console.log('[REFRESH STATE DEBUG] DB.equipos.length:', DB.equipos?.length);
+    if (DB.equipos?.length > 0) {
+      console.log('[REFRESH STATE DEBUG] Primer equipo:', JSON.stringify(DB.equipos[0]));
+      console.log('[REFRESH STATE DEBUG] DB.equipos[0].nombre:', DB.equipos[0].nombre, typeof DB.equipos[0].nombre);
+      console.log('[REFRESH STATE DEBUG] DB.equipos[0].id:', DB.equipos[0].id);
+    }
 
     setConn(true);
     renderAll();

@@ -1049,9 +1049,13 @@ async function handleRequest(req, res){
       const equiposRaw = await db.prepare('SELECT * FROM equipos ORDER BY id LIMIT 500').all();
       console.log(`📊 /api/state: ${equiposRaw?.length || 0} equipos cargados`);
       if (equiposRaw?.length > 0) {
-        console.log(`   Primer equipo:`, JSON.stringify(equiposRaw[0]).substring(0, 100));
+        console.log(`   [DEBUG] Primer equipo RAW:`, JSON.stringify(equiposRaw[0]));
+        console.log(`   [DEBUG] Tipo de primer equipo:`, typeof equiposRaw[0]);
+        console.log(`   [DEBUG] Keys del primer equipo:`, Object.keys(equiposRaw[0] || {}));
+        console.log(`   [DEBUG] equiposRaw[0].nombre:`, equiposRaw[0].nombre);
+        console.log(`   [DEBUG] equiposRaw[0].id:`, equiposRaw[0].id);
       }
-      const equipos = (equiposRaw || []).filter(e => e && typeof e === 'object').map(e=>{
+      const equipos = (equiposRaw || []).filter(e => e && typeof e === 'object').map((e, idx)=>{
         // Normalizar: MongoDB puede tener propiedades diferentes
         const obj = {
           id: e.id || e._id,
@@ -1069,6 +1073,9 @@ async function handleRequest(req, res){
           specs: {cpu: e.cpu || '', ram: e.ram || '', disco: e.disco || ''},
           origen: e.origen || ''
         };
+        if (idx === 0) {
+          console.log(`   [DEBUG] Primer equipo NORMALIZADO:`, JSON.stringify(obj));
+        }
         return obj;
       });
 

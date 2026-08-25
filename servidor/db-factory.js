@@ -311,6 +311,14 @@ function createMongoDBAdapter() {
     }
 
     const results = await collection.find(filter).sort(options.sort || {}).limit(options.limit || 0).toArray();
+
+    // Debug: log primer resultado si es equipos
+    if (tableName === 'equipos' && results.length > 0) {
+      console.log(`[DEBUG MongoDB] SELECT ${tableName}: ${results.length} docs`);
+      console.log(`[DEBUG MongoDB] Primer doc:`, JSON.stringify(results[0]));
+      console.log(`[DEBUG MongoDB] Tipo del primer doc:`, typeof results[0]);
+    }
+
     return results;
   }
 

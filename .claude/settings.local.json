@@ -60,7 +60,8 @@
       "Bash(grep -n \"^\\\\`\\\\\\)\\\\;\" server.js)",
       "Bash(grep -n '`\\);' server.js)",
       "Bash(git rm *)",
-      "PowerShell($seed = Get-Content \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\seed.json\" | ConvertFrom-Json; $seed.equipos[0] | ConvertTo-Json)"
+      "PowerShell($seed = Get-Content \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\seed.json\" | ConvertFrom-Json; $seed.equipos[0] | ConvertTo-Json)",
+      "Bash(xargs grep -l \"/api/state\")"
     ]
   }
 }
