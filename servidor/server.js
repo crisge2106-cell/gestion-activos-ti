@@ -380,16 +380,22 @@ async function clearAllTables(){
 
 async function seedIfEmpty(){
   try {
+    // Verificar si ya hay datos
     const result = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
     const count = result?.c || 0;
-    if(count > 0) return;
+    if(count > 0) {
+      console.log(`✅ Base de datos ya tiene ${count} equipos, skipeando carga de datos.`);
+      return;
+    }
   } catch (err) {
     console.log('No se pudo contar equipos, asumiendo BD vacía:', err.message);
   }
+
   if(!fs.existsSync(SEED_PATH)){
     console.log('No hay seed.json, se inicia con base de datos vacia.');
     return;
   }
+
   console.log('Base de datos vacia: cargando datos migrados desde seed.json ...');
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
   await bulkLoad(seed);
