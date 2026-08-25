@@ -475,10 +475,17 @@ async function isFreshStartNeeded(){
       return true;
     }
 
-    // EN VERCEL: Si tiene más de 250 equipos, sincronizar con seed.json
-    if(isVercel && count > 250) {
-      console.log(`[SEED] → VERCEL tiene ${count} equipos (esperaba ~228), SINCRONIZANDO con seed.json`);
-      return true;
+    // EN VERCEL: Sincronizar con seed.json actualizado
+    if(isVercel) {
+      const trabCount = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=1').get();
+      const trabTotal = trabCount?.c || 0;
+      console.log(`[SEED] VERCEL: ${count} equipos, ${trabTotal} trabajadores`);
+
+      // Si hay equipos pero pocos trabajadores, hacer fresh start para sincronizar
+      if(count > 0 && trabTotal < 100) {
+        console.log(`[SEED] → VERCEL necesita sincronización: ${trabTotal} trabajadores (esperaba 123)`);
+        return true;
+      }
     }
 
     // Verificar estructura del primer equipo

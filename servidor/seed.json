@@ -16,7 +16,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-001"
+      "nombre": null,
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0002",
@@ -34,7 +36,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-002"
+      "nombre": "IMP-002",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0003",
@@ -52,7 +56,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-003"
+      "nombre": "IMP-003",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0004",
@@ -70,7 +76,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-004"
+      "nombre": "IMP-004",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0005",
@@ -88,7 +96,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-005"
+      "nombre": "IMP-005",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0006",
@@ -106,7 +116,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-001"
+      "nombre": "CEL-001",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0007",
@@ -124,7 +136,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-049"
+      "nombre": "LPT-049",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0008",
@@ -142,7 +156,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-006"
+      "nombre": "IMP-006",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0009",
@@ -160,7 +176,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-074"
+      "nombre": "LPT-074",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0010",
@@ -178,7 +196,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "Contabilidad_06"
+      "nombre": "Contabilidad_06",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0011",
@@ -196,7 +216,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-002"
+      "nombre": "CEL-002",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0012",
@@ -214,7 +236,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-034"
+      "nombre": "LPT-034",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0013",
@@ -232,7 +256,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-003"
+      "nombre": "CEL-003",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0014",
@@ -250,7 +276,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-021"
+      "nombre": "LPT-021",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0015",
@@ -268,7 +296,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-004"
+      "nombre": "CEL-004",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0016",
@@ -286,7 +316,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-001"
+      "nombre": "LPT-001",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0017",
@@ -304,7 +336,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-005"
+      "nombre": "CEL-005",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0018",
@@ -322,7 +356,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-006"
+      "nombre": "CEL-006",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0019",
@@ -340,7 +376,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-028"
+      "nombre": "LPT-028",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0020",
@@ -358,7 +396,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-007"
+      "nombre": "CEL-007",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0021",
@@ -376,7 +416,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-055"
+      "nombre": "LPT-055",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0022",
@@ -394,7 +436,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-029"
+      "nombre": "LPT-029",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0023",
@@ -412,7 +456,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-008"
+      "nombre": "CEL-008",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0024",
@@ -430,7 +476,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-014"
+      "nombre": "LPT-014",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0025",
@@ -448,7 +496,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-009"
+      "nombre": "CEL-009",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0026",
@@ -466,7 +516,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-038"
+      "nombre": "LPT-038",
+      "especificaciones_tecnicas": "{\"hostname\":\"LPT-038\",\"numero_serie_disco\":\"N/A\",\"so\":\"Windows-11-10.0.26200-SP0\",\"cpu\":\"Intel64 Family 6 Model 186 Stepping 3, GenuineIntel\",\"ram_total_gb\":15.68,\"ram_usado_gb\":14.8,\"ram_disponible_gb\":0.88,\"disco_total_gb\":469.8,\"disco_usado_gb\":414.34,\"disco_disponible_gb\":55.46,\"usuario_windows\":\"CristopherMorePalaci\",\"timestamp\":null}",
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0027",
@@ -484,7 +536,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-010"
+      "nombre": "CEL-010",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0028",
@@ -502,7 +556,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-018"
+      "nombre": "LPT-018",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0029",
@@ -520,7 +576,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-011"
+      "nombre": "CEL-011",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0030",
@@ -538,7 +596,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-012"
+      "nombre": "CEL-012",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0031",
@@ -556,7 +616,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-035"
+      "nombre": "LPT-035",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0032",
@@ -574,7 +636,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-077"
+      "nombre": "LPT-077",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0033",
@@ -592,7 +656,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-013"
+      "nombre": "CEL-013",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0034",
@@ -610,7 +676,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXPA-ADM01"
+      "nombre": "AXPA-ADM01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0035",
@@ -628,7 +696,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-014"
+      "nombre": "CEL-014",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0036",
@@ -646,7 +716,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-032"
+      "nombre": "LPT-032",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0037",
@@ -664,7 +736,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-015"
+      "nombre": "CEL-015",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0038",
@@ -682,7 +756,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-065"
+      "nombre": "LPT-065",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0039",
@@ -700,7 +776,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-016"
+      "nombre": "CEL-016",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0040",
@@ -718,7 +796,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-057"
+      "nombre": "LPT-057",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0041",
@@ -736,7 +816,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-017"
+      "nombre": "CEL-017",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0042",
@@ -754,7 +836,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-005"
+      "nombre": "LPT-005",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0043",
@@ -772,7 +856,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-018"
+      "nombre": "CEL-018",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0044",
@@ -790,7 +876,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-070"
+      "nombre": "CEL-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0045",
@@ -808,7 +896,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-007"
+      "nombre": "IMP-007",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0046",
@@ -826,7 +916,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-002"
+      "nombre": "LPT-002",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0047",
@@ -844,7 +936,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-073"
+      "nombre": "LPT-073",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0048",
@@ -862,7 +956,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXLIM-FIN03"
+      "nombre": "AXLIM-FIN03",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0049",
@@ -880,7 +976,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-019"
+      "nombre": "CEL-019",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0050",
@@ -898,7 +996,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-083"
+      "nombre": "CEL-083",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0051",
@@ -916,7 +1016,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-020"
+      "nombre": "CEL-020",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0052",
@@ -934,7 +1036,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-051"
+      "nombre": "LPT-051",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0053",
@@ -952,7 +1056,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-021"
+      "nombre": "CEL-021",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0054",
@@ -970,7 +1076,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-036"
+      "nombre": "LPT-036",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0055",
@@ -988,7 +1096,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-022"
+      "nombre": "CEL-022",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0056",
@@ -1006,7 +1116,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-059"
+      "nombre": "LPT-059",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0057",
@@ -1024,7 +1136,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-023"
+      "nombre": "CEL-023",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0058",
@@ -1042,7 +1156,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-042"
+      "nombre": "LPT-042",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0059",
@@ -1060,7 +1176,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-050"
+      "nombre": "LPT-050",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0060",
@@ -1078,7 +1196,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-024"
+      "nombre": "CEL-024",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0061",
@@ -1096,7 +1216,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-025"
+      "nombre": "CEL-025",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0062",
@@ -1114,7 +1236,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-044"
+      "nombre": "LPT-044",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0063",
@@ -1132,7 +1256,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-026"
+      "nombre": "CEL-026",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0064",
@@ -1150,7 +1276,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-054"
+      "nombre": "LPT-054",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0065",
@@ -1168,7 +1296,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXPA-COME01"
+      "nombre": "AXPA-COME01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0066",
@@ -1186,7 +1316,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "SCA-001"
+      "nombre": "SCA-001",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0067",
@@ -1204,7 +1336,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-027"
+      "nombre": "CEL-027",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0068",
@@ -1222,7 +1356,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-037"
+      "nombre": "LPT-037",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0069",
@@ -1233,14 +1369,16 @@
       "fechaCompra": "2025-05-29",
       "sede": "PAITA",
       "estado": "Asignado",
-      "usuarioActual": "ANTONIO BAUTISTA",
+      "usuarioActual": "FRANK SALVADOR CORDOVA",
       "area": "TRANSPORTE",
       "observaciones": "",
       "cpu": "",
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-028"
+      "nombre": "CEL-028",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0070",
@@ -1258,7 +1396,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-029"
+      "nombre": "CEL-029",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0071",
@@ -1276,7 +1416,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-030"
+      "nombre": "CEL-030",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0072",
@@ -1294,7 +1436,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-031"
+      "nombre": "CEL-031",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0073",
@@ -1312,7 +1456,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-072"
+      "nombre": "LPT-072",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0074",
@@ -1330,7 +1476,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-032"
+      "nombre": "CEL-032",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0075",
@@ -1348,7 +1496,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-033"
+      "nombre": "CEL-033",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0076",
@@ -1366,7 +1516,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-034"
+      "nombre": "CEL-034",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0077",
@@ -1384,7 +1536,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-079"
+      "nombre": "LPT-079",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0078",
@@ -1402,7 +1556,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-084"
+      "nombre": "CEL-084",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0079",
@@ -1420,7 +1576,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-035"
+      "nombre": "CEL-035",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0080",
@@ -1438,7 +1596,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-036"
+      "nombre": "CEL-036",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0081",
@@ -1456,7 +1616,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-012"
+      "nombre": "IMP-012",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0082",
@@ -1474,7 +1636,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-037"
+      "nombre": "CEL-037",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0083",
@@ -1492,7 +1656,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-082"
+      "nombre": "CEL-082",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0084",
@@ -1503,32 +1669,36 @@
       "fechaCompra": "2024-10-01",
       "sede": "PAITA",
       "estado": "Asignado",
-      "usuarioActual": "DANIELA BENITES BASTIDAS",
+      "usuarioActual": "ZAIRA GARCIA CORREA",
       "area": "RRHH",
       "observaciones": "",
       "cpu": "",
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-039"
+      "nombre": "CEL-039",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0085",
       "tipo": "Escaner",
       "marca": "BROTHER",
       "modelo": "2200",
-      "serie": "S/N",
+      "serie": "U64871M7X112365",
       "fechaCompra": "2021-11-15",
       "sede": "PAITA",
       "estado": "Asignado",
-      "usuarioActual": "DANIELA BENITES BASTIDAS",
+      "usuarioActual": "ZAIRA GARCIA CORREA",
       "area": "RRHH",
       "observaciones": "",
       "cpu": "",
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXLI-VIG01"
+      "nombre": "AXLI-VIG01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0086",
@@ -1539,14 +1709,16 @@
       "fechaCompra": "2024-10-14",
       "sede": "PAITA",
       "estado": "Asignado",
-      "usuarioActual": "DANIELA BENITES BASTIDAS",
+      "usuarioActual": "ZAIRA GARCIA CORREA",
       "area": "RRHH",
       "observaciones": "",
       "cpu": "",
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-040"
+      "nombre": "LPT-040",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0087",
@@ -1564,7 +1736,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-040"
+      "nombre": "CEL-040",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0088",
@@ -1582,7 +1756,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-041"
+      "nombre": "LPT-041",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0089",
@@ -1600,7 +1776,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-075"
+      "nombre": "LPT-075",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0090",
@@ -1618,7 +1796,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXPA-ADM03"
+      "nombre": "AXPA-ADM03",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0091",
@@ -1636,7 +1816,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-041"
+      "nombre": "CEL-041",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0092",
@@ -1654,7 +1836,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-042"
+      "nombre": "CEL-042",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0093",
@@ -1672,7 +1856,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-039"
+      "nombre": "LPT-039",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0094",
@@ -1690,7 +1876,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-043"
+      "nombre": "CEL-043",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0095",
@@ -1708,7 +1896,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-053"
+      "nombre": "LPT-053",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0096",
@@ -1726,7 +1916,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-044"
+      "nombre": "CEL-044",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0097",
@@ -1744,7 +1936,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-026"
+      "nombre": "LPT-026",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0098",
@@ -1762,7 +1956,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-045"
+      "nombre": "CEL-045",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0099",
@@ -1780,7 +1976,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-048"
+      "nombre": "LPT-048",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0100",
@@ -1798,7 +1996,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-046"
+      "nombre": "CEL-046",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0101",
@@ -1816,7 +2016,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXILI-GER02"
+      "nombre": "AXILI-GER02",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0102",
@@ -1834,7 +2036,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-070"
+      "nombre": "CEL-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0103",
@@ -1852,7 +2056,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-008"
+      "nombre": "IMP-008",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0104",
@@ -1870,7 +2076,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-048"
+      "nombre": "CEL-048",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0105",
@@ -1888,7 +2096,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-070"
+      "nombre": "CEL-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0106",
@@ -1906,7 +2116,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-015"
+      "nombre": "LPT-015",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0107",
@@ -1924,7 +2136,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-066"
+      "nombre": "LPT-066",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0108",
@@ -1942,7 +2156,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-050"
+      "nombre": "CEL-050",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0109",
@@ -1960,7 +2176,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-003"
+      "nombre": "LPT-003",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0110",
@@ -1978,7 +2196,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-051"
+      "nombre": "CEL-051",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0111",
@@ -1996,7 +2216,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXLI-VIG01"
+      "nombre": "AXLI-VIG01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0112",
@@ -2014,7 +2236,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-045"
+      "nombre": "LPT-045",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0113",
@@ -2032,7 +2256,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-052"
+      "nombre": "CEL-052",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0114",
@@ -2050,7 +2276,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-023"
+      "nombre": "LPT-023",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0115",
@@ -2068,7 +2296,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-053"
+      "nombre": "CEL-053",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0116",
@@ -2086,7 +2316,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-054"
+      "nombre": "CEL-054",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0117",
@@ -2104,7 +2336,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-055"
+      "nombre": "CEL-055",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0118",
@@ -2122,7 +2356,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-009"
+      "nombre": "IMP-009",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0119",
@@ -2140,7 +2376,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-025"
+      "nombre": "LPT-025",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0120",
@@ -2158,7 +2396,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-030"
+      "nombre": "LPT-030",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0121",
@@ -2176,7 +2416,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-056"
+      "nombre": "CEL-056",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0122",
@@ -2194,7 +2436,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-056"
+      "nombre": "LPT-056",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0123",
@@ -2212,7 +2456,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-070"
+      "nombre": "CEL-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0124",
@@ -2230,7 +2476,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-006"
+      "nombre": "LPT-006",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0125",
@@ -2248,7 +2496,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-058"
+      "nombre": "CEL-058",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0126",
@@ -2266,7 +2516,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-076"
+      "nombre": "LPT-076",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0127",
@@ -2284,7 +2536,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXPA-LIQ01"
+      "nombre": "AXPA-LIQ01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0128",
@@ -2302,7 +2556,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-059"
+      "nombre": "CEL-059",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0129",
@@ -2320,7 +2576,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-008"
+      "nombre": "LPT-008",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0130",
@@ -2338,7 +2596,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-060"
+      "nombre": "CEL-060",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0131",
@@ -2356,7 +2616,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-058"
+      "nombre": "LPT-058",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0132",
@@ -2374,7 +2636,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-061"
+      "nombre": "CEL-061",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0133",
@@ -2392,7 +2656,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-062"
+      "nombre": "CEL-062",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0134",
@@ -2410,7 +2676,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-085"
+      "nombre": "CEL-085",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0135",
@@ -2428,7 +2696,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-010"
+      "nombre": "IMP-010",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0136",
@@ -2446,7 +2716,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "IMP-011"
+      "nombre": "IMP-011",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0137",
@@ -2464,7 +2736,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-063"
+      "nombre": "CEL-063",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0138",
@@ -2482,7 +2756,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-046"
+      "nombre": "LPT-046",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0139",
@@ -2500,7 +2776,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-064"
+      "nombre": "CEL-064",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0140",
@@ -2518,7 +2796,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-071"
+      "nombre": "LPT-071",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0141",
@@ -2536,7 +2816,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-065"
+      "nombre": "CEL-065",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0142",
@@ -2554,7 +2836,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-060"
+      "nombre": "LPT-060",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0143",
@@ -2572,7 +2856,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-066"
+      "nombre": "CEL-066",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0144",
@@ -2590,7 +2876,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-067"
+      "nombre": "LPT-067",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0145",
@@ -2608,7 +2896,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-067"
+      "nombre": "CEL-067",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0146",
@@ -2626,7 +2916,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-068"
+      "nombre": "CEL-068",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0147",
@@ -2644,7 +2936,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-069"
+      "nombre": "CEL-069",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0148",
@@ -2662,7 +2956,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-043"
+      "nombre": "LPT-043",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0149",
@@ -2680,7 +2976,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-070"
+      "nombre": "CEL-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0150",
@@ -2698,7 +2996,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-047"
+      "nombre": "LPT-047",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0151",
@@ -2716,7 +3016,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-071"
+      "nombre": "CEL-071",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0152",
@@ -2734,7 +3036,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-062"
+      "nombre": "LPT-062",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0153",
@@ -2752,7 +3056,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-072"
+      "nombre": "CEL-072",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0154",
@@ -2770,7 +3076,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-073"
+      "nombre": "CEL-073",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0155",
@@ -2788,7 +3096,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-074"
+      "nombre": "CEL-074",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0156",
@@ -2806,7 +3116,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "Contabilidad_06"
+      "nombre": "Contabilidad_06",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0157",
@@ -2824,7 +3136,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-020"
+      "nombre": "LPT-020",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0158",
@@ -2842,7 +3156,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-075"
+      "nombre": "CEL-075",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0159",
@@ -2860,7 +3176,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-076"
+      "nombre": "CEL-076",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0160",
@@ -2878,7 +3196,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "Contabilidad_06"
+      "nombre": "Contabilidad_06",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0161",
@@ -2896,7 +3216,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-077"
+      "nombre": "CEL-077",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0162",
@@ -2914,7 +3236,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-052"
+      "nombre": "LPT-052",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0163",
@@ -2932,7 +3256,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-078"
+      "nombre": "CEL-078",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0164",
@@ -2950,7 +3276,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-004"
+      "nombre": "LPT-004",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0165",
@@ -2968,7 +3296,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-079"
+      "nombre": "CEL-079",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0166",
@@ -2986,7 +3316,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "AXLI-CAL01"
+      "nombre": "AXLI-CAL01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0167",
@@ -3004,7 +3336,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-080"
+      "nombre": "CEL-080",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0168",
@@ -3022,7 +3356,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-078"
+      "nombre": "LPT-078",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0169",
@@ -3040,7 +3376,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-081"
+      "nombre": "CEL-081",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0170",
@@ -3058,7 +3396,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-082"
+      "nombre": "LPT-082",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0171",
@@ -3076,7 +3416,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-070"
+      "nombre": "LPT-070",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0172",
@@ -3094,7 +3436,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "CEL-082"
+      "nombre": "CEL-082",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0173",
@@ -3112,7 +3456,9 @@
       "ram": "",
       "disco": "",
       "origen": "Asignados",
-      "nombre": "LPT-046"
+      "nombre": "LPT-046",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0174",
@@ -3130,7 +3476,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-031"
+      "nombre": "LPT-031",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0175",
@@ -3148,7 +3496,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-080"
+      "nombre": "LPT-080-OLD",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0176",
@@ -3166,7 +3516,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-028"
+      "nombre": "LPT-028",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0177",
@@ -3184,7 +3536,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-001"
+      "nombre": "LPT-001",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0178",
@@ -3202,7 +3556,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-081"
+      "nombre": "LPT-081",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0179",
@@ -3220,7 +3576,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXPA-DOC02"
+      "nombre": "AXPA-DOC02",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0180",
@@ -3238,7 +3596,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "NOTEBOOK"
+      "nombre": "NOTEBOOK",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0181",
@@ -3256,7 +3616,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-023"
+      "nombre": "LPT-023",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0182",
@@ -3274,7 +3636,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXPA-DOC02"
+      "nombre": "AXPA-DOC02",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0183",
@@ -3292,7 +3656,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-003"
+      "nombre": "LPT-003",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0184",
@@ -3310,7 +3676,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXLI-OPER06"
+      "nombre": "AXLI-OPER06",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0185",
@@ -3328,7 +3696,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXLIM-OPER09"
+      "nombre": "AXLIM-OPER09",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0186",
@@ -3346,7 +3716,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXLI-OPER07"
+      "nombre": "AXLI-OPER07",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0187",
@@ -3364,7 +3736,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-009"
+      "nombre": "LPT-009",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0188",
@@ -3382,7 +3756,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-017"
+      "nombre": "LPT-017",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0189",
@@ -3400,7 +3776,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-013"
+      "nombre": "LPT-013",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0190",
@@ -3418,7 +3796,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXLI-LEG01"
+      "nombre": "AXLI-LEG01",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0191",
@@ -3436,7 +3816,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-064"
+      "nombre": "LPT-064",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0192",
@@ -3454,7 +3836,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "CEL-043"
+      "nombre": "CEL-043",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0193",
@@ -3472,7 +3856,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-053"
+      "nombre": "LPT-053",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0194",
@@ -3490,7 +3876,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "AXPA-DOC03"
+      "nombre": "AXPA-DOC03",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0195",
@@ -3508,7 +3896,9 @@
       "ram": "",
       "disco": "",
       "origen": "Laptop en custodia",
-      "nombre": "LPT-012"
+      "nombre": "LPT-012",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0196",
@@ -3526,7 +3916,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-006"
+      "nombre": "CEL-006",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0197",
@@ -3544,7 +3936,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-033"
+      "nombre": "CEL-033",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0198",
@@ -3562,7 +3956,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-086"
+      "nombre": "CEL-086",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0199",
@@ -3580,7 +3976,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-087"
+      "nombre": "CEL-087",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0200",
@@ -3598,7 +3996,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-088"
+      "nombre": "CEL-088",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0201",
@@ -3616,7 +4016,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-089"
+      "nombre": "CEL-089",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0202",
@@ -3634,7 +4036,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-090"
+      "nombre": "CEL-090",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0203",
@@ -3652,7 +4056,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-091"
+      "nombre": "CEL-091",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0204",
@@ -3670,7 +4076,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-092"
+      "nombre": "CEL-092",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0205",
@@ -3688,7 +4096,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-059"
+      "nombre": "CEL-059",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0206",
@@ -3706,7 +4116,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-093"
+      "nombre": "CEL-093",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0207",
@@ -3724,7 +4136,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-094"
+      "nombre": "CEL-094",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0208",
@@ -3742,7 +4156,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-025"
+      "nombre": "CEL-025",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0209",
@@ -3760,7 +4176,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-095"
+      "nombre": "CEL-095",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0210",
@@ -3778,7 +4196,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-096"
+      "nombre": "CEL-096",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0211",
@@ -3796,7 +4216,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-097"
+      "nombre": "CEL-097",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0212",
@@ -3814,7 +4236,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-098"
+      "nombre": "CEL-098",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0213",
@@ -3832,7 +4256,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-099"
+      "nombre": "CEL-099",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0214",
@@ -3850,7 +4276,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-033"
+      "nombre": "CEL-033",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0215",
@@ -3868,7 +4296,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-100"
+      "nombre": "CEL-100",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0216",
@@ -3886,7 +4316,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-101"
+      "nombre": "CEL-101",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0217",
@@ -3904,7 +4336,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-102"
+      "nombre": "CEL-102",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0218",
@@ -3922,7 +4356,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-103"
+      "nombre": "CEL-103",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0219",
@@ -3931,16 +4367,18 @@
       "modelo": "REDMI NOTE 14",
       "serie": "862844076416104",
       "fechaCompra": "2025-07-03",
-      "sede": "Paita",
-      "estado": "Disponible",
-      "usuarioActual": "",
-      "area": "",
+      "sede": "PAITA",
+      "estado": "Asignado",
+      "usuarioActual": "BRAYAN STECK GALLO ORDINOLA",
+      "area": "TRANSPORTE",
       "observaciones": "DEVUELTO POR CESE JESUS MEJIA",
       "cpu": "",
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-104"
+      "nombre": "CEL-104",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0220",
@@ -3958,7 +4396,9 @@
       "ram": "",
       "disco": "",
       "origen": "Devueltos - Vendidos",
-      "nombre": "CEL-105"
+      "nombre": "CEL-105",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0221",
@@ -3976,7 +4416,9 @@
       "ram": "",
       "disco": "",
       "origen": "Perdida o robo",
-      "nombre": "CEL-106"
+      "nombre": "CEL-106",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0222",
@@ -3994,7 +4436,9 @@
       "ram": "",
       "disco": "",
       "origen": "UsuarioLima",
-      "nombre": "ACC-007"
+      "nombre": "ACC-007",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0223",
@@ -4012,7 +4456,9 @@
       "ram": "",
       "disco": "",
       "origen": "UsuarioLima",
-      "nombre": "ACC-008"
+      "nombre": "ACC-008",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0224",
@@ -4030,7 +4476,9 @@
       "ram": "",
       "disco": "",
       "origen": "UsuarioLima",
-      "nombre": "ACC-009"
+      "nombre": "ACC-009",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0225",
@@ -4048,7 +4496,9 @@
       "ram": "",
       "disco": "",
       "origen": "Mouse",
-      "nombre": "ACC-010"
+      "nombre": "ACC-010",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0226",
@@ -4066,7 +4516,9 @@
       "ram": "",
       "disco": "",
       "origen": "Mouse",
-      "nombre": "ACC-011"
+      "nombre": "ACC-011",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0227",
@@ -4084,7 +4536,9 @@
       "ram": "",
       "disco": "",
       "origen": "Mouse",
-      "nombre": "ACC-012"
+      "nombre": "ACC-012",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     },
     {
       "id": "EQ-0228",
@@ -4102,7 +4556,89 @@
       "ram": "",
       "disco": "",
       "origen": "Mouse",
-      "nombre": "ACC-013"
+      "nombre": "ACC-013",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
+    },
+    {
+      "id": "EQ-0230",
+      "tipo": "Accesorio",
+      "marca": "GENIUS",
+      "modelo": "ECO-8100",
+      "serie": "35I98264700435",
+      "fechaCompra": "2026-07-10",
+      "sede": "PAITA",
+      "estado": "Asignado",
+      "usuarioActual": "ZAIRA GARCIA CORREA",
+      "area": "RRHH",
+      "observaciones": "",
+      "cpu": "",
+      "ram": "",
+      "disco": "",
+      "origen": "Manual",
+      "nombre": "ACC-007",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
+    },
+    {
+      "id": "EQ-0237",
+      "tipo": "LIN",
+      "marca": "",
+      "modelo": "",
+      "serie": "947258559",
+      "fechaCompra": null,
+      "sede": "PAITA",
+      "estado": "Asignado",
+      "usuarioActual": "ZAIRA GARCIA CORREA",
+      "area": "RRHH",
+      "observaciones": "Línea móvil",
+      "cpu": "",
+      "ram": "",
+      "disco": "",
+      "origen": "Manual",
+      "nombre": "LIN-0001",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
+    },
+    {
+      "id": "EQ-0238",
+      "tipo": "LIN",
+      "marca": "",
+      "modelo": "",
+      "serie": "946152226",
+      "fechaCompra": null,
+      "sede": "PAITA",
+      "estado": "Asignado",
+      "usuarioActual": "BRAYAN STECK GALLO ORDINOLA",
+      "area": "TRANSPORTE",
+      "observaciones": "Línea móvil",
+      "cpu": "",
+      "ram": "",
+      "disco": "",
+      "origen": "Manual",
+      "nombre": "LIN-0002",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
+    },
+    {
+      "id": "EQ-0239",
+      "tipo": "Laptop",
+      "marca": "LENOVO",
+      "modelo": "THINKPAD E16",
+      "serie": "PF66MHTV",
+      "fechaCompra": "2026-08-07",
+      "sede": "PAITA",
+      "estado": "Asignado",
+      "usuarioActual": "KEYSI CHIROQUE FARIAS",
+      "area": "CUSTOMER",
+      "observaciones": "",
+      "cpu": "ULTRA 5",
+      "ram": "16",
+      "disco": "",
+      "origen": "Manual",
+      "nombre": "LPT-080",
+      "especificaciones_tecnicas": null,
+      "ultima_actualizacion_inventario": null
     }
   ],
   "movimientos": [
@@ -6591,750 +7127,3934 @@
       "sede": "Paita",
       "observaciones": "",
       "origen": "Mouse"
+    },
+    {
+      "id": "MV-0229",
+      "tipo": "Devolucion por salida",
+      "fecha": "2026-07-13",
+      "trabajador": "ANTONIO BAUTISTA",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0230",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-20",
+      "trabajador": "FRANK SALVADOR CORDOVA",
+      "dni": "41989541",
+      "area": "TRANSPORTE",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0231",
+      "tipo": "Devolucion por salida",
+      "fecha": "2026-05-13",
+      "trabajador": "DANIELA BENITES BASTIDAS",
+      "dni": "",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0232",
+      "tipo": "Devolucion por salida",
+      "fecha": "2026-05-13",
+      "trabajador": "DANIELA BENITES BASTIDAS",
+      "dni": "",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0233",
+      "tipo": "Devolucion por salida",
+      "fecha": "2026-05-13",
+      "trabajador": "DANIELA BENITES BASTIDAS",
+      "dni": "",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0234",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-20",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0235",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-20",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "USADO",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0236",
+      "tipo": "Devolucion por salida",
+      "fecha": "2026-07-20",
+      "trabajador": "DANIELA BENITES BASTIDAS",
+      "dni": "",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0237",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-20",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0238",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-27",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0239",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-27",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0240",
+      "tipo": "Asignacion",
+      "fecha": "2026-07-28",
+      "trabajador": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0241",
+      "tipo": "Asignacion",
+      "fecha": "2026-08-20",
+      "trabajador": "BRAYAN STECK GALLO ORDINOLA",
+      "dni": "47017700",
+      "area": "TRANSPORTE",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    },
+    {
+      "id": "MV-0242",
+      "tipo": "Asignacion",
+      "fecha": "2026-08-20",
+      "trabajador": "KEYSI CHIROQUE FARIAS",
+      "dni": "70087470",
+      "area": "CUSTOMER",
+      "sede": "PAITA",
+      "observaciones": "",
+      "origen": "Manual"
+    }
+  ],
+  "movimiento_items": [
+    {
+      "id": 1,
+      "movimientoId": "MV-0001",
+      "equipoId": "EQ-0001",
+      "cantidad": 1,
+      "descripcion": "Impresora RICOH IM 430",
+      "marcaModelo": "RICOH IM 430",
+      "serieEstado": "3350P602970",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 2,
+      "movimientoId": "MV-0002",
+      "equipoId": "EQ-0002",
+      "cantidad": 1,
+      "descripcion": "Impresora EPSON L395",
+      "marcaModelo": "EPSON L395",
+      "serieEstado": "X2P6252519",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 3,
+      "movimientoId": "MV-0003",
+      "equipoId": "EQ-0003",
+      "cantidad": 1,
+      "descripcion": "Impresora EPSON WF-C5710 SERIES",
+      "marcaModelo": "EPSON WF-C5710 SERIES",
+      "serieEstado": "X3B2013197",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 4,
+      "movimientoId": "MV-0004",
+      "equipoId": "EQ-0004",
+      "cantidad": 1,
+      "descripcion": "Impresora RICOH M400 FW",
+      "marcaModelo": "RICOH M400 FW",
+      "serieEstado": "701933230H3WK",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 5,
+      "movimientoId": "MV-0005",
+      "equipoId": "EQ-0005",
+      "cantidad": 1,
+      "descripcion": "Impresora RICOH M400 FW",
+      "marcaModelo": "RICOH M400 FW",
+      "serieEstado": "701930310FN1X",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 6,
+      "movimientoId": "MV-0006",
+      "equipoId": "EQ-0006",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862378074793321.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 7,
+      "movimientoId": "MV-0007",
+      "equipoId": "EQ-0007",
+      "cantidad": 1,
+      "descripcion": "PC Lenovo THINKCENTRE M70 GEN 5",
+      "marcaModelo": "Lenovo THINKCENTRE M70 GEN 5",
+      "serieEstado": "MZ01908T",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 8,
+      "movimientoId": "MV-0008",
+      "equipoId": "EQ-0008",
+      "cantidad": 1,
+      "descripcion": "Impresora EPSON M200",
+      "marcaModelo": "EPSON M200",
+      "serieEstado": "UKTY000580",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 9,
+      "movimientoId": "MV-0009",
+      "equipoId": "EQ-0009",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5YJ48A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 10,
+      "movimientoId": "MV-0010",
+      "equipoId": "EQ-0010",
+      "cantidad": 1,
+      "descripcion": "PC OEM OEM",
+      "marcaModelo": "OEM OEM",
+      "serieEstado": "OEM",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 11,
+      "movimientoId": "MV-0011",
+      "equipoId": "EQ-0011",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "869244071071462",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 12,
+      "movimientoId": "MV-0012",
+      "equipoId": "EQ-0012",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD SLIM 3",
+      "marcaModelo": "Lenovo IDEAPAD SLIM 3",
+      "serieEstado": "PF4ZKDBN",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 13,
+      "movimientoId": "MV-0013",
+      "equipoId": "EQ-0013",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "860688076881847",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 14,
+      "movimientoId": "MV-0014",
+      "equipoId": "EQ-0014",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 82C5",
+      "marcaModelo": "Lenovo 82C5",
+      "serieEstado": "PF2ERC7Y",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 15,
+      "movimientoId": "MV-0015",
+      "equipoId": "EQ-0015",
+      "cantidad": 1,
+      "descripcion": "Celular OPPO Reno 13 F 5G",
+      "marcaModelo": "OPPO Reno 13 F 5G",
+      "serieEstado": "860380070100198",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 16,
+      "movimientoId": "MV-0016",
+      "equipoId": "EQ-0016",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "PF39ALJG",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 17,
+      "movimientoId": "MV-0017",
+      "equipoId": "EQ-0017",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "869912062772526",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 18,
+      "movimientoId": "MV-0018",
+      "equipoId": "EQ-0018",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE PRO 13",
+      "marcaModelo": "XIAOMI REDMI NOTE PRO 13",
+      "serieEstado": "865201071629743",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 19,
+      "movimientoId": "MV-0019",
+      "equipoId": "EQ-0019",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad Slim 3 15IAH8",
+      "marcaModelo": "Lenovo IdeaPad Slim 3 15IAH8",
+      "serieEstado": "PF4DPWW2",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 20,
+      "movimientoId": "MV-0020",
+      "equipoId": "EQ-0020",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374071708164",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 21,
+      "movimientoId": "MV-0021",
+      "equipoId": "EQ-0021",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5APW0K",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 22,
+      "movimientoId": "MV-0022",
+      "equipoId": "EQ-0022",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS X509FJ",
+      "marcaModelo": "ASUS X509FJ",
+      "serieEstado": "K8N0CX15N931353",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 23,
+      "movimientoId": "MV-0023",
+      "equipoId": "EQ-0023",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374071325746",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 24,
+      "movimientoId": "MV-0024",
+      "equipoId": "EQ-0024",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS ZEMBOOK S 14",
+      "marcaModelo": "ASUS ZEMBOOK S 14",
+      "serieEstado": "S8N0KD00781735F",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 25,
+      "movimientoId": "MV-0025",
+      "equipoId": "EQ-0025",
+      "cantidad": 1,
+      "descripcion": "Celular SAMSUNG A35",
+      "marcaModelo": "SAMSUNG A35",
+      "serieEstado": "356263631221961",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 26,
+      "movimientoId": "MV-0026",
+      "equipoId": "EQ-0026",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E14",
+      "marcaModelo": "Lenovo THINKPAD E14",
+      "serieEstado": "PF4X7CFC",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 27,
+      "movimientoId": "MV-0027",
+      "equipoId": "EQ-0027",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201071403602",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 28,
+      "movimientoId": "MV-0028",
+      "equipoId": "EQ-0028",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD S340",
+      "marcaModelo": "Lenovo IDEAPAD S340",
+      "serieEstado": "MP1T6BRG",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 29,
+      "movimientoId": "MV-0029",
+      "equipoId": "EQ-0029",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869244071241347.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 30,
+      "movimientoId": "MV-0030",
+      "equipoId": "EQ-0030",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844074873405",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 31,
+      "movimientoId": "MV-0031",
+      "equipoId": "EQ-0031",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF4XKY9C",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 32,
+      "movimientoId": "MV-0032",
+      "equipoId": "EQ-0032",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5YDPQD",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 33,
+      "movimientoId": "MV-0033",
+      "equipoId": "EQ-0033",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 12 S",
+      "marcaModelo": "XIAOMI REDMI NOTE 12 S",
+      "serieEstado": "868379060231924",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 34,
+      "movimientoId": "MV-0034",
+      "equipoId": "EQ-0034",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS X513EA",
+      "marcaModelo": "ASUS X513EA",
+      "serieEstado": "M6N0CV09R218237",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 35,
+      "movimientoId": "MV-0035",
+      "equipoId": "EQ-0035",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 C",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 C",
+      "serieEstado": "860820073242968",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 36,
+      "movimientoId": "MV-0036",
+      "equipoId": "EQ-0036",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD SLIM 5",
+      "marcaModelo": "Lenovo IDEAPAD SLIM 5",
+      "serieEstado": "MP2MQVLR",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 37,
+      "movimientoId": "MV-0037",
+      "equipoId": "EQ-0037",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374070910944",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 38,
+      "movimientoId": "MV-0038",
+      "equipoId": "EQ-0038",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5QPDBL\t",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 39,
+      "movimientoId": "MV-0039",
+      "equipoId": "EQ-0039",
+      "cantidad": 1,
+      "descripcion": "Celular APPLE IPHONE 13",
+      "marcaModelo": "APPLE IPHONE 13",
+      "serieEstado": "356228321561133",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 40,
+      "movimientoId": "MV-0040",
+      "equipoId": "EQ-0040",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E14 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E14 Gen 2",
+      "serieEstado": "PF5K06DZ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 41,
+      "movimientoId": "MV-0041",
+      "equipoId": "EQ-0041",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13",
+      "marcaModelo": "XIAOMI REDMI NOTE 13",
+      "serieEstado": "869244070937028 ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 42,
+      "movimientoId": "MV-0042",
+      "equipoId": "EQ-0042",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "PF38HTEB",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 43,
+      "movimientoId": "MV-0043",
+      "equipoId": "EQ-0043",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869912060317704",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 44,
+      "movimientoId": "MV-0044",
+      "equipoId": "EQ-0044",
+      "cantidad": 1,
+      "descripcion": "PC Compatible ASUS B85M-G R2.0",
+      "marcaModelo": "Compatible ASUS B85M-G R2.0",
+      "serieEstado": "N/A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 45,
+      "movimientoId": "MV-0045",
+      "equipoId": "EQ-0045",
+      "cantidad": 1,
+      "descripcion": "Impresora EPSON M205 Series",
+      "marcaModelo": "EPSON M205 Series",
+      "serieEstado": "534541593031303810",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 46,
+      "movimientoId": "MV-0046",
+      "equipoId": "EQ-0046",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "\tPF3985MZ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 47,
+      "movimientoId": "MV-0047",
+      "equipoId": "EQ-0047",
+      "cantidad": 1,
+      "descripcion": "Laptop LENOVO THINKPAD GEN 3",
+      "marcaModelo": "LENOVO THINKPAD GEN 3",
+      "serieEstado": "PF5YDX1P",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 48,
+      "movimientoId": "MV-0048",
+      "equipoId": "EQ-0048",
+      "cantidad": 1,
+      "descripcion": "Laptop HP Notebook",
+      "marcaModelo": "HP Notebook",
+      "serieEstado": "\t5CG71260GS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 49,
+      "movimientoId": "MV-0049",
+      "equipoId": "EQ-0049",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374070905829",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 50,
+      "movimientoId": "MV-0050",
+      "equipoId": "EQ-0050",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 11",
+      "marcaModelo": "XIAOMI REDMI NOTE 11",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 51,
+      "movimientoId": "MV-0051",
+      "equipoId": "EQ-0051",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374070914607",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 52,
+      "movimientoId": "MV-0052",
+      "equipoId": "EQ-0052",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E14 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E14 Gen 2",
+      "serieEstado": "PF5C8YXC",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 53,
+      "movimientoId": "MV-0053",
+      "equipoId": "EQ-0053",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 11",
+      "marcaModelo": "XIAOMI REDMI NOTE 11",
+      "serieEstado": "864469067939308",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 54,
+      "movimientoId": "MV-0054",
+      "equipoId": "EQ-0054",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS VIVOBOOKI K3504ZA",
+      "marcaModelo": "ASUS VIVOBOOKI K3504ZA",
+      "serieEstado": "RCN0CX01D64149G",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 55,
+      "movimientoId": "MV-0055",
+      "equipoId": "EQ-0055",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862378070879868/11",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 56,
+      "movimientoId": "MV-0056",
+      "equipoId": "EQ-0056",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16",
+      "marcaModelo": "Lenovo ThinkPad E16",
+      "serieEstado": "PF5GKMML",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 57,
+      "movimientoId": "MV-0057",
+      "equipoId": "EQ-0057",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076420262",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 58,
+      "movimientoId": "MV-0058",
+      "equipoId": "EQ-0058",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF57NRCH",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 59,
+      "movimientoId": "MV-0059",
+      "equipoId": "EQ-0059",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5ABSGD",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 60,
+      "movimientoId": "MV-0060",
+      "equipoId": "EQ-0060",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869341078036462",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 61,
+      "movimientoId": "MV-0061",
+      "equipoId": "EQ-0061",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 12S",
+      "marcaModelo": "XIAOMI Redmi Note 12S",
+      "serieEstado": "86379060209425.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 62,
+      "movimientoId": "MV-0062",
+      "equipoId": "EQ-0062",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5DD4FV",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 63,
+      "movimientoId": "MV-0063",
+      "equipoId": "EQ-0063",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "860319070466787.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 64,
+      "movimientoId": "MV-0064",
+      "equipoId": "EQ-0064",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5APS1W",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 65,
+      "movimientoId": "MV-0065",
+      "equipoId": "EQ-0065",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 82C5",
+      "marcaModelo": "Lenovo 82C5",
+      "serieEstado": "PF2ERCBL",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 66,
+      "movimientoId": "MV-0066",
+      "equipoId": "EQ-0066",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 67,
+      "movimientoId": "MV-0067",
+      "equipoId": "EQ-0067",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076436045",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 68,
+      "movimientoId": "MV-0068",
+      "equipoId": "EQ-0068",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF4XKW25",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 69,
+      "movimientoId": "MV-0069",
+      "equipoId": "EQ-0069",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076098464",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 70,
+      "movimientoId": "MV-0070",
+      "equipoId": "EQ-0070",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844074607787",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 71,
+      "movimientoId": "MV-0071",
+      "equipoId": "EQ-0071",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201072597303",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 72,
+      "movimientoId": "MV-0072",
+      "equipoId": "EQ-0072",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346077001122",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 73,
+      "movimientoId": "MV-0073",
+      "equipoId": "EQ-0073",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16",
+      "marcaModelo": "Lenovo THINKPAD E16",
+      "serieEstado": "PF5SD41B",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 74,
+      "movimientoId": "MV-0074",
+      "equipoId": "EQ-0074",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201072751686",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 75,
+      "movimientoId": "MV-0075",
+      "equipoId": "EQ-0075",
+      "cantidad": 1,
+      "descripcion": "Celular OPPO RENO 11F",
+      "marcaModelo": "OPPO RENO 11F",
+      "serieEstado": "862053070357195",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 76,
+      "movimientoId": "MV-0076",
+      "equipoId": "EQ-0076",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844074613561",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 77,
+      "movimientoId": "MV-0077",
+      "equipoId": "EQ-0077",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16",
+      "marcaModelo": "Lenovo THINKPAD E16",
+      "serieEstado": "PF5QCF60",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 78,
+      "movimientoId": "MV-0078",
+      "equipoId": "EQ-0078",
+      "cantidad": 1,
+      "descripcion": "Celular OPPO CPH2699",
+      "marcaModelo": "OPPO CPH2699",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 79,
+      "movimientoId": "MV-0079",
+      "equipoId": "EQ-0079",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201071599268",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 80,
+      "movimientoId": "MV-0080",
+      "equipoId": "EQ-0080",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862378070869588",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 81,
+      "movimientoId": "MV-0081",
+      "equipoId": "EQ-0081",
+      "cantidad": 1,
+      "descripcion": "Impresora BROTHER MF 6730",
+      "marcaModelo": "BROTHER MF 6730",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 82,
+      "movimientoId": "MV-0082",
+      "equipoId": "EQ-0082",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844074577725",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 83,
+      "movimientoId": "MV-0083",
+      "equipoId": "EQ-0083",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346077034107",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 84,
+      "movimientoId": "MV-0084",
+      "equipoId": "EQ-0084",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "862058076996565",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 85,
+      "movimientoId": "MV-0085",
+      "equipoId": "EQ-0085",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "S/N",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 86,
+      "movimientoId": "MV-0086",
+      "equipoId": "EQ-0086",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF547SVS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 87,
+      "movimientoId": "MV-0087",
+      "equipoId": "EQ-0087",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "860688076881888",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 88,
+      "movimientoId": "MV-0088",
+      "equipoId": "EQ-0088",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF57NPXN",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 89,
+      "movimientoId": "MV-0089",
+      "equipoId": "EQ-0089",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5YKCP6",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 90,
+      "movimientoId": "MV-0090",
+      "equipoId": "EQ-0090",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 82C5",
+      "marcaModelo": "Lenovo 82C5",
+      "serieEstado": "PF2ERC8B",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 91,
+      "movimientoId": "MV-0091",
+      "equipoId": "EQ-0091",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374070908427",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 92,
+      "movimientoId": "MV-0092",
+      "equipoId": "EQ-0092",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "862058076851646",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 93,
+      "movimientoId": "MV-0093",
+      "equipoId": "EQ-0093",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 1",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 1",
+      "serieEstado": "PF54TH1Z",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 94,
+      "movimientoId": "MV-0094",
+      "equipoId": "EQ-0094",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869912063449140.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 95,
+      "movimientoId": "MV-0095",
+      "equipoId": "EQ-0095",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5AQL45",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 96,
+      "movimientoId": "MV-0096",
+      "equipoId": "EQ-0096",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201071569667",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 97,
+      "movimientoId": "MV-0097",
+      "equipoId": "EQ-0097",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD 3 15ALC6",
+      "marcaModelo": "Lenovo IDEAPAD 3 15ALC6",
+      "serieEstado": "PF4AS5NZ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 98,
+      "movimientoId": "MV-0098",
+      "equipoId": "EQ-0098",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374070905225",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 99,
+      "movimientoId": "MV-0099",
+      "equipoId": "EQ-0099",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF5DCKAE",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 100,
+      "movimientoId": "MV-0100",
+      "equipoId": "EQ-0100",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076924602",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 101,
+      "movimientoId": "MV-0101",
+      "equipoId": "EQ-0101",
+      "cantidad": 1,
+      "descripcion": "Laptop HP ENVY x360 Convertible",
+      "marcaModelo": "HP ENVY x360 Convertible",
+      "serieEstado": "8CG1103S54",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 102,
+      "movimientoId": "MV-0102",
+      "equipoId": "EQ-0102",
+      "cantidad": 1,
+      "descripcion": "Celular N/A N/A",
+      "marcaModelo": "N/A N/A",
+      "serieEstado": "N/A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 103,
+      "movimientoId": "MV-0103",
+      "equipoId": "EQ-0103",
+      "cantidad": 1,
+      "descripcion": "Impresora HP  LASER JET P 1102w",
+      "marcaModelo": "HP  LASER JET P 1102w",
+      "serieEstado": "YJ38X04PR1a",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 104,
+      "movimientoId": "MV-0104",
+      "equipoId": "EQ-0104",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "867274075963341",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 105,
+      "movimientoId": "MV-0105",
+      "equipoId": "EQ-0105",
+      "cantidad": 1,
+      "descripcion": "Celular N/A N/A",
+      "marcaModelo": "N/A N/A",
+      "serieEstado": "N/A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 106,
+      "movimientoId": "MV-0106",
+      "equipoId": "EQ-0106",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS ZenBook UX325EA",
+      "marcaModelo": "ASUS ZenBook UX325EA",
+      "serieEstado": "M6N0LP01V836233",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 107,
+      "movimientoId": "MV-0107",
+      "equipoId": "EQ-0107",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS ZEMBOOK S 14 UX5406SA",
+      "marcaModelo": "ASUS ZEMBOOK S 14 UX5406SA",
+      "serieEstado": "SCN0KD00916551D",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 108,
+      "movimientoId": "MV-0108",
+      "equipoId": "EQ-0108",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869912063349746.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 109,
+      "movimientoId": "MV-0109",
+      "equipoId": "EQ-0109",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "PF38HZBA",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 110,
+      "movimientoId": "MV-0110",
+      "equipoId": "EQ-0110",
+      "cantidad": 1,
+      "descripcion": "Celular SAMSUNG GALAXY A35 5G",
+      "marcaModelo": "SAMSUNG GALAXY A35 5G",
+      "serieEstado": "356263631218355/01",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 111,
+      "movimientoId": "MV-0111",
+      "equipoId": "EQ-0111",
+      "cantidad": 1,
+      "descripcion": "PC ASUS \tB85M-G R2.0",
+      "marcaModelo": "ASUS \tB85M-G R2.0",
+      "serieEstado": "S/N",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 112,
+      "movimientoId": "MV-0112",
+      "equipoId": "EQ-0112",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF5DCH2H",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 113,
+      "movimientoId": "MV-0113",
+      "equipoId": "EQ-0113",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI Note 13",
+      "marcaModelo": "XIAOMI REDMI Note 13",
+      "serieEstado": "869244079906263",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 114,
+      "movimientoId": "MV-0114",
+      "equipoId": "EQ-0114",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5GKH5F",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 115,
+      "movimientoId": "MV-0115",
+      "equipoId": "EQ-0115",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076415783/05",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 116,
+      "movimientoId": "MV-0116",
+      "equipoId": "EQ-0116",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201072706763",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 117,
+      "movimientoId": "MV-0117",
+      "equipoId": "EQ-0117",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869244071001246",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 118,
+      "movimientoId": "MV-0118",
+      "equipoId": "EQ-0118",
+      "cantidad": 1,
+      "descripcion": "Impresora HP Laser jet P1102w",
+      "marcaModelo": "HP Laser jet P1102w",
+      "serieEstado": "RK16NPZPR1a",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 119,
+      "movimientoId": "MV-0119",
+      "equipoId": "EQ-0119",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 5 15ITL05",
+      "marcaModelo": "Lenovo IdeaPad 5 15ITL05",
+      "serieEstado": "PF481HCQ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 120,
+      "movimientoId": "MV-0120",
+      "equipoId": "EQ-0120",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD SLIM 5",
+      "marcaModelo": "Lenovo IDEAPAD SLIM 5",
+      "serieEstado": "MP2HCZBT",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 121,
+      "movimientoId": "MV-0121",
+      "equipoId": "EQ-0121",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346076997882",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 122,
+      "movimientoId": "MV-0122",
+      "equipoId": "EQ-0122",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16",
+      "marcaModelo": "Lenovo ThinkPad E16",
+      "serieEstado": "PF5GKS5F",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 123,
+      "movimientoId": "MV-0123",
+      "equipoId": "EQ-0123",
+      "cantidad": 1,
+      "descripcion": "Celular N/A N/A",
+      "marcaModelo": "N/A N/A",
+      "serieEstado": "N/A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 124,
+      "movimientoId": "MV-0124",
+      "equipoId": "EQ-0124",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 81AX",
+      "marcaModelo": "Lenovo 81AX",
+      "serieEstado": "R90QPY4Z",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 125,
+      "movimientoId": "MV-0125",
+      "equipoId": "EQ-0125",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201071577165",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 126,
+      "movimientoId": "MV-0126",
+      "equipoId": "EQ-0126",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5YKBHJ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 127,
+      "movimientoId": "MV-0127",
+      "equipoId": "EQ-0127",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS X513EA",
+      "marcaModelo": "ASUS X513EA",
+      "serieEstado": "M6N0CV09R326232",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 128,
+      "movimientoId": "MV-0128",
+      "equipoId": "EQ-0128",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "860223064413203",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 129,
+      "movimientoId": "MV-0129",
+      "equipoId": "EQ-0129",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 5 15ITL05",
+      "marcaModelo": "Lenovo IdeaPad 5 15ITL05",
+      "serieEstado": "PF3K4MXK",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 130,
+      "movimientoId": "MV-0130",
+      "equipoId": "EQ-0130",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 14 PRO",
+      "marcaModelo": "XIAOMI Redmi Note 14 PRO",
+      "serieEstado": "862844074605468",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 131,
+      "movimientoId": "MV-0131",
+      "equipoId": "EQ-0131",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5GKAC0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 132,
+      "movimientoId": "MV-0132",
+      "equipoId": "EQ-0132",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076418027",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 133,
+      "movimientoId": "MV-0133",
+      "equipoId": "EQ-0133",
+      "cantidad": 1,
+      "descripcion": "Celular APPLE IPAD",
+      "marcaModelo": "APPLE IPAD",
+      "serieEstado": "GG7G42PNQ16Q",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 134,
+      "movimientoId": "MV-0134",
+      "equipoId": "EQ-0134",
+      "cantidad": 1,
+      "descripcion": "Celular APPLE IPHONE 13 PRO MAX",
+      "marcaModelo": "APPLE IPHONE 13 PRO MAX",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 135,
+      "movimientoId": "MV-0135",
+      "equipoId": "EQ-0135",
+      "cantidad": 1,
+      "descripcion": "Impresora RICOH IM 430",
+      "marcaModelo": "RICOH IM 430",
+      "serieEstado": "3350P603051",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 136,
+      "movimientoId": "MV-0136",
+      "equipoId": "EQ-0136",
+      "cantidad": 1,
+      "descripcion": "Impresora EPSON L1250",
+      "marcaModelo": "EPSON L1250",
+      "serieEstado": "XBFS021269",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 137,
+      "movimientoId": "MV-0137",
+      "equipoId": "EQ-0137",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13",
+      "marcaModelo": "XIAOMI REDMI NOTE 13",
+      "serieEstado": "869341078092564 ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 138,
+      "movimientoId": "MV-0138",
+      "equipoId": "EQ-0138",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5DCH51",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 139,
+      "movimientoId": "MV-0139",
+      "equipoId": "EQ-0139",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 14 PRO",
+      "marcaModelo": "XIAOMI Redmi Note 14 PRO",
+      "serieEstado": "865991075054548.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 140,
+      "movimientoId": "MV-0140",
+      "equipoId": "EQ-0140",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16",
+      "marcaModelo": "Lenovo THINKPAD E16",
+      "serieEstado": "PF5SD3ZB",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 141,
+      "movimientoId": "MV-0141",
+      "equipoId": "EQ-0141",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346077044262",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 142,
+      "movimientoId": "MV-0142",
+      "equipoId": "EQ-0142",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5GKPYC",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 143,
+      "movimientoId": "MV-0143",
+      "equipoId": "EQ-0143",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "869912061740425",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 144,
+      "movimientoId": "MV-0144",
+      "equipoId": "EQ-0144",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5QL6SY",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 145,
+      "movimientoId": "MV-0145",
+      "equipoId": "EQ-0145",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869244070962083.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 146,
+      "movimientoId": "MV-0146",
+      "equipoId": "EQ-0146",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13",
+      "marcaModelo": "XIAOMI REDMI NOTE 13",
+      "serieEstado": "869244071263820",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 147,
+      "movimientoId": "MV-0147",
+      "equipoId": "EQ-0147",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201072671066",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 148,
+      "movimientoId": "MV-0148",
+      "equipoId": "EQ-0148",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF56FXRK",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 149,
+      "movimientoId": "MV-0149",
+      "equipoId": "EQ-0149",
+      "cantidad": 1,
+      "descripcion": "Celular N/A N/A",
+      "marcaModelo": "N/A N/A",
+      "serieEstado": "N/A",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 150,
+      "movimientoId": "MV-0150",
+      "equipoId": "EQ-0150",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF5DDYYY",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 151,
+      "movimientoId": "MV-0151",
+      "equipoId": "EQ-0151",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "865201071406027",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 152,
+      "movimientoId": "MV-0152",
+      "equipoId": "EQ-0152",
+      "cantidad": 1,
+      "descripcion": "Laptop HP 15-dy1xxx",
+      "marcaModelo": "HP 15-dy1xxx",
+      "serieEstado": "5CD00704JC",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 153,
+      "movimientoId": "MV-0153",
+      "equipoId": "EQ-0153",
+      "cantidad": 1,
+      "descripcion": "Celular Motorola G13",
+      "marcaModelo": "Motorola G13",
+      "serieEstado": "354648963001514.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 154,
+      "movimientoId": "MV-0154",
+      "equipoId": "EQ-0154",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346077021203",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 155,
+      "movimientoId": "MV-0155",
+      "equipoId": "EQ-0155",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844074581560",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 156,
+      "movimientoId": "MV-0156",
+      "equipoId": "EQ-0156",
+      "cantidad": 1,
+      "descripcion": "PC ASUS OEM",
+      "marcaModelo": "ASUS OEM",
+      "serieEstado": "OEM",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 157,
+      "movimientoId": "MV-0157",
+      "equipoId": "EQ-0157",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo \tIdeaPad 3 15ITL6",
+      "marcaModelo": "Lenovo \tIdeaPad 3 15ITL6",
+      "serieEstado": "PF42BT72",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 158,
+      "movimientoId": "MV-0158",
+      "equipoId": "EQ-0158",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "86991206128543.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 159,
+      "movimientoId": "MV-0159",
+      "equipoId": "EQ-0159",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862378070879181",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 160,
+      "movimientoId": "MV-0160",
+      "equipoId": "EQ-0160",
+      "cantidad": 1,
+      "descripcion": "PC ASUS OEM",
+      "marcaModelo": "ASUS OEM",
+      "serieEstado": "OEM",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 161,
+      "movimientoId": "MV-0161",
+      "equipoId": "EQ-0161",
+      "cantidad": 1,
+      "descripcion": "Celular HONOR 200 SMART",
+      "marcaModelo": "HONOR 200 SMART",
+      "serieEstado": "862374071333948",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 162,
+      "movimientoId": "MV-0162",
+      "equipoId": "EQ-0162",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF5APS1H",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 163,
+      "movimientoId": "MV-0163",
+      "equipoId": "EQ-0163",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13",
+      "marcaModelo": "XIAOMI REDMI NOTE 13",
+      "serieEstado": "860319072855102",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 164,
+      "movimientoId": "MV-0164",
+      "equipoId": "EQ-0164",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "\tPF39AEBM",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 165,
+      "movimientoId": "MV-0165",
+      "equipoId": "EQ-0165",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi 13 C",
+      "marcaModelo": "XIAOMI Redmi 13 C",
+      "serieEstado": "86836906956988.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 166,
+      "movimientoId": "MV-0166",
+      "equipoId": "EQ-0166",
+      "cantidad": 1,
+      "descripcion": "Laptop ACER Aspire A315-23",
+      "marcaModelo": "ACER Aspire A315-23",
+      "serieEstado": "NXHVUAL00D1080398A7600",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 167,
+      "movimientoId": "MV-0167",
+      "equipoId": "EQ-0167",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "86944071151504/01",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 168,
+      "movimientoId": "MV-0168",
+      "equipoId": "EQ-0168",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 2",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 2",
+      "serieEstado": "PF5YKC2S",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 169,
+      "movimientoId": "MV-0169",
+      "equipoId": "EQ-0169",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 PRO",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 PRO",
+      "serieEstado": "862058076873889",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 170,
+      "movimientoId": "MV-0170",
+      "equipoId": "EQ-0171",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16",
+      "marcaModelo": "Lenovo THINKPAD E16",
+      "serieEstado": "PF5SDBKR",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 171,
+      "movimientoId": "MV-0171",
+      "equipoId": "EQ-0172",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "865346077034107",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 172,
+      "movimientoId": "MV-0172",
+      "equipoId": "EQ-0173",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 1",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 1",
+      "serieEstado": "PF5DCH51\t",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 173,
+      "movimientoId": "MV-0173",
+      "equipoId": "EQ-0174",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD SLIM 5 14IAH8",
+      "marcaModelo": "Lenovo IDEAPAD SLIM 5 14IAH8",
+      "serieEstado": "MP2LFYPM",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 174,
+      "movimientoId": "MV-0174",
+      "equipoId": "EQ-0175",
+      "cantidad": 1,
+      "descripcion": "Laptop ACER A515",
+      "marcaModelo": "ACER A515",
+      "serieEstado": "NXHSLAL00H034095FD7600",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 175,
+      "movimientoId": "MV-0175",
+      "equipoId": "EQ-0176",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD SLIM 3 14IAH8",
+      "marcaModelo": "Lenovo IDEAPAD SLIM 3 14IAH8",
+      "serieEstado": "PF4DPWW2",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 176,
+      "movimientoId": "MV-0176",
+      "equipoId": "EQ-0177",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL0",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL0",
+      "serieEstado": "PF39ALJG",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 177,
+      "movimientoId": "MV-0177",
+      "equipoId": "EQ-0178",
+      "cantidad": 1,
+      "descripcion": "Laptop ASUS ZenBook UX564EI_Q538EI",
+      "marcaModelo": "ASUS ZenBook UX564EI_Q538EI",
+      "serieEstado": "MCN0CX335355523",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 178,
+      "movimientoId": "MV-0178",
+      "equipoId": "EQ-0179",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 82C5",
+      "marcaModelo": "Lenovo 82C5",
+      "serieEstado": "PF2ERC56",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 179,
+      "movimientoId": "MV-0179",
+      "equipoId": "EQ-0180",
+      "cantidad": 1,
+      "descripcion": "Laptop HP NOTEBOOK",
+      "marcaModelo": "HP NOTEBOOK",
+      "serieEstado": "CND7030NW3",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 180,
+      "movimientoId": "MV-0180",
+      "equipoId": "EQ-0181",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo V15-IIL",
+      "marcaModelo": "Lenovo V15-IIL",
+      "serieEstado": "PF2ERB93 ",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 181,
+      "movimientoId": "MV-0181",
+      "equipoId": "EQ-0182",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 82C5",
+      "marcaModelo": "Lenovo 82C5",
+      "serieEstado": "PF2ERC56",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 182,
+      "movimientoId": "MV-0182",
+      "equipoId": "EQ-0183",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "PF38HZBA",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 183,
+      "movimientoId": "MV-0183",
+      "equipoId": "EQ-0184",
+      "cantidad": 1,
+      "descripcion": "Laptop HP HP Laptop 15-dy1xxx",
+      "marcaModelo": "HP HP Laptop 15-dy1xxx",
+      "serieEstado": "5CD00704JS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 184,
+      "movimientoId": "MV-0184",
+      "equipoId": "EQ-0185",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 5 15ITL05",
+      "marcaModelo": "Lenovo IdeaPad 5 15ITL05",
+      "serieEstado": "PF36D6PD",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 185,
+      "movimientoId": "MV-0185",
+      "equipoId": "EQ-0186",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 3 15IIL05",
+      "marcaModelo": "Lenovo IdeaPad 3 15IIL05",
+      "serieEstado": "PF38J7R0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 186,
+      "movimientoId": "MV-0186",
+      "equipoId": "EQ-0187",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IdeaPad 5 15ITL05",
+      "marcaModelo": "Lenovo IdeaPad 5 15ITL05",
+      "serieEstado": "PF3K83N9",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 187,
+      "movimientoId": "MV-0187",
+      "equipoId": "EQ-0188",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD 3",
+      "marcaModelo": "Lenovo IDEAPAD 3",
+      "serieEstado": "PF42F6EH",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 188,
+      "movimientoId": "MV-0188",
+      "equipoId": "EQ-0189",
+      "cantidad": 1,
+      "descripcion": "Laptop HP ENVY X360",
+      "marcaModelo": "HP ENVY X360",
+      "serieEstado": "8CG938MBXL",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 189,
+      "movimientoId": "MV-0189",
+      "equipoId": "EQ-0190",
+      "cantidad": 1,
+      "descripcion": "Laptop HP PAVILION LAPTOP 15",
+      "marcaModelo": "HP PAVILION LAPTOP 15",
+      "serieEstado": "5CD1298MDD",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 190,
+      "movimientoId": "MV-0190",
+      "equipoId": "EQ-0191",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo IDEAPAD 5",
+      "marcaModelo": "Lenovo IDEAPAD 5",
+      "serieEstado": "PF3JFYW7",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 191,
+      "movimientoId": "MV-0191",
+      "equipoId": "EQ-0192",
+      "cantidad": 1,
+      "descripcion": "Laptop XIAOMI Redmi Note 13",
+      "marcaModelo": "XIAOMI Redmi Note 13",
+      "serieEstado": "869912063449140",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 192,
+      "movimientoId": "MV-0192",
+      "equipoId": "EQ-0193",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo ThinkPad E16 Gen 2",
+      "marcaModelo": "Lenovo ThinkPad E16 Gen 2",
+      "serieEstado": "PF5AQL45",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 193,
+      "movimientoId": "MV-0193",
+      "equipoId": "EQ-0194",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo 15ITL05",
+      "marcaModelo": "Lenovo 15ITL05",
+      "serieEstado": "LR0EW8TD",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 194,
+      "movimientoId": "MV-0194",
+      "equipoId": "EQ-0195",
+      "cantidad": 1,
+      "descripcion": "Laptop HP NOTEBOOK",
+      "marcaModelo": "HP NOTEBOOK",
+      "serieEstado": "5CG7125ZHP",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 195,
+      "movimientoId": "MV-0195",
+      "equipoId": "EQ-0196",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE PRO 13",
+      "marcaModelo": "REDMI NOTE PRO 13",
+      "serieEstado": "865201071629743.0",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 196,
+      "movimientoId": "MV-0196",
+      "equipoId": "EQ-0197",
+      "cantidad": 1,
+      "descripcion": "Celular OPPO RENO 11F",
+      "marcaModelo": "OPPO RENO 11F",
+      "serieEstado": "862053070357195",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 197,
+      "movimientoId": "MV-0197",
+      "equipoId": "EQ-0198",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11",
+      "marcaModelo": "REDMI NOTE 11",
+      "serieEstado": "865643066154825",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 198,
+      "movimientoId": "MV-0198",
+      "equipoId": "EQ-0199",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11",
+      "marcaModelo": "REDMI NOTE 11",
+      "serieEstado": "861696068020521",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 199,
+      "movimientoId": "MV-0199",
+      "equipoId": "EQ-0200",
+      "cantidad": 1,
+      "descripcion": "Celular POCO M4",
+      "marcaModelo": "POCO M4",
+      "serieEstado": "868733052087423",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 200,
+      "movimientoId": "MV-0200",
+      "equipoId": "EQ-0201",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11",
+      "marcaModelo": "REDMI NOTE 11",
+      "serieEstado": "864469067948846",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 201,
+      "movimientoId": "MV-0201",
+      "equipoId": "EQ-0202",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI POCO M4",
+      "marcaModelo": "XIAOMI POCO M4",
+      "serieEstado": "862844058362660",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 202,
+      "movimientoId": "MV-0202",
+      "equipoId": "EQ-0203",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI POCO M4",
+      "marcaModelo": "XIAOMI POCO M4",
+      "serieEstado": "862844058141464",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 203,
+      "movimientoId": "MV-0203",
+      "equipoId": "EQ-0204",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11",
+      "marcaModelo": "REDMI NOTE 11",
+      "serieEstado": "863837058809485",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 204,
+      "movimientoId": "MV-0204",
+      "equipoId": "EQ-0205",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI 10 C",
+      "marcaModelo": "REDMI 10 C",
+      "serieEstado": "860223064413203",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 205,
+      "movimientoId": "MV-0205",
+      "equipoId": "EQ-0206",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11 S",
+      "marcaModelo": "REDMI NOTE 11 S",
+      "serieEstado": "863837058456386",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 206,
+      "movimientoId": "MV-0206",
+      "equipoId": "EQ-0207",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI POCO M5",
+      "marcaModelo": "XIAOMI POCO M5",
+      "serieEstado": "867701067730361",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 207,
+      "movimientoId": "MV-0207",
+      "equipoId": "EQ-0208",
+      "cantidad": 1,
+      "descripcion": "Celular Redmi Note 12S",
+      "marcaModelo": "Redmi Note 12S",
+      "serieEstado": "86379060209425",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 208,
+      "movimientoId": "MV-0208",
+      "equipoId": "EQ-0209",
+      "cantidad": 1,
+      "descripcion": "Celular POCO M4",
+      "marcaModelo": "POCO M4",
+      "serieEstado": "868733051928163",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 209,
+      "movimientoId": "MV-0209",
+      "equipoId": "EQ-0210",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 11",
+      "marcaModelo": "XIAOMI REDMI NOTE 11",
+      "serieEstado": "862055178900024",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 210,
+      "movimientoId": "MV-0210",
+      "equipoId": "EQ-0211",
+      "cantidad": 1,
+      "descripcion": "Celular Redmi Note 12S",
+      "marcaModelo": "Redmi Note 12S",
+      "serieEstado": "868379060250031",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 211,
+      "movimientoId": "MV-0211",
+      "equipoId": "EQ-0212",
+      "cantidad": 1,
+      "descripcion": "Celular Motorola Moto G20",
+      "marcaModelo": "Motorola Moto G20",
+      "serieEstado": "356544993231270",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 212,
+      "movimientoId": "MV-0212",
+      "equipoId": "EQ-0213",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 11",
+      "marcaModelo": "REDMI NOTE 11",
+      "serieEstado": "864469067949760",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 213,
+      "movimientoId": "MV-0213",
+      "equipoId": "EQ-0214",
+      "cantidad": 1,
+      "descripcion": "Celular OPPO RENO 11F",
+      "marcaModelo": "OPPO RENO 11F",
+      "serieEstado": "862053070357195",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 214,
+      "movimientoId": "MV-0214",
+      "equipoId": "EQ-0215",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI 10 C",
+      "marcaModelo": "XIAOMI 10 C",
+      "serieEstado": "868504061025542",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 215,
+      "movimientoId": "MV-0215",
+      "equipoId": "EQ-0216",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI Redmi Note 12S",
+      "marcaModelo": "XIAOMI Redmi Note 12S",
+      "serieEstado": "868379060204061/78",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 216,
+      "movimientoId": "MV-0216",
+      "equipoId": "EQ-0217",
+      "cantidad": 1,
+      "descripcion": "Celular 200 SMART",
+      "marcaModelo": "200 SMART",
+      "serieEstado": "862374071326363",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 217,
+      "movimientoId": "MV-0217",
+      "equipoId": "EQ-0218",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 14",
+      "marcaModelo": "REDMI NOTE 14",
+      "serieEstado": "867274075928344",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 218,
+      "movimientoId": "MV-0218",
+      "equipoId": "EQ-0219",
+      "cantidad": 1,
+      "descripcion": "Celular REDMI NOTE 14",
+      "marcaModelo": "REDMI NOTE 14",
+      "serieEstado": "862844076416104",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 219,
+      "movimientoId": "MV-0219",
+      "equipoId": "EQ-0220",
+      "cantidad": 1,
+      "descripcion": "Celular redmi NOTE 14",
+      "marcaModelo": "redmi NOTE 14",
+      "serieEstado": "867274075853849",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 220,
+      "movimientoId": "MV-0220",
+      "equipoId": "EQ-0222",
+      "cantidad": 1,
+      "descripcion": "Mochila",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 221,
+      "movimientoId": "MV-0221",
+      "equipoId": "EQ-0223",
+      "cantidad": 1,
+      "descripcion": "Mochila/Pad Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 222,
+      "movimientoId": "MV-0222",
+      "equipoId": "EQ-0224",
+      "cantidad": 1,
+      "descripcion": "Mochila /Pad Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 223,
+      "movimientoId": "MV-0223",
+      "equipoId": "EQ-0225",
+      "cantidad": 1,
+      "descripcion": "Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 224,
+      "movimientoId": "MV-0224",
+      "equipoId": "EQ-0226",
+      "cantidad": 1,
+      "descripcion": "Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 225,
+      "movimientoId": "MV-0225",
+      "equipoId": "EQ-0227",
+      "cantidad": 1,
+      "descripcion": "Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 226,
+      "movimientoId": "MV-0226",
+      "equipoId": "EQ-0228",
+      "cantidad": 1,
+      "descripcion": "Mouse",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 229,
+      "movimientoId": "MV-0229",
+      "equipoId": "EQ-0069",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076098464",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 230,
+      "movimientoId": "MV-0230",
+      "equipoId": "EQ-0069",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 14 + CARGADOR",
+      "marcaModelo": "XIAOMI REDMI NOTE 14",
+      "serieEstado": "862844076098464",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 231,
+      "movimientoId": "MV-0231",
+      "equipoId": "EQ-0084",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "862058076996565",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 232,
+      "movimientoId": "MV-0231",
+      "equipoId": "EQ-0085",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "S/N",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 233,
+      "movimientoId": "MV-0231",
+      "equipoId": "EQ-0086",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF547SVS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 234,
+      "movimientoId": "MV-0232",
+      "equipoId": "EQ-0086",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF547SVS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 235,
+      "movimientoId": "MV-0233",
+      "equipoId": "EQ-0085",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "S/N",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 236,
+      "movimientoId": "MV-0234",
+      "equipoId": "EQ-0086",
+      "cantidad": 1,
+      "descripcion": "Laptop Lenovo THINKPAD E16 Gen 1",
+      "marcaModelo": "Lenovo THINKPAD E16 Gen 1",
+      "serieEstado": "PF547SVS",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 237,
+      "movimientoId": "MV-0234",
+      "equipoId": "EQ-0230",
+      "cantidad": 1,
+      "descripcion": "MOUSE GENIUS ECO-8100",
+      "marcaModelo": "GENIUS ECO-8100",
+      "serieEstado": "35I98264700435",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 239,
+      "movimientoId": "MV-0236",
+      "equipoId": "EQ-0085",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "U64871M7X112365",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 240,
+      "movimientoId": "MV-0237",
+      "equipoId": "EQ-0085",
+      "cantidad": 1,
+      "descripcion": "Escaner BROTHER 2200",
+      "marcaModelo": "BROTHER 2200",
+      "serieEstado": "U64871M7X112365",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 241,
+      "movimientoId": "MV-0238",
+      "equipoId": "EQ-0231",
+      "cantidad": 1,
+      "descripcion": "MOCHILA",
+      "marcaModelo": "TARGUS",
+      "serieEstado": "S/N",
+      "numeroTelefonico1": "",
+      "numeroTelefonico2": ""
+    },
+    {
+      "id": 248,
+      "movimientoId": "MV-0239",
+      "equipoId": null,
+      "cantidad": 1,
+      "descripcion": "Número telefónico",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": "947258559",
+      "numeroTelefonico2": ""
+    },
+    {
+      "id": 249,
+      "movimientoId": "MV-0235",
+      "equipoId": "EQ-0236",
+      "cantidad": 1,
+      "descripcion": "Celular XIAOMI REDMI NOTE 13 MB + CARGADOR + 947258559",
+      "marcaModelo": "XIAOMI REDMI NOTE 13 MB",
+      "serieEstado": "862058076996565",
+      "numeroTelefonico1": "947258559",
+      "numeroTelefonico2": ""
+    },
+    {
+      "id": 250,
+      "movimientoId": "MV-0235",
+      "equipoId": null,
+      "cantidad": 1,
+      "descripcion": "Número telefónico",
+      "marcaModelo": "",
+      "serieEstado": "",
+      "numeroTelefonico1": "",
+      "numeroTelefonico2": ""
+    },
+    {
+      "id": 251,
+      "movimientoId": "MV-0240",
+      "equipoId": "EQ-0237",
+      "cantidad": 1,
+      "descripcion": "Línea móvil",
+      "marcaModelo": "",
+      "serieEstado": "947258559",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 252,
+      "movimientoId": "MV-0241",
+      "equipoId": "EQ-0219",
+      "cantidad": 1,
+      "descripcion": "Celular  REDMI NOTE 14 + CARGADOR",
+      "marcaModelo": "REDMI NOTE 14",
+      "serieEstado": "862844076416104",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 253,
+      "movimientoId": "MV-0241",
+      "equipoId": "EQ-0238",
+      "cantidad": 1,
+      "descripcion": "Línea móvil",
+      "marcaModelo": "",
+      "serieEstado": "946152226",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
+    },
+    {
+      "id": 254,
+      "movimientoId": "MV-0242",
+      "equipoId": "EQ-0239",
+      "cantidad": 1,
+      "descripcion": "Laptop LENOVO THINKPAD E16 + CARGADOR",
+      "marcaModelo": "LENOVO THINKPAD E16",
+      "serieEstado": "PF66MHTV",
+      "numeroTelefonico1": null,
+      "numeroTelefonico2": null
     }
   ],
   "mantenimientos": [],
-  "nextEqId": 229,
-  "nextMvId": 227,
-  "nextMantId": 1,
   "trabajadores": [
     {
       "nombre": "ADMINITRACIÓN",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Area Administración - 1er Piso",
       "dni": "",
       "area": "ADMINITRACION",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Area Customer Service - 2do Piso",
       "dni": "",
       "area": "CARGA",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Area Operaciones - Tercer Piso",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Area de Contabilidad - 1er Piso",
       "dni": "",
       "area": "CONTABILIDAD",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Area de Finanzas - 2do Piso",
       "dni": "",
       "area": "FINANZAS",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Aymar Timana",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "BD ASISTENCIA",
       "dni": "",
       "area": "TI",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "BETTSY MIRANDA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "BRAYAN STECK GALLO ORDINOLA",
       "dni": "47017700",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "BRENDA CASTILLO AGUIRRE",
       "dni": "",
       "area": "MATRICES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "BRENDI RAMIREZ MANRIQUE",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Briani Arteaga Orozco",
       "dni": "",
       "area": "",
-      "sede": "UNIREEFER"
+      "sede": "UNIREEFER",
+      "activo": 1
     },
     {
       "nombre": "CANDELARIO CASTRO ATOCHE",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "CARLO TANTARUNA",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "CLAUDIA PARDO CARRASCO",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "CRISTOPHER MORE PALACIOS",
       "dni": "",
       "area": "TI",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Carlo Andre Tantaruna",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Carmen Mejia",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "DENNIS SUAREZ VARGAS",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "DENNIS VALENCIA",
       "dni": "",
       "area": "TI",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "DESPACHADORES",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "DEYCI PANGALIMA CORDOVA",
       "dni": "",
       "area": "CUSTOMER",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "DIANA CHAMBA ARIAS",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Diana Chamba",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "EDDY FLORES SILVA",
       "dni": "",
       "area": "DOCUMENTACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "EDINSON SILVA",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "EDITH UCEDA MARCHAND",
       "dni": "",
       "area": "GERENCIA",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Eddy Flores",
       "dni": "",
       "area": "",
-      "sede": "Paita"
+      "sede": "Paita",
+      "activo": 1
     },
     {
       "nombre": "Edith Uceda",
       "dni": "",
       "area": "",
-      "sede": "Paita"
+      "sede": "Paita",
+      "activo": 1
     },
     {
       "nombre": "FERRER JOHNNY",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "FRANK SALVADOR CORDOVA",
       "dni": "41989541",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Freddy Prieto",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "GERARDO VENTURA",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "GHINO RIVERA",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "GRETA MARIANI AGUILAR",
       "dni": "",
       "area": "EXTERNO",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "GUILLERMO ROQUE",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "HENRY NUÑEZ ARCELLES",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Henry Retamozo",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "ISAAC YARLEQUE",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "ISAAC YARLEQUE NAVARRO",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JESUS MEJIA ADRIANZEN",
       "dni": "",
       "area": "DOCUMENTACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JHONATAN VIVAS DAVILA",
       "dni": "",
       "area": "LIQUIDACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JOE GALLARDO NORIEGA",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JONATHAN  GUTIERREZ TAVARA",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JORDY PUESCAS",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JORGE ALBERTO RONDOY",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JORGE LAZO ROFRIO",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JORGE MAURICIO",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JOSE FELIX UBILLUS PINGO",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JOSE REYES PEÑA",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JOSEPH CARRILLO PINTADO",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JUAN CARLOS CHIMPAY ACUÑA",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "JUNIOR CORREO AMBULAY",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "JUNIOR CORREO AMBULAY (BACKUP M)",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Jesus Flores",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Jesús Calderón",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Jesús Flores",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Jhoan Rodriguez",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Juan Aldave Cordova",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Juan Carlos Chimpay Acuña",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "KATHERINE FUENTES",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "KEYSI CHIROQUE FARIAS",
       "dni": "70087470",
       "area": "CUSTOMER",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Kenny Aguirre",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Kevin Marchand",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "LENIN GONZALES PEÑA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "LISVET AGUILAR NONAJULCA",
       "dni": "",
       "area": "CUSTOMER",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "LIZ QUIÑONES",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "LUIS CASTRO VEGA",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Lissette Panduro Alvarez",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Liz Quñones",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Luis Paul Marchand",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "MALU MIÑAN",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "MARIA SANCHEZ ALMESTAR",
       "dni": "",
       "area": "CALIDAD",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MARISELA CHONTO",
       "dni": "",
       "area": "CUSTOMER",
-      "sede": "JAYANCA"
+      "sede": "JAYANCA",
+      "activo": 1
     },
     {
       "nombre": "MARTIN CHERRE CASQUERO",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MIDORY MAURICIO HIDALGO",
       "dni": "",
       "area": "COMERCIAL",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MILAGRO VIERA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MILAGROS VIERA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MIRIAM MEJIA",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "MOISES HUERTAS",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "MONITOR AYMAR",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Malú Miñan",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Marco Gutierrez",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Mayra Otero",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Midory Mauricio",
       "dni": "",
       "area": "",
-      "sede": "Paita"
+      "sede": "Paita",
+      "activo": 1
     },
     {
       "nombre": "NEDEEF CORDOVA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "NEDEEF CORDOVA BRUNO",
       "dni": "",
       "area": "LIQUIDACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "NINELL ALBAN PANTA",
       "dni": "",
       "area": "GERENCIA",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "NUMA PACHECO",
       "dni": "",
       "area": "EXTERNO",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Nilton Ichpas",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "OPERACIONES",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "PEDRO BARRIOS",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "PIERINA PETRONE",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "PIERINA PETRONE RUIZ",
       "dni": "",
       "area": "CUSTOMER",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "PIERO JUARZ",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Paola Vilela",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Patrick Colorado",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Piero Juarez",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "ROBERTO MOROCHO CHAMBA",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "ROBERTO ROMERO AYOSA",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "RUDE CHAMBA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "RUDE CHAMBA YANAYACO",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Rosario Romero",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "SAMANTHA LUNA",
       "dni": "",
       "area": "",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "SANTOS ALBERTO CARRANZA CASTILLO",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "SANTOS FARIAS ESTRADA",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "SERGIO DIAZ TINOCO",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "SERVER SINTAD",
       "dni": "",
       "area": "TI",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "SIMON UCAÑAN",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "SISCONT",
       "dni": "",
       "area": "TI",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "STEPHANIE SEMINARIO",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Sanders Soto",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Shirley Tantalean",
       "dni": "",
       "area": "ADMINISTRACIÓN",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "VICTOR AYALA GALAN",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "YESNY CUNYA MONTORO",
       "dni": "",
       "area": "MATRICES",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "YOSSELYN VANESSA GARCIA PEDROSO",
       "dni": "",
       "area": "ADMINISTRACION",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "YURIKA LACHIRA SANTIAGO",
       "dni": "",
       "area": "DOCUMENTACION",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "Yesny Cunya",
       "dni": "",
       "area": "",
-      "sede": "Paita"
+      "sede": "Paita",
+      "activo": 1
     },
     {
       "nombre": "Yessabel Francia",
       "dni": "",
       "area": "OPERACIONES",
-      "sede": "LIMA"
+      "sede": "LIMA",
+      "activo": 1
     },
     {
       "nombre": "Yurika Lachira",
       "dni": "",
       "area": "",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "ZAIRA GARCIA CORREA",
       "dni": "72700704",
       "area": "RRHH",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     },
     {
       "nombre": "ÁREA DE MONITOREO",
       "dni": "",
       "area": "TRANSPORTE",
-      "sede": "PAITA"
+      "sede": "PAITA",
+      "activo": 1
     }
-  ]
+  ],
+  "solicitudes_compra": [
+    {
+      "id": "SOL-0001",
+      "numero": "SOL--0001",
+      "fecha": "2026-07-28T17:46:47.876Z",
+      "usuario": "cmore",
+      "descripcion": "Solicitud de compra",
+      "estado": "pendiente",
+      "observaciones": "",
+      "createdAt": "2026-07-28T17:40:39.523Z"
+    }
+  ],
+  "inventario_reportes": [
+    {
+      "id": "1b2c5c1e61165be01a21b746",
+      "timestamp": "2026-07-27T16:04:25.425753",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 15.28,
+      "ram_disponible_gb": 0.4,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.33,
+      "disco_disponible_gb": 55.47,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:04:25.429Z"
+    },
+    {
+      "id": "4425d0e6c22a1c0bd07175c0",
+      "timestamp": "2026-07-27T15:44:07.506821",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.29,
+      "ram_disponible_gb": 1.39,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.3,
+      "disco_disponible_gb": 55.5,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T20:44:07.517Z"
+    },
+    {
+      "id": "4e45b84f3800cbba1338f41c",
+      "timestamp": "2026-07-27T16:05:55.862779",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.92,
+      "ram_disponible_gb": 0.77,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.33,
+      "disco_disponible_gb": 55.47,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:05:55.883Z"
+    },
+    {
+      "id": "4f2c42c0dd6dc0f3d8bcc3ef",
+      "timestamp": "2026-07-27T16:00:52.133078",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 15.23,
+      "ram_disponible_gb": 0.45,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.33,
+      "disco_disponible_gb": 55.47,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:00:52.137Z"
+    },
+    {
+      "id": "98a0ea742d29f7f3d98c4fe2",
+      "timestamp": "2026-07-27T16:00:01.384182",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.75,
+      "ram_disponible_gb": 0.93,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.32,
+      "disco_disponible_gb": 55.48,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:00:01.391Z"
+    },
+    {
+      "id": "ae51078ccd4188f89b31308a",
+      "timestamp": "2026-07-27T15:48:49.563497",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.27,
+      "ram_disponible_gb": 1.41,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.3,
+      "disco_disponible_gb": 55.51,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T20:48:49.577Z"
+    },
+    {
+      "id": "b81fb523c67e656fb0ec88cc",
+      "timestamp": "2026-07-27T15:42:45.373088",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 13.95,
+      "ram_disponible_gb": 1.73,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.3,
+      "disco_disponible_gb": 55.51,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T20:42:45.379Z"
+    },
+    {
+      "id": "c347296fda39f2f44a330c54",
+      "timestamp": "2026-07-27T16:02:02.439807",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.7,
+      "ram_disponible_gb": 0.98,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.33,
+      "disco_disponible_gb": 55.48,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:02:02.460Z"
+    },
+    {
+      "id": "cadc5496eedfee06d2125f04",
+      "timestamp": "2026-07-27T15:36:26.694319",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.8,
+      "ram_disponible_gb": 0.88,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.3,
+      "disco_disponible_gb": 55.51,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T20:36:26.699Z"
+    },
+    {
+      "id": "cb684285a7e4c58b53bd61d0",
+      "timestamp": "2026-07-27T16:12:06.070245",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.8,
+      "ram_disponible_gb": 0.88,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.34,
+      "disco_disponible_gb": 55.46,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T21:12:06.078Z"
+    },
+    {
+      "id": "eb27070168bd1d361cdaef27",
+      "timestamp": "2026-07-27T15:43:29.930800",
+      "dispositivo_ip": "::1",
+      "tipo_dispositivo": "PC",
+      "so": "Windows-11-10.0.26200-SP0",
+      "usuario_windows": "CristopherMorePalaci",
+      "cpu": "Intel64 Family 6 Model 186 Stepping 3, GenuineIntel",
+      "ram_total_gb": 15.68,
+      "ram_usado_gb": 14.41,
+      "ram_disponible_gb": 1.27,
+      "disco_total_gb": 469.8,
+      "disco_usado_gb": 414.3,
+      "disco_disponible_gb": 55.5,
+      "modelo_telefono": null,
+      "numero_telefono": null,
+      "ultima_actualizacion": "2026-07-27T20:43:29.937Z"
+    }
+  ],
+  "asignacion_recursos": []
 }
