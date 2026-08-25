@@ -1260,7 +1260,14 @@ async function handleRequest(req, res){
         .filter(m => m && typeof m === 'object')
         .map(m => ({id: m.id || m._id, equipoId: m.equipoId || '', fecha: m.fecha || '', tipo: m.tipo || '', realizadoPor: m.realizadoPor || '', descripcion: m.descripcion || ''}));
 
-      const trabajadores = (await db.prepare('SELECT * FROM trabajadores WHERE activo=1 ORDER BY nombre LIMIT 300').all() || [])
+      const trabajadoresRaw = await db.prepare('SELECT * FROM trabajadores WHERE activo=1 ORDER BY nombre LIMIT 300').all() || [];
+      console.log(`📊 /api/state: ${trabajadoresRaw?.length || 0} trabajadores cargados`);
+      if (trabajadoresRaw?.length > 0) {
+        console.log(`   [DEBUG] Primer trabajador RAW:`, JSON.stringify(trabajadoresRaw[0]));
+        console.log(`   [DEBUG] Tipo de primer trabajador:`, typeof trabajadoresRaw[0]);
+        console.log(`   [DEBUG] Keys:`, Object.keys(trabajadoresRaw[0] || {}));
+      }
+      const trabajadores = (trabajadoresRaw || [])
         .filter(t => t && typeof t === 'object')
         .map(t => ({nombre: t.nombre || '', dni: t.dni || '', area: t.area || '', sede: t.sede || '', activo: t.activo || 1}));
 
