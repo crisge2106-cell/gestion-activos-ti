@@ -365,6 +365,7 @@ async function bulkLoad(data){
         await mongoDb.collection('movimientos').deleteMany({});
         await mongoDb.collection('movimiento_items').deleteMany({});
         await mongoDb.collection('mantenimientos').deleteMany({});
+        await mongoDb.collection('trabajadores').deleteMany({});
         console.log('✅ Colecciones limpiadas antes de bulkLoad');
       }
 
@@ -471,26 +472,37 @@ async function seedIfEmpty(){
 async function backfillTrabajadoresIfEmpty(){
   try {
     // Verificar si hay datos válidos
-    const sample = await db.prepare('SELECT * FROM trabajadores LIMIT 1').get();
-    if(sample && sample.nombre && typeof sample.nombre === 'string') {
-      console.log('✅ Trabajadores ya cargados (datos válidos)');
-      return;
-    }
-    // Si hay datos pero son inválidos, limpiar
-    if(sample) {
-      console.log('⚠️ Datos de trabajadores corruptos, limpiando...');
+    const count = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get();
+    const hasData = (count?.c || 0) > 0;
+
+    if(hasData) {
+      const sample = await db.prepare('SELECT * FROM trabajadores LIMIT 1').get();
+      if(sample && sample.nombre && typeof sample.nombre === 'string') {
+        console.log(`✅ Trabajadores ya cargados (${count?.c || 0} registros válidos)`);
+        return;
+      }
+      console.log('⚠️ Datos de trabajadores corruptos, limpiando y recargando...');
       await db.prepare('DELETE FROM trabajadores').run();
     }
   } catch (err) {
     console.log('No se pudo verificar trabajadores:', err.message);
   }
+
   console.log('📝 Extrayendo trabajadores de movimientos y equipos...');
+  let count = 0;
   for(const m of await getMovimientos()){
-    if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
+    if(m.trabajador) {
+      await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
+      count++;
+    }
   }
   for(const e of await getEquipos()){
-    if(e.usuarioActual && e.estado==='Asignado') await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
+    if(e.usuarioActual && e.estado==='Asignado') {
+      await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
+      count++;
+    }
   }
+  console.log(`✅ Cargados ${count} trabajadores desde equipos y movimientos`);
 }
 
 // ---------------------------------------------------------------------------
