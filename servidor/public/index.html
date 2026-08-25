@@ -1423,6 +1423,20 @@ async function actualizarCargo(movId){
 function getEquipoQuick(id){ return DB.equipos.find(e=>e.id===id); }
 
 // ---------- DEVOLUCIONES ----------
+function resetDevolucionForm(){
+  try{
+    document.getElementById('devTrabajador').value='';
+    document.getElementById('devFecha').value = todayISO();
+    document.getElementById('devMotivo').value='';
+    document.getElementById('devEstadoNuevo').value='Disponible';
+    document.getElementById('devObs').value='';
+    document.getElementById('devEquiposList').innerHTML='Selecciona un trabajador para ver sus equipos.';
+    console.log('[RESET] Formulario de devolución limpiado correctamente');
+  }catch(e){
+    console.error('[RESET ERROR]', e);
+  }
+}
+
 async function saveDevolucion(){
   const trabajador = document.getElementById('devTrabajador').value;
   if(!trabajador){ alert('Selecciona un trabajador'); return; }
@@ -1438,7 +1452,7 @@ async function saveDevolucion(){
     const res = await apiPost('/api/devoluciones', {trabajador, equipoIds, motivo, fecha, estadoNuevo, observaciones:obs});
     await refreshState();
     verActa(res.id);
-    document.getElementById('devObs').value='';
+    resetDevolucionForm();
   }catch(err){ alert('Error al guardar: ' + err.message); }
   finally{ btn.disabled = false; }
 }
