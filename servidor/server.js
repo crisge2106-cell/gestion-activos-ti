@@ -833,14 +833,28 @@ async function handleRequest(req, res){
   try{
     // ---- Rutas publicas (sin sesion) ----
     if(pathname === '/api/login' && req.method === 'POST'){
-      const body = await readBody(req);
-      const user = await getUser((body.username||'').trim());
-      if(!user || !verifyPassword(body.password||'', user.salt, user.hash)){
-        return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
+      try {
+        const body = await readBody(req);
+        console.log(`📧 Login attempt: ${body.username}`);
+        const user = await getUser((body.username||'').trim());
+        if(!user){
+          console.log(`❌ Usuario no encontrado: ${body.username}`);
+          return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
+        }
+        if(!verifyPassword(body.password||'', user.salt, user.hash)){
+          console.log(`❌ Contraseña incorrecta para: ${body.username}`);
+          return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
+        }
+        console.log(`✅ Credenciales válidas: ${body.username}`);
+        const sid = await createSession(user.username);
+        console.log(`✅ Sesión creada: ${sid.substring(0, 8)}...`);
+        setSessionCookie(res, sid);
+        console.log(`✅ Cookie de sesión establecida`);
+        return sendJson(res, 200, {ok:true, username:user.username, mustChangePassword: !!user.mustChangePassword});
+      } catch (err) {
+        console.error(`❌ Error en login:`, err.message, err.stack);
+        return sendJson(res, 500, {error: 'Error al procesar login', details: err.message});
       }
-      const sid = await createSession(user.username);
-      setSessionCookie(res, sid);
-      return sendJson(res, 200, {ok:true, username:user.username, mustChangePassword: !!user.mustChangePassword});
     }
     if(pathname === '/api/forgot-password' && req.method === 'POST'){
       const body = await readBody(req);
