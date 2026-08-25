@@ -504,7 +504,27 @@ async function seedIfEmpty(){
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
   console.log(`[SEED] Seed contiene: ${seed.equipos?.length || 0} equipos, ${seed.movimientos?.length || 0} movimientos`);
 
-  // Verificar si necesita fresh start
+  // EN LOCAL: SIEMPRE limpiar y recargar (asegurar sincronización exacta)
+  if(!isVercel) {
+    console.log('[SEED] 🔄 LOCAL: FRESH START (limpiar y sincronizar con seed.json)...');
+    try {
+      await clearAllTables();
+      console.log('[SEED] ✅ Tablas limpiadas');
+
+      await bulkLoad(seed);
+      console.log(`[SEED] ✅ bulkLoad completado: ${seed.equipos.length} equipos insertados`);
+
+      const verifyCount = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+      console.log(`[SEED] ✅ Verificación: ${verifyCount?.c || 0} equipos en BD`);
+    } catch(err) {
+      console.error('[SEED] ❌ Error en fresh start LOCAL:', err.message, err.stack);
+      throw err;
+    }
+    console.log('[SEED] === FIN SEED (LOCAL) ===');
+    return;
+  }
+
+  // EN VERCEL: Verificar si necesita fresh start
   const needsFreshStart = await isFreshStartNeeded();
   console.log(`[SEED] needsFreshStart: ${needsFreshStart}`);
 
@@ -514,8 +534,8 @@ async function seedIfEmpty(){
     return;
   }
 
-  // Fresh start: limpiar y recargar TODO
-  console.log('[SEED] 🔄 FRESH START: limpiando y recargando TODA la BD...');
+  // Fresh start en Vercel: limpiar y recargar TODO
+  console.log('[SEED] 🔄 VERCEL FRESH START: limpiando y recargando TODA la BD...');
   try {
     await clearAllTables();
     console.log('[SEED] ✅ Tablas limpiadas');
@@ -523,15 +543,14 @@ async function seedIfEmpty(){
     await bulkLoad(seed);
     console.log(`[SEED] ✅ bulkLoad completado: ${seed.equipos.length} equipos insertados`);
 
-    // Verificar que se insertó correctamente
     const verifyCount = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
     console.log(`[SEED] ✅ Verificación: ${verifyCount?.c || 0} equipos en BD`);
   } catch(err) {
-    console.error('[SEED] ❌ Error en fresh start:', err.message, err.stack);
+    console.error('[SEED] ❌ Error en fresh start VERCEL:', err.message, err.stack);
     throw err;
   }
 
-  console.log('[SEED] === FIN SEED ===');
+  console.log('[SEED] === FIN SEED (VERCEL) ===');
 }
 
 async function backfillTrabajadoresIfEmpty(){
