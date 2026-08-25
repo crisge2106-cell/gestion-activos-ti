@@ -486,6 +486,12 @@ async function isFreshStartNeeded(){
         console.log(`[SEED] → VERCEL necesita sincronización: ${trabTotal} trabajadores (esperaba 123)`);
         return true;
       }
+
+      // Si hay más equipos de lo esperado (duplicados), hacer fresh start
+      if(count > 300) {
+        console.log(`[SEED] → VERCEL tiene ${count} equipos (DUPLICADOS, esperaba 232), limpiando...`);
+        return true;
+      }
     }
 
     // Verificar estructura del primer equipo
