@@ -440,8 +440,23 @@ async function bulkLoad(data){
 }
 
 async function clearAllTables(){
-  await db.exec('DELETE FROM movimiento_items; DELETE FROM movimientos; DELETE FROM mantenimientos; DELETE FROM equipos; DELETE FROM trabajadores;');
+  console.log('🧹 Limpiando TODAS las colecciones...');
+  const tables = [
+    'movimiento_items', 'movimientos', 'mantenimientos', 'equipos', 'trabajadores',
+    'solicitudes_compra', 'solicitudes_items', 'inventario_reportes', 'agentes_reportes'
+  ];
+  for(const table of tables) {
+    try {
+      await db.prepare(`DELETE FROM ${table}`).run();
+      console.log(`  ✓ ${table}`);
+    } catch(err) {
+      console.log(`  ⚠️ ${table}: ${err.message}`);
+    }
+  }
+  console.log('✅ Limpieza completada');
 }
+
+let seedAlreadyLoaded = false;
 
 async function seedIfEmpty(){
   if(!fs.existsSync(SEED_PATH)){
@@ -451,22 +466,34 @@ async function seedIfEmpty(){
 
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
 
-  try {
-    // Verificar si ya hay datos válidos (verificamos estructura, no solo conteo)
-    const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
-    if(result && result.id && typeof result.id === 'string') {
-      // Datos válidos encontrados
-      const count = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
-      console.log(`✅ Base de datos ya tiene ${count?.c || 0} equipos válidos, skipeando carga de datos.`);
-      return;
-    }
-  } catch (err) {
-    console.log('No se pudo verificar equipos:', err.message);
+  // En VERCEL: SIEMPRE limpiar y recargar (fresh start cada deploy)
+  if(isVercel && !seedAlreadyLoaded) {
+    console.log('🔄 [VERCEL] Fresh start: limpiando y recargando TODA la BD...');
+    await clearAllTables();
+    await bulkLoad(seed);
+    seedAlreadyLoaded = true;
+    console.log(`✅ [VERCEL] Fresh start completado: ${seed.equipos.length} equipos, ${seed.movimientos.length} movimientos`);
+    return;
   }
 
-  console.log('Base de datos vacia o corrompida: limpiando y cargando datos migrados desde seed.json ...');
-  await bulkLoad(seed);
-  console.log(`✅ Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
+  // En LOCAL: verificar si hay datos válidos
+  if(!isVercel) {
+    try {
+      const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
+      if(result && result.id && typeof result.id === 'string') {
+        const count = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+        console.log(`✅ Base de datos ya tiene ${count?.c || 0} equipos válidos, skipeando carga.`);
+        return;
+      }
+    } catch (err) {
+      console.log('No se pudo verificar equipos:', err.message);
+    }
+
+    console.log('Base de datos vacia o corrompida: limpiando y cargando datos...');
+    await clearAllTables();
+    await bulkLoad(seed);
+    console.log(`✅ Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
+  }
 }
 
 async function backfillTrabajadoresIfEmpty(){
