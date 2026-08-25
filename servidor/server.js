@@ -985,29 +985,56 @@ async function handleRequest(req, res){
 
     if(pathname === '/api/state' && req.method === 'GET'){
       // Cargar datos con LIMIT para performance
-      const equipos = (await db.prepare('SELECT * FROM equipos ORDER BY id LIMIT 500').all()).map(e=>({
-        id:e.id, nombre:e.nombre, tipo:e.tipo, marca:e.marca, modelo:e.modelo, serie:e.serie, fechaCompra:e.fechaCompra,
-        sede:e.sede, estado:e.estado, usuarioActual:e.usuarioActual, area:e.area, observaciones:e.observaciones,
-        specs:{cpu:e.cpu, ram:e.ram, disco:e.disco}, origen:e.origen
-      }));
+      const equiposRaw = await db.prepare('SELECT * FROM equipos ORDER BY id LIMIT 500').all();
+      const equipos = (equiposRaw || []).filter(e => e && typeof e === 'object').map(e=>{
+        // Normalizar: MongoDB puede tener propiedades diferentes
+        const obj = {
+          id: e.id || e._id,
+          nombre: e.nombre || '',
+          tipo: e.tipo || '',
+          marca: e.marca || '',
+          modelo: e.modelo || '',
+          serie: e.serie || '',
+          fechaCompra: e.fechaCompra || '',
+          sede: e.sede || '',
+          estado: e.estado || '',
+          usuarioActual: e.usuarioActual || '',
+          area: e.area || '',
+          observaciones: e.observaciones || '',
+          specs: {cpu: e.cpu || '', ram: e.ram || '', disco: e.disco || ''},
+          origen: e.origen || ''
+        };
+        return obj;
+      });
 
       const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC LIMIT 200').all();
       const items = await db.prepare('SELECT * FROM movimiento_items LIMIT 500').all();
       const byMov = {};
-      for(const it of items){
-        (byMov[it.movimientoId] = byMov[it.movimientoId] || []).push({
-          equipoId: it.equipoId, cantidad: it.cantidad, descripcion: it.descripcion,
-          marcaModelo: it.marcaModelo, serieEstado: it.serieEstado
-        });
+      for(const it of (items || [])){
+        if (it && typeof it === 'object') {
+          (byMov[it.movimientoId] = byMov[it.movimientoId] || []).push({
+            equipoId: it.equipoId || '', cantidad: it.cantidad || 0, descripcion: it.descripcion || '',
+            marcaModelo: it.marcaModelo || '', serieEstado: it.serieEstado || ''
+          });
+        }
       }
-      const movimientos = movs.map(m=>({
-        id:m.id, tipo:m.tipo, fecha:m.fecha, trabajador:m.trabajador, dni:m.dni, area:m.area, sede:m.sede,
-        observaciones:m.observaciones, origen:m.origen, items: byMov[m.id]||[]
+      const movimientos = (movs || []).filter(m => m && typeof m === 'object').map(m=>({
+        id: m.id || m._id, tipo: m.tipo || '', fecha: m.fecha || '', trabajador: m.trabajador || '', dni: m.dni || '',
+        area: m.area || '', sede: m.sede || '', observaciones: m.observaciones || '', origen: m.origen || '',
+        items: byMov[m.id || m._id] || []
       }));
 
-      const mantenimientos = await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC LIMIT 200').all();
-      const trabajadores = await db.prepare('SELECT * FROM trabajadores WHERE activo=1 ORDER BY nombre LIMIT 300').all();
-      const solicitudesCompra = await db.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC LIMIT 100').all();
+      const mantenimientos = (await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC LIMIT 200').all() || [])
+        .filter(m => m && typeof m === 'object')
+        .map(m => ({id: m.id || m._id, equipoId: m.equipoId || '', fecha: m.fecha || '', tipo: m.tipo || '', realizadoPor: m.realizadoPor || '', descripcion: m.descripcion || ''}));
+
+      const trabajadores = (await db.prepare('SELECT * FROM trabajadores WHERE activo=1 ORDER BY nombre LIMIT 300').all() || [])
+        .filter(t => t && typeof t === 'object')
+        .map(t => ({nombre: t.nombre || '', dni: t.dni || '', area: t.area || '', sede: t.sede || '', activo: t.activo || 1}));
+
+      const solicitudesCompra = (await db.prepare('SELECT * FROM solicitudes_compra ORDER BY fecha DESC LIMIT 100').all() || [])
+        .filter(s => s && typeof s === 'object')
+        .map(s => ({id: s.id || s._id, numero: s.numero || '', fecha: s.fecha || '', usuario: s.usuario || '', descripcion: s.descripcion || '', estado: s.estado || 'pendiente', observaciones: s.observaciones || ''}));
       const inventarioReportes = await db.prepare(`SELECT * FROM inventario_reportes ORDER BY timestamp DESC LIMIT 50`).all();
       const agentesReportes = await db.prepare(`
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
