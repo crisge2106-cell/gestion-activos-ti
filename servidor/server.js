@@ -359,6 +359,15 @@ async function bulkLoad(data){
       const mongoDb = await db.getMongoDatabase();
       if (!mongoDb) throw new Error('MongoDB no inicializada');
 
+      // LIMPIAR colecciones antes de insertar (elimina datos corruptos de despliegues anteriores)
+      if (equiposDocs.length > 0) {
+        await mongoDb.collection('equipos').deleteMany({});
+        await mongoDb.collection('movimientos').deleteMany({});
+        await mongoDb.collection('movimiento_items').deleteMany({});
+        await mongoDb.collection('mantenimientos').deleteMany({});
+        console.log('✅ Colecciones limpiadas antes de bulkLoad');
+      }
+
       if (equiposDocs.length > 0) await mongoDb.collection('equipos').insertMany(equiposDocs, { ordered: false });
       if (movimientosDocs.length > 0) await mongoDb.collection('movimientos').insertMany(movimientosDocs, { ordered: false });
       if (movItemsDocs.length > 0) await mongoDb.collection('movimiento_items').insertMany(movItemsDocs, { ordered: false });
