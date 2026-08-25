@@ -476,6 +476,12 @@ async function isFreshStartNeeded(){
       return true;
     }
 
+    // EN LOCAL: Si tiene equipos pero cantidad NO coincide con seed.json, sincronizar
+    if(!isVercel && count > 0 && count < 220) {
+      console.log(`[SEED] → LOCAL tiene ${count} equipos (esperaba 228), SINCRONIZANDO con seed.json`);
+      return true;
+    }
+
     // Verificar estructura del primer equipo
     const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
     console.log(`[SEED] Primer equipo estructura:`, {
