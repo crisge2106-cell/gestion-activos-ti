@@ -144,10 +144,18 @@ function createMongoDBAdapter() {
   // Conectar a MongoDB
   async function connectDB() {
     if (!client) {
-      client = new MongoClient(MONGODB_URI);
+      const t0 = Date.now();
+      client = new MongoClient(MONGODB_URI, {
+        maxPoolSize: 10,
+        minPoolSize: 1,
+        maxIdleTimeMS: 30000,
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 5000
+      });
       await client.connect();
       db = client.db(DB_NAME);
-      console.log('✅ Conectado a MongoDB:', DB_NAME);
+      const elapsed = Date.now() - t0;
+      console.log(`✅ Conectado a MongoDB (${elapsed}ms):`, DB_NAME);
     }
     return db;
   }
@@ -197,38 +205,43 @@ function createMongoDBAdapter() {
 
   // Ejecutor de queries SQL -> MongoDB
   async function executeQuery(database, sql, params, type) {
+    const t0 = Date.now();
+    const sqlShort = sql.substring(0, 50).replace(/\n/g, ' ');
     try {
+      let result;
+
       // INSERT
       if (sql.trim().toUpperCase().startsWith('INSERT INTO')) {
-        return await handleInsert(database, sql, params);
+        result = await handleInsert(database, sql, params);
       }
-
       // SELECT
-      if (sql.trim().toUpperCase().startsWith('SELECT')) {
-        const result = await handleSelect(database, sql, params);
-        if (type === 'get') return result[0] || null;
-        return result;
+      else if (sql.trim().toUpperCase().startsWith('SELECT')) {
+        result = await handleSelect(database, sql, params);
+        if (type === 'get') result = result[0] || null;
       }
-
       // UPDATE
-      if (sql.trim().toUpperCase().startsWith('UPDATE')) {
-        return await handleUpdate(database, sql, params);
+      else if (sql.trim().toUpperCase().startsWith('UPDATE')) {
+        result = await handleUpdate(database, sql, params);
       }
-
       // DELETE
-      if (sql.trim().toUpperCase().startsWith('DELETE')) {
-        return await handleDelete(database, sql, params);
+      else if (sql.trim().toUpperCase().startsWith('DELETE')) {
+        result = await handleDelete(database, sql, params);
       }
-
       // BEGIN/COMMIT/ROLLBACK (no-op en MongoDB)
-      if (sql.includes('BEGIN') || sql.includes('COMMIT') || sql.includes('ROLLBACK')) {
-        return { ok: true };
+      else if (sql.includes('BEGIN') || sql.includes('COMMIT') || sql.includes('ROLLBACK')) {
+        result = { ok: true };
+      }
+      else {
+        console.warn('⚠️ Query no soportada:', sqlShort);
+        return null;
       }
 
-      console.warn('⚠️ Query no soportada:', sql);
-      return null;
+      const elapsed = Date.now() - t0;
+      if (elapsed > 100) console.log(`⏱️ Query lenta (${elapsed}ms): ${sqlShort}...`);
+      return result;
     } catch (err) {
-      console.error('❌ Error en query:', sql, err.message);
+      const elapsed = Date.now() - t0;
+      console.error(`❌ Error en query (${elapsed}ms): ${sqlShort}... - ${err.message}`);
       throw err;
     }
   }
