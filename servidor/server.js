@@ -230,10 +230,10 @@ async function upsertTrabajador(t){
   if(!nombre) return;
   const existing = await db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
   if(existing){
-    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede) WHERE nombre = ? COLLATE NOCASE`)
+    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede), activo=1 WHERE nombre = ? COLLATE NOCASE`)
       .run(t.dni||'', t.area||'', t.sede||'', nombre);
   } else {
-    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede) VALUES (?,?,?,?)').run(nombre, t.dni||'', t.area||'', t.sede||'');
+    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,1)').run(nombre, t.dni||'', t.area||'', t.sede||'');
   }
 }
 async function getTrabajadores(){
