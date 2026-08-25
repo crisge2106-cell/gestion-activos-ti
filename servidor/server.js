@@ -470,12 +470,21 @@ async function seedIfEmpty(){
 
 async function backfillTrabajadoresIfEmpty(){
   try {
-    const result = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get();
-    const count = result?.c || 0;
-    if(count > 0) return;
+    // Verificar si hay datos válidos
+    const sample = await db.prepare('SELECT * FROM trabajadores LIMIT 1').get();
+    if(sample && sample.nombre && typeof sample.nombre === 'string') {
+      console.log('✅ Trabajadores ya cargados (datos válidos)');
+      return;
+    }
+    // Si hay datos pero son inválidos, limpiar
+    if(sample) {
+      console.log('⚠️ Datos de trabajadores corruptos, limpiando...');
+      await db.prepare('DELETE FROM trabajadores').run();
+    }
   } catch (err) {
-    console.log('No se pudo contar trabajadores, asumiendo tabla vacía:', err.message);
+    console.log('No se pudo verificar trabajadores:', err.message);
   }
+  console.log('📝 Extrayendo trabajadores de movimientos y equipos...');
   for(const m of await getMovimientos()){
     if(m.trabajador) await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
   }
@@ -501,6 +510,22 @@ function verifyPassword(pw, salt, hash){
 }
 
 async function seedUsersIfEmpty(){
+  try {
+    // Verificar si hay usuarios válidos
+    const existing = await db.prepare('SELECT * FROM users LIMIT 1').get();
+    if(existing && existing.username && typeof existing.username === 'string') {
+      console.log('✅ Usuarios ya cargados (datos válidos)');
+      return;
+    }
+    // Si hay datos pero son inválidos, limpiar
+    if(existing) {
+      console.log('⚠️ Datos de usuarios corruptos, limpiando...');
+      await db.prepare('DELETE FROM users').run();
+    }
+  } catch (err) {
+    console.log('No se pudo verificar usuarios:', err.message);
+  }
+
   // Usuario de prueba: admin / admin123
   const {salt, hash} = hashPassword('admin123');
   const defaults = [
