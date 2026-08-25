@@ -466,7 +466,7 @@ async function createSession(username){
   const now = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 60 * 60 * 12 * 1000).toISOString(); // 12 horas
 
-  console.log(`🔐 Creando sesión: sid=${sid}, username=${username}, dbType=${dbType}`);
+  console.log(`🔐 Creando sesión: ${username}`);
 
   try {
     console.log('🔐 Ejecutando INSERT INTO sessions...');
