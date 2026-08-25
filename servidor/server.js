@@ -986,6 +986,10 @@ async function handleRequest(req, res){
     if(pathname === '/api/state' && req.method === 'GET'){
       // Cargar datos con LIMIT para performance
       const equiposRaw = await db.prepare('SELECT * FROM equipos ORDER BY id LIMIT 500').all();
+      console.log(`📊 /api/state: ${equiposRaw?.length || 0} equipos cargados`);
+      if (equiposRaw?.length > 0) {
+        console.log(`   Primer equipo:`, JSON.stringify(equiposRaw[0]).substring(0, 100));
+      }
       const equipos = (equiposRaw || []).filter(e => e && typeof e === 'object').map(e=>{
         // Normalizar: MongoDB puede tener propiedades diferentes
         const obj = {
