@@ -261,8 +261,17 @@ function createMongoDBAdapter() {
     });
 
     const collection = database.collection(tableName);
-    const result = await collection.insertOne(doc);
-    return { lastID: result.insertedId, changes: 1 };
+    try {
+      // Intentar insertMany si hay múltiples documentos en buffer (para futuro)
+      const result = await collection.insertOne(doc);
+      return { lastID: result.insertedId, changes: 1 };
+    } catch (err) {
+      // Si falla porque el documento ya existe (duplicate key), ignorar
+      if (err.code === 11000) {
+        return { lastID: doc._id, changes: 0 };
+      }
+      throw err;
+    }
   }
 
   // Manejar SELECT
