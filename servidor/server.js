@@ -429,25 +429,27 @@ function verifyPassword(pw, salt, hash){
 }
 
 async function seedUsersIfEmpty(){
-  const result = await db.prepare('SELECT COUNT(*) AS c FROM users').get();
-  const count = result?.c || 0;
-  if(count > 0) return;
-
   // Usuario de prueba: admin / admin123
   const {salt, hash} = hashPassword('admin123');
-  const testUser = {username:'admin', salt, hash};
-
   const defaults = [
-    testUser, // Usuario de prueba
+    {username:'admin', salt, hash}, // Usuario de prueba
     {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
     {username:'dvalnecia', salt:'960284915d484ffe07c5e65dd6087cfe', hash:'8d0bc56a9834741c7166d550c1f82b23090a4abb754d33ed9ddfba69497346613d6cd19eedc02461242249019dc894c3037f27adeebd6bcb4dfc917523159989'}
   ];
+
+  // Solo agregar usuarios que no existan - preserva usuarios existentes
   const ins = db.prepare('INSERT INTO users (username, salt, hash, mustChangePassword) VALUES (?,?,?,1)');
-  for(const u of defaults) await ins.run(u.username, u.salt, u.hash);
-  console.log('Usuarios iniciales creados:');
-  console.log('  - admin / admin123 (prueba)');
-  console.log('  - cmore / ??? (contraseña entregada por separado)');
-  console.log('  - dvalnecia / ??? (contraseña entregada por separado)');
+  for(const u of defaults){
+    const existing = await getUser(u.username);
+    if(!existing){
+      try{
+        await ins.run(u.username, u.salt, u.hash);
+        console.log(`✅ Usuario creado: ${u.username}`);
+      } catch(err){
+        console.log(`⚠️ Usuario ${u.username} ya existe o error al crear`);
+      }
+    }
+  }
 }
 
 async function getUser(username){
