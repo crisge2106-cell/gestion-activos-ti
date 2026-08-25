@@ -327,10 +327,10 @@ async function bulkLoad(data){
 
     // Preparar documentos en formato MongoDB
     const equiposDocs = (data.equipos||[]).map(e => ({
-      id: e.id, tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
+      id: e.id, nombre: e.nombre||'', tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
       fechaCompra: e.fechaCompra||null, sede: e.sede||'', estado: e.estado||'Disponible',
       usuarioActual: e.usuarioActual||'', area: e.area||'', observaciones: e.observaciones||'',
-      cpu: (e.specs&&e.specs.cpu)||'', ram: (e.specs&&e.specs.ram)||'', disco: (e.specs&&e.specs.disco)||'',
+      cpu: (e.specs&&e.specs.cpu)||e.cpu||'', ram: (e.specs&&e.specs.ram)||e.ram||'', disco: (e.specs&&e.specs.disco)||e.disco||'',
       origen: e.origen||''
     }));
 

@@ -59,7 +59,8 @@
       "Bash(node -c server.js)",
       "Bash(grep -n \"^\\\\`\\\\\\)\\\\;\" server.js)",
       "Bash(grep -n '`\\);' server.js)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "PowerShell($seed = Get-Content \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\seed.json\" | ConvertFrom-Json; $seed.equipos[0] | ConvertTo-Json)"
     ]
   }
 }
