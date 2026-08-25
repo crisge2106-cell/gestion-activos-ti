@@ -58,7 +58,8 @@
       "Bash(node -c db-factory.js)",
       "Bash(node -c server.js)",
       "Bash(grep -n \"^\\\\`\\\\\\)\\\\;\" server.js)",
-      "Bash(grep -n '`\\);' server.js)"
+      "Bash(grep -n '`\\);' server.js)",
+      "Bash(git rm *)"
     ]
   }
 }

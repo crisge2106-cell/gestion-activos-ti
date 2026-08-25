@@ -276,6 +276,20 @@ function createMongoDBAdapter() {
 
   // Manejar SELECT
   async function handleSelect(database, sql, params) {
+    // Detectar COUNT(*)
+    const countMatch = sql.match(/SELECT\s+COUNT\(\*\)\s+(?:AS\s+)?(\w+)?/i);
+    if (countMatch) {
+      const tableMatch = sql.match(/FROM (\w+)/i);
+      if (!tableMatch) throw new Error('Invalid SELECT COUNT');
+
+      const tableName = tableMatch[1];
+      const collection = database.collection(tableName);
+      const filter = buildWhereFilter(sql, params);
+      const count = await collection.countDocuments(filter);
+      const alias = countMatch[1] || 'COUNT(*)';
+      return [{ [alias]: count }];
+    }
+
     const tableMatch = sql.match(/FROM (\w+)/i);
     if (!tableMatch) throw new Error('Invalid SELECT');
 
