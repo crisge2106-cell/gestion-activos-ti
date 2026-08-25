@@ -319,49 +319,104 @@ function maxSuffix(ids, prefix){
 // Carga masiva de datos
 // ---------------------------------------------------------------------------
 async function bulkLoad(data){
-  const insEq = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
-    VALUES (@id,@tipo,@marca,@modelo,@serie,@fechaCompra,@sede,@estado,@usuarioActual,@area,@observaciones,@cpu,@ram,@disco,@origen)`);
-  const insMv = db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
-    VALUES (@id,@tipo,@fecha,@trabajador,@dni,@area,@sede,@observaciones,@origen)`);
-  const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
-    VALUES (@movimientoId,@equipoId,@cantidad,@descripcion,@marcaModelo,@serieEstado)`);
-  const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
-    VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion)`);
+  const isMongoDBType = db.getType && db.getType() === 'mongodb';
 
-  await db.exec('BEGIN');
-  try{
-    for(const e of (data.equipos||[])){
-      await insEq.run({
-        id: e.id, tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
-        fechaCompra: e.fechaCompra||null, sede: e.sede||'', estado: e.estado||'Disponible',
-        usuarioActual: e.usuarioActual||'', area: e.area||'', observaciones: e.observaciones||'',
-        cpu: (e.specs&&e.specs.cpu)||'', ram: (e.specs&&e.specs.ram)||'', disco: (e.specs&&e.specs.disco)||'',
-        origen: e.origen||''
-      });
-    }
+  // En MongoDB: usar insertMany para mejor performance
+  if (isMongoDBType) {
+    const t0 = Date.now();
+
+    // Preparar documentos en formato MongoDB
+    const equiposDocs = (data.equipos||[]).map(e => ({
+      id: e.id, tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
+      fechaCompra: e.fechaCompra||null, sede: e.sede||'', estado: e.estado||'Disponible',
+      usuarioActual: e.usuarioActual||'', area: e.area||'', observaciones: e.observaciones||'',
+      cpu: (e.specs&&e.specs.cpu)||'', ram: (e.specs&&e.specs.ram)||'', disco: (e.specs&&e.specs.disco)||'',
+      origen: e.origen||''
+    }));
+
+    const movimientosDocs = (data.movimientos||[]).map(m => ({
+      id: m.id, tipo: m.tipo||'', fecha: m.fecha||null, trabajador: m.trabajador||'', dni: m.dni||'',
+      area: m.area||'', sede: m.sede||'', observaciones: m.observaciones||'', origen: m.origen||''
+    }));
+
+    const movItemsDocs = [];
     for(const m of (data.movimientos||[])){
-      await insMv.run({
-        id: m.id, tipo: m.tipo||'', fecha: m.fecha||null, trabajador: m.trabajador||'', dni: m.dni||'',
-        area: m.area||'', sede: m.sede||'', observaciones: m.observaciones||'', origen: m.origen||''
-      });
       for(const it of (m.items||[])){
-        await insIt.run({
+        movItemsDocs.push({
           movimientoId: m.id, equipoId: it.equipoId||null, cantidad: it.cantidad||1,
           descripcion: it.descripcion||'', marcaModelo: it.marcaModelo||'', serieEstado: it.serieEstado||''
         });
       }
     }
-    for(const mt of (data.mantenimientos||[])){
-      await insMt.run({
-        id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
-        realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
-      });
+
+    const mantenimientosDocs = (data.mantenimientos||[]).map(mt => ({
+      id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
+      realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
+    }));
+
+    try {
+      // Obtener conexión MongoDB directa
+      const mongoDb = await db.getMongoDatabase();
+      if (!mongoDb) throw new Error('MongoDB no inicializada');
+
+      if (equiposDocs.length > 0) await mongoDb.collection('equipos').insertMany(equiposDocs, { ordered: false });
+      if (movimientosDocs.length > 0) await mongoDb.collection('movimientos').insertMany(movimientosDocs, { ordered: false });
+      if (movItemsDocs.length > 0) await mongoDb.collection('movimiento_items').insertMany(movItemsDocs, { ordered: false });
+      if (mantenimientosDocs.length > 0) await mongoDb.collection('mantenimientos').insertMany(mantenimientosDocs, { ordered: false });
+
+      const elapsed = Date.now() - t0;
+      console.log(`✅ MongoDB bulkLoad completado en ${elapsed}ms (${equiposDocs.length} equipos, ${movimientosDocs.length} movimientos)`);
+    } catch (err) {
+      console.error('❌ Error en bulkLoad MongoDB:', err.message);
+      throw err;
     }
-    await db.exec('COMMIT');
-  }catch(err){
-    await db.exec('ROLLBACK');
-    throw err;
+  } else {
+    // En SQLite: usar INSERT tradicional
+    const insEq = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+      VALUES (@id,@tipo,@marca,@modelo,@serie,@fechaCompra,@sede,@estado,@usuarioActual,@area,@observaciones,@cpu,@ram,@disco,@origen)`);
+    const insMv = db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen)
+      VALUES (@id,@tipo,@fecha,@trabajador,@dni,@area,@sede,@observaciones,@origen)`);
+    const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
+      VALUES (@movimientoId,@equipoId,@cantidad,@descripcion,@marcaModelo,@serieEstado)`);
+    const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
+      VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion)`);
+
+    await db.exec('BEGIN');
+    try{
+      for(const e of (data.equipos||[])){
+        await insEq.run({
+          id: e.id, tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
+          fechaCompra: e.fechaCompra||null, sede: e.sede||'', estado: e.estado||'Disponible',
+          usuarioActual: e.usuarioActual||'', area: e.area||'', observaciones: e.observaciones||'',
+          cpu: (e.specs&&e.specs.cpu)||'', ram: (e.specs&&e.specs.ram)||'', disco: (e.specs&&e.specs.disco)||'',
+          origen: e.origen||''
+        });
+      }
+      for(const m of (data.movimientos||[])){
+        await insMv.run({
+          id: m.id, tipo: m.tipo||'', fecha: m.fecha||null, trabajador: m.trabajador||'', dni: m.dni||'',
+          area: m.area||'', sede: m.sede||'', observaciones: m.observaciones||'', origen: m.origen||''
+        });
+        for(const it of (m.items||[])){
+          await insIt.run({
+            movimientoId: m.id, equipoId: it.equipoId||null, cantidad: it.cantidad||1,
+            descripcion: it.descripcion||'', marcaModelo: it.marcaModelo||'', serieEstado: it.serieEstado||''
+          });
+        }
+      }
+      for(const mt of (data.mantenimientos||[])){
+        await insMt.run({
+          id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
+          realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
+        });
+      }
+      await db.exec('COMMIT');
+    }catch(err){
+      await db.exec('ROLLBACK');
+      throw err;
+    }
   }
+
   await setCounter('eq', Math.max(maxSuffix((data.equipos||[]).map(e=>e.id), 'EQ'), data.nextEqId||0) + 1);
   await setCounter('mv', Math.max(maxSuffix((data.movimientos||[]).map(m=>m.id), 'MV'), data.nextMvId||0) + 1);
   await setCounter('mt', Math.max(maxSuffix((data.mantenimientos||[]).map(m=>m.id), 'MT'), data.nextMantId||0) + 1);

@@ -406,7 +406,10 @@ function createMongoDBAdapter() {
   return {
     connectDB,
     exec,
-    prepare
+    prepare,
+    getMongoClient: () => client,
+    getDatabase: () => db,
+    connectOnDemand: connectDB
   };
 }
 
@@ -418,6 +421,14 @@ module.exports = {
   init: initializeDB,
   getDB: () => dbInstance,
   getType: () => dbType,
+  getMongoDatabase: async () => {
+    if (dbType !== 'mongodb' || !dbInstance) {
+      return null;
+    }
+    // Asegurar conexión antes de retornar
+    await dbInstance.connectOnDemand();
+    return dbInstance.getDatabase();
+  },
 
   // Forward métodos a la instancia actual
   exec: async (sql) => {
