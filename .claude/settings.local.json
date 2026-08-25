@@ -61,7 +61,9 @@
       "Bash(grep -n '`\\);' server.js)",
       "Bash(git rm *)",
       "PowerShell($seed = Get-Content \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\seed.json\" | ConvertFrom-Json; $seed.equipos[0] | ConvertTo-Json)",
-      "Bash(xargs grep -l \"/api/state\")"
+      "Bash(xargs grep -l \"/api/state\")",
+      "Bash(node -e \"const s=require\\('./servidor/seed.json'\\); console.log\\('movimientos:', s.movimientos?.length || 0\\); console.log\\('movimiento_items:', s.movimiento_items?.length || 0\\);\")",
+      "Bash(node -e \"const s=require\\('./servidor/seed.json'\\); const m=s.movimientos[0]; console.log\\(JSON.stringify\\({id:m.id, trabajador:m.trabajador, tipo:m.tipo}, null, 2\\)\\);\")"
     ]
   }
 }

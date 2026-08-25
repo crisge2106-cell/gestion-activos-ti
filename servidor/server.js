@@ -354,6 +354,10 @@ async function bulkLoad(data){
       realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
     }));
 
+    const trabajadoresDocs = (data.trabajadores||[]).map(t => ({
+      nombre: t.nombre||'', dni: t.dni||'', area: t.area||'', sede: t.sede||'', activo: 1
+    }));
+
     try {
       // Obtener conexión MongoDB directa
       const mongoDb = await db.getMongoDatabase();
@@ -373,9 +377,10 @@ async function bulkLoad(data){
       if (movimientosDocs.length > 0) await mongoDb.collection('movimientos').insertMany(movimientosDocs, { ordered: false });
       if (movItemsDocs.length > 0) await mongoDb.collection('movimiento_items').insertMany(movItemsDocs, { ordered: false });
       if (mantenimientosDocs.length > 0) await mongoDb.collection('mantenimientos').insertMany(mantenimientosDocs, { ordered: false });
+      if (trabajadoresDocs.length > 0) await mongoDb.collection('trabajadores').insertMany(trabajadoresDocs, { ordered: false });
 
       const elapsed = Date.now() - t0;
-      console.log(`✅ MongoDB bulkLoad completado en ${elapsed}ms (${equiposDocs.length} equipos, ${movimientosDocs.length} movimientos)`);
+      console.log(`✅ MongoDB bulkLoad completado en ${elapsed}ms (${equiposDocs.length} equipos, ${movimientosDocs.length} movimientos, ${trabajadoresDocs.length} trabajadores)`);
     } catch (err) {
       console.error('❌ Error en bulkLoad MongoDB:', err.message);
       throw err;
@@ -561,6 +566,9 @@ async function backfillTrabajadoresIfEmpty(){
     console.log('[TRAB] 📝 Extrayendo trabajadores de movimientos y equipos...');
     const movs = await getMovimientos();
     console.log(`[TRAB]   ✓ getMovimientos(): ${movs?.length || 0} registros`);
+    if(movs?.length > 0) {
+      console.log(`[TRAB]   Primer movimiento:`, JSON.stringify(movs[0]).substring(0, 150));
+    }
 
     const equips = await getEquipos();
     console.log(`[TRAB]   ✓ getEquipos(): ${equips?.length || 0} registros`);

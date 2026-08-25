@@ -6596,5 +6596,745 @@
   "mantenimientos": [],
   "nextEqId": 229,
   "nextMvId": 227,
-  "nextMantId": 1
+  "nextMantId": 1,
+  "trabajadores": [
+    {
+      "nombre": "ADMINITRACIÓN",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Area Administración - 1er Piso",
+      "dni": "",
+      "area": "ADMINITRACION",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Area Customer Service - 2do Piso",
+      "dni": "",
+      "area": "CARGA",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Area Operaciones - Tercer Piso",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Area de Contabilidad - 1er Piso",
+      "dni": "",
+      "area": "CONTABILIDAD",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Area de Finanzas - 2do Piso",
+      "dni": "",
+      "area": "FINANZAS",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Aymar Timana",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "BD ASISTENCIA",
+      "dni": "",
+      "area": "TI",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "BETTSY MIRANDA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "BRAYAN STECK GALLO ORDINOLA",
+      "dni": "47017700",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "BRENDA CASTILLO AGUIRRE",
+      "dni": "",
+      "area": "MATRICES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "BRENDI RAMIREZ MANRIQUE",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Briani Arteaga Orozco",
+      "dni": "",
+      "area": "",
+      "sede": "UNIREEFER"
+    },
+    {
+      "nombre": "CANDELARIO CASTRO ATOCHE",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "CARLO TANTARUNA",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "CLAUDIA PARDO CARRASCO",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "CRISTOPHER MORE PALACIOS",
+      "dni": "",
+      "area": "TI",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Carlo Andre Tantaruna",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Carmen Mejia",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "DENNIS SUAREZ VARGAS",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "DENNIS VALENCIA",
+      "dni": "",
+      "area": "TI",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "DESPACHADORES",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "DEYCI PANGALIMA CORDOVA",
+      "dni": "",
+      "area": "CUSTOMER",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "DIANA CHAMBA ARIAS",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Diana Chamba",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "EDDY FLORES SILVA",
+      "dni": "",
+      "area": "DOCUMENTACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "EDINSON SILVA",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "EDITH UCEDA MARCHAND",
+      "dni": "",
+      "area": "GERENCIA",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Eddy Flores",
+      "dni": "",
+      "area": "",
+      "sede": "Paita"
+    },
+    {
+      "nombre": "Edith Uceda",
+      "dni": "",
+      "area": "",
+      "sede": "Paita"
+    },
+    {
+      "nombre": "FERRER JOHNNY",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "FRANK SALVADOR CORDOVA",
+      "dni": "41989541",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Freddy Prieto",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "GERARDO VENTURA",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "GHINO RIVERA",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "GRETA MARIANI AGUILAR",
+      "dni": "",
+      "area": "EXTERNO",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "GUILLERMO ROQUE",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "HENRY NUÑEZ ARCELLES",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Henry Retamozo",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "ISAAC YARLEQUE",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "ISAAC YARLEQUE NAVARRO",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JESUS MEJIA ADRIANZEN",
+      "dni": "",
+      "area": "DOCUMENTACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JHONATAN VIVAS DAVILA",
+      "dni": "",
+      "area": "LIQUIDACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JOE GALLARDO NORIEGA",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JONATHAN  GUTIERREZ TAVARA",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JORDY PUESCAS",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JORGE ALBERTO RONDOY",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JORGE LAZO ROFRIO",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JORGE MAURICIO",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JOSE FELIX UBILLUS PINGO",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JOSE REYES PEÑA",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JOSEPH CARRILLO PINTADO",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JUAN CARLOS CHIMPAY ACUÑA",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "JUNIOR CORREO AMBULAY",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "JUNIOR CORREO AMBULAY (BACKUP M)",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Jesus Flores",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Jesús Calderón",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Jesús Flores",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Jhoan Rodriguez",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Juan Aldave Cordova",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Juan Carlos Chimpay Acuña",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "KATHERINE FUENTES",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "KEYSI CHIROQUE FARIAS",
+      "dni": "70087470",
+      "area": "CUSTOMER",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Kenny Aguirre",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Kevin Marchand",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "LENIN GONZALES PEÑA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "LISVET AGUILAR NONAJULCA",
+      "dni": "",
+      "area": "CUSTOMER",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "LIZ QUIÑONES",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "LUIS CASTRO VEGA",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Lissette Panduro Alvarez",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Liz Quñones",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Luis Paul Marchand",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "MALU MIÑAN",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "MARIA SANCHEZ ALMESTAR",
+      "dni": "",
+      "area": "CALIDAD",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MARISELA CHONTO",
+      "dni": "",
+      "area": "CUSTOMER",
+      "sede": "JAYANCA"
+    },
+    {
+      "nombre": "MARTIN CHERRE CASQUERO",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MIDORY MAURICIO HIDALGO",
+      "dni": "",
+      "area": "COMERCIAL",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MILAGRO VIERA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MILAGROS VIERA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MIRIAM MEJIA",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "MOISES HUERTAS",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "MONITOR AYMAR",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Malú Miñan",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Marco Gutierrez",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Mayra Otero",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Midory Mauricio",
+      "dni": "",
+      "area": "",
+      "sede": "Paita"
+    },
+    {
+      "nombre": "NEDEEF CORDOVA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "NEDEEF CORDOVA BRUNO",
+      "dni": "",
+      "area": "LIQUIDACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "NINELL ALBAN PANTA",
+      "dni": "",
+      "area": "GERENCIA",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "NUMA PACHECO",
+      "dni": "",
+      "area": "EXTERNO",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Nilton Ichpas",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "OPERACIONES",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "PEDRO BARRIOS",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "PIERINA PETRONE",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "PIERINA PETRONE RUIZ",
+      "dni": "",
+      "area": "CUSTOMER",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "PIERO JUARZ",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Paola Vilela",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Patrick Colorado",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Piero Juarez",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "ROBERTO MOROCHO CHAMBA",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "ROBERTO ROMERO AYOSA",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "RUDE CHAMBA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "RUDE CHAMBA YANAYACO",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Rosario Romero",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "SAMANTHA LUNA",
+      "dni": "",
+      "area": "",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "SANTOS ALBERTO CARRANZA CASTILLO",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "SANTOS FARIAS ESTRADA",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "SERGIO DIAZ TINOCO",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "SERVER SINTAD",
+      "dni": "",
+      "area": "TI",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "SIMON UCAÑAN",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "SISCONT",
+      "dni": "",
+      "area": "TI",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "STEPHANIE SEMINARIO",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Sanders Soto",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Shirley Tantalean",
+      "dni": "",
+      "area": "ADMINISTRACIÓN",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "VICTOR AYALA GALAN",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "YESNY CUNYA MONTORO",
+      "dni": "",
+      "area": "MATRICES",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "YOSSELYN VANESSA GARCIA PEDROSO",
+      "dni": "",
+      "area": "ADMINISTRACION",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "YURIKA LACHIRA SANTIAGO",
+      "dni": "",
+      "area": "DOCUMENTACION",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "Yesny Cunya",
+      "dni": "",
+      "area": "",
+      "sede": "Paita"
+    },
+    {
+      "nombre": "Yessabel Francia",
+      "dni": "",
+      "area": "OPERACIONES",
+      "sede": "LIMA"
+    },
+    {
+      "nombre": "Yurika Lachira",
+      "dni": "",
+      "area": "",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "ZAIRA GARCIA CORREA",
+      "dni": "72700704",
+      "area": "RRHH",
+      "sede": "PAITA"
+    },
+    {
+      "nombre": "ÁREA DE MONITOREO",
+      "dni": "",
+      "area": "TRANSPORTE",
+      "sede": "PAITA"
+    }
+  ]
 }
