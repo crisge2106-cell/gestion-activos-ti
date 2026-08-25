@@ -542,8 +542,13 @@ async function seedIfEmpty(){
     console.log(`[SEED] ✅ bulkLoad completado: ${seed.equipos.length} equipos insertados`);
 
     // Verificar que se insertó correctamente
-    const verifyCount = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
-    console.log(`[SEED] ✅ Verificación: ${verifyCount?.c || 0} equipos en BD`);
+    const verifyCountEquipos = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+    const verifyCountTrabajadores = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores').get();
+    const verifyCountTrabajadoresActivos = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=1').get();
+    console.log(`[SEED] ✅ Verificación después de bulkLoad:`);
+    console.log(`[SEED]    - ${verifyCountEquipos?.c || 0} equipos en BD`);
+    console.log(`[SEED]    - ${verifyCountTrabajadores?.c || 0} trabajadores TOTAL en BD`);
+    console.log(`[SEED]    - ${verifyCountTrabajadoresActivos?.c || 0} trabajadores activos (activo=1) en BD`);
   } catch(err) {
     console.error('[SEED] ❌ Error en fresh start:', err.message, err.stack);
     throw err;
