@@ -456,7 +456,18 @@ async function clearAllTables(){
   console.log('✅ Limpieza completada');
 }
 
-let seedAlreadyLoaded = false;
+async function isFreshStartNeeded(){
+  try {
+    // Verificar si equipos tiene estructura válida
+    const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
+    if(result && result.id && typeof result.id === 'string') {
+      return false; // Datos válidos, no necesita fresh start
+    }
+    return true; // Datos corruptos o no existen
+  } catch (err) {
+    return true; // Error en query, necesita fresh start
+  }
+}
 
 async function seedIfEmpty(){
   if(!fs.existsSync(SEED_PATH)){
@@ -466,34 +477,20 @@ async function seedIfEmpty(){
 
   const seed = JSON.parse(fs.readFileSync(SEED_PATH, 'utf8'));
 
-  // En VERCEL: SIEMPRE limpiar y recargar (fresh start cada deploy)
-  if(isVercel && !seedAlreadyLoaded) {
-    console.log('🔄 [VERCEL] Fresh start: limpiando y recargando TODA la BD...');
-    await clearAllTables();
-    await bulkLoad(seed);
-    seedAlreadyLoaded = true;
-    console.log(`✅ [VERCEL] Fresh start completado: ${seed.equipos.length} equipos, ${seed.movimientos.length} movimientos`);
+  // Verificar si necesita fresh start
+  const needsFreshStart = await isFreshStartNeeded();
+
+  if(!needsFreshStart) {
+    const count = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
+    console.log(`✅ Base de datos ya tiene ${count?.c || 0} equipos válidos, skipeando carga.`);
     return;
   }
 
-  // En LOCAL: verificar si hay datos válidos
-  if(!isVercel) {
-    try {
-      const result = await db.prepare('SELECT * FROM equipos LIMIT 1').get();
-      if(result && result.id && typeof result.id === 'string') {
-        const count = await db.prepare('SELECT COUNT(*) AS c FROM equipos').get();
-        console.log(`✅ Base de datos ya tiene ${count?.c || 0} equipos válidos, skipeando carga.`);
-        return;
-      }
-    } catch (err) {
-      console.log('No se pudo verificar equipos:', err.message);
-    }
-
-    console.log('Base de datos vacia o corrompida: limpiando y cargando datos...');
-    await clearAllTables();
-    await bulkLoad(seed);
-    console.log(`✅ Cargados ${seed.equipos.length} equipos y ${seed.movimientos.length} movimientos.`);
-  }
+  // Fresh start: limpiar y recargar TODO
+  console.log('🔄 Fresh start: limpiando y recargando TODA la BD...');
+  await clearAllTables();
+  await bulkLoad(seed);
+  console.log(`✅ Fresh start completado: ${seed.equipos.length} equipos, ${seed.movimientos.length} movimientos`);
 }
 
 async function backfillTrabajadoresIfEmpty(){
@@ -515,21 +512,40 @@ async function backfillTrabajadoresIfEmpty(){
     console.log('No se pudo verificar trabajadores:', err.message);
   }
 
-  console.log('📝 Extrayendo trabajadores de movimientos y equipos...');
-  let count = 0;
-  for(const m of await getMovimientos()){
-    if(m.trabajador) {
-      await upsertTrabajador({nombre:m.trabajador, dni:m.dni, area:m.area, sede:m.sede});
-      count++;
+  try {
+    console.log('📝 Extrayendo trabajadores de movimientos y equipos...');
+    const movs = await getMovimientos();
+    console.log(`   Movimientos cargados: ${movs?.length || 0}`);
+
+    const equips = await getEquipos();
+    console.log(`   Equipos cargados: ${equips?.length || 0}`);
+
+    let trabCount = 0;
+    for(const m of movs || []){
+      if(m && m.trabajador) {
+        try {
+          await upsertTrabajador({nombre:m.trabajador, dni:m.dni||'', area:m.area||'', sede:m.sede||''});
+          trabCount++;
+        } catch(err) {
+          console.log(`   ⚠️ Error al crear trabajador ${m.trabajador}: ${err.message}`);
+        }
+      }
     }
-  }
-  for(const e of await getEquipos()){
-    if(e.usuarioActual && e.estado==='Asignado') {
-      await upsertTrabajador({nombre:e.usuarioActual, area:e.area, sede:e.sede});
-      count++;
+
+    for(const e of equips || []){
+      if(e && e.usuarioActual && e.estado==='Asignado') {
+        try {
+          await upsertTrabajador({nombre:e.usuarioActual, dni:'', area:e.area||'', sede:e.sede||''});
+          trabCount++;
+        } catch(err) {
+          console.log(`   ⚠️ Error al crear trabajador ${e.usuarioActual}: ${err.message}`);
+        }
+      }
     }
+    console.log(`✅ Cargados ${trabCount} trabajadores desde equipos y movimientos`);
+  } catch(err) {
+    console.error('❌ Error en backfillTrabajadores:', err.message);
   }
-  console.log(`✅ Cargados ${count} trabajadores desde equipos y movimientos`);
 }
 
 // ---------------------------------------------------------------------------
