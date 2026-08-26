@@ -900,8 +900,11 @@ async function updateEquipoFields(id, fields){
   if(fields.nombre !== undefined){
     const nombre = (fields.nombre||'').trim();
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
-    const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?) AND id != ?').get(nombre, id);
-    if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
+    // Solo validar si el nombre CAMBIÓ (no es el mismo que el actual)
+    if(nombre.toLowerCase() !== (cur.nombre||'').toLowerCase()){
+      const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
+      if(existente && existente.id !== id) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
+    }
   }
   await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
     .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.sede, merged.estado,
