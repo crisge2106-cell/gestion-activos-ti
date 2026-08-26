@@ -902,8 +902,12 @@ async function updateEquipoFields(id, fields){
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
     // Solo validar si el nombre CAMBIÓ (no es el mismo que el actual)
     if(nombre.toLowerCase() !== (cur.nombre||'').toLowerCase()){
-      const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
-      if(existente && existente.id !== id) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
+      // Obtener todos los equipos y buscar por nombre (case-insensitive)
+      const todos = await db.prepare('SELECT id, nombre FROM equipos').all();
+      const existente = (todos||[]).find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase());
+      if(existente && (existente.id || existente._id) !== id) {
+        throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
+      }
     }
   }
   await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
