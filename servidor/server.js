@@ -927,7 +927,9 @@ async function insertEquipo(e){
     let candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
 
     let intento = 0;
-    while(await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(candidato)){
+    const todos = await db.prepare('SELECT nombre FROM equipos').all();
+    const nombresExistentes = new Set((todos||[]).map(e => (e.nombre||'').toLowerCase()));
+    while(nombresExistentes.has(candidato.toLowerCase())){
       contador++;
       candidato = tipoCorto + '-' + String(contador).padStart(4, '0');
       intento++;
@@ -937,7 +939,9 @@ async function insertEquipo(e){
     nombre = candidato;
     await setCounter(contadorName, contador + 1);
   } else {
-    const existente = await db.prepare('SELECT id FROM equipos WHERE LOWER(nombre) = LOWER(?)').get(nombre);
+    // Obtener todos los equipos y buscar por nombre (case-insensitive)
+    const todos = await db.prepare('SELECT id, nombre FROM equipos').all();
+    const existente = (todos||[]).find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase());
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
 
