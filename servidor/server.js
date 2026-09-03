@@ -1558,10 +1558,7 @@ async function handleRequest(req, res){
       const id = decodeURIComponent(pathname.split('/').pop());
       const eq = await getEquipo(id);
       if(!eq) return sendJson(res, 404, {error:'Equipo no encontrado'});
-      // Solo permitir eliminar si está en Disponible o En custodia (no Asignado)
-      if(eq.estado === 'Asignado'){
-        return sendJson(res, 400, {error:'No puedes eliminar un equipo asignado. Debe devolverse primero.'});
-      }
+      // Permitir eliminar incluso si está asignado (especialmente para números telefónicos duplicados)
       // Eliminar equipo
       await db.prepare('DELETE FROM equipos WHERE id=?').run(id);
       // Eliminar items asociados en movimientos

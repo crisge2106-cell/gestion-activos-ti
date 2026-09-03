@@ -1670,9 +1670,11 @@ function renderDirectorioTelefonos(){
   // Construir tabla
   let html = '<tr><th>Número Telefónico</th><th>Equipo</th><th>Asignado a</th><th>Área</th><th>Estado</th><th>Veces Registrado</th><th></th></tr>';
   for(const t of items){
-    const trabajadoresStr = t.trabajadores.length > 0 ? t.trabajadores.filter(Boolean).join(', ') : (t.usuarioActual || '—');
-    const areasStr = t.areas.length > 0 ? t.areas.filter(Boolean).join(', ') : (t.area || '—');
+    // Mostrar SOLO el usuario actual, no histórico
+    const trabajadoresStr = t.usuarioActual || '—';
+    const areasStr = t.area || '—';
     const estadoBadge = t.estado === 'Asignado' ? `<badge style="background:var(--verde);">${t.estado}</badge>` : `<badge>${t.estado}</badge>`;
+    const btnEliminar = `<button class="btn-sm danger" onclick="eliminarEquipo('${t.linId}')">Eliminar</button>`;
 
     html += `<tr>
       <td><strong>${escapeHtml(t.numero)}</strong></td>
@@ -1681,7 +1683,7 @@ function renderDirectorioTelefonos(){
       <td>${escapeHtml(areasStr)}</td>
       <td>${estadoBadge}</td>
       <td style="text-align:center;"><badge>${t.contador}</badge></td>
-      <td><button class="btn-sm" onclick="verDetalleLinea('${t.linId}')">Ver</button></td>
+      <td>${btnEliminar}</td>
     </tr>`;
   }
 
@@ -1696,6 +1698,19 @@ function verDetalleLinea(linId){
   if(!lin) return alert('Linea no encontrada');
   const msg = `LIN: ${lin.nombre}\nTelefono: ${lin.serie}\nEstado: ${lin.estado}\nUsuario: ${lin.usuarioActual || 'Sin asignar'}`;
   alert(msg);
+}
+
+async function eliminarEquipo(equipoId){
+  const eq = DB.equipos.find(e => e.id === equipoId);
+  if(!eq) return alert('Equipo no encontrado');
+  if(!confirm(`¿Eliminar ${eq.nombre} (${eq.serie})? Esta acción no se puede deshacer.`)) return;
+  try{
+    const res = await apiFetch(`/api/equipos/${encodeURIComponent(equipoId)}`, 'DELETE');
+    alert('Equipo eliminado correctamente');
+    await refreshState();
+  }catch(err){
+    alert('Error: ' + err.message);
+  }
 }
 
 // ---------- SOLICITUDES DE COMPRA ----------
