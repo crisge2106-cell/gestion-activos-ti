@@ -480,23 +480,11 @@ async function isFreshStartNeeded(){
       return true;
     }
 
-    // EN VERCEL: Sincronizar con seed.json actualizado
+    // EN VERCEL: NO hacer fresh start automático
+    // Solo se hace si el usuario lo solicita explícitamente
     if(isVercel) {
-      const trabCount = await db.prepare('SELECT COUNT(*) AS c FROM trabajadores WHERE activo=?').get(1);
-      const trabTotal = trabCount?.c || 0;
-      console.log(`[SEED] VERCEL: ${count} equipos, ${trabTotal} trabajadores`);
-
-      // Solo hacer fresh start si hay equipos pero CERO trabajadores (nunca se cargó)
-      if(count > 0 && trabTotal === 0) {
-        console.log(`[SEED] → VERCEL: hay ${count} equipos pero 0 trabajadores, recargando...`);
-        return true;
-      }
-
-      // Si hay más equipos de lo esperado (duplicados), hacer fresh start
-      if(count > 250) {
-        console.log(`[SEED] → VERCEL tiene ${count} equipos (POSIBLES DUPLICADOS, esperaba 232), limpiando...`);
-        return true;
-      }
+      console.log('[SEED] VERCEL: fresh start desactivado automáticamente. Datos preservados.');
+      return false;
     }
 
     // Verificar estructura del primer equipo
