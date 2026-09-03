@@ -493,8 +493,8 @@ async function isFreshStartNeeded(){
       }
 
       // Si hay más equipos de lo esperado (duplicados), hacer fresh start
-      if(count > 300) {
-        console.log(`[SEED] → VERCEL tiene ${count} equipos (DUPLICADOS, esperaba 232), limpiando...`);
+      if(count > 250) {
+        console.log(`[SEED] → VERCEL tiene ${count} equipos (POSIBLES DUPLICADOS, esperaba 232), limpiando...`);
         return true;
       }
     }
