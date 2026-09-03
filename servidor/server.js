@@ -214,7 +214,12 @@ async function getCounter(name){
   return 1;
 }
 async function setCounter(name, value){
-  await db.prepare('INSERT INTO counters (name, value) VALUES (?, ?) ON CONFLICT(name) DO UPDATE SET value = ?').run(name, value, value);
+  // Intentar UPDATE primero, si no actualiza nada, hacer INSERT
+  const result = await db.prepare('UPDATE counters SET value = ? WHERE name = ?').run(value, name);
+  if(!result || result.changes === 0){
+    // Si no se actualizó, insertar (el contador no existe)
+    await db.prepare('INSERT INTO counters (name, value) VALUES (?, ?)').run(name, value);
+  }
 }
 async function nextId(prefix, counterName){
   const n = await getCounter(counterName);
