@@ -486,9 +486,9 @@ async function isFreshStartNeeded(){
       const trabTotal = trabCount?.c || 0;
       console.log(`[SEED] VERCEL: ${count} equipos, ${trabTotal} trabajadores`);
 
-      // Si hay equipos pero pocos trabajadores, hacer fresh start para sincronizar
-      if(count > 0 && trabTotal < 100) {
-        console.log(`[SEED] → VERCEL necesita sincronización: ${trabTotal} trabajadores (esperaba 123)`);
+      // Solo hacer fresh start si hay equipos pero CERO trabajadores (nunca se cargó)
+      if(count > 0 && trabTotal === 0) {
+        console.log(`[SEED] → VERCEL: hay ${count} equipos pero 0 trabajadores, recargando...`);
         return true;
       }
 
