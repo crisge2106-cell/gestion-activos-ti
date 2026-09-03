@@ -1326,6 +1326,19 @@ async function handleRequest(req, res){
       const id = decodeURIComponent(pathname.split('/').pop());
       const equipo = await getEquipo(id);
       if(!equipo) return sendJson(res, 404, {error:'Equipo no encontrado'});
+
+      // Solo permitir eliminar números telefónicos (LIN) en estado Disponible
+      if(equipo.tipo === 'LIN'){
+        if(equipo.estado !== 'Disponible'){
+          return sendJson(res, 400, {error:`No se puede eliminar un número telefónico en estado "${equipo.estado}". Debe estar disponible.`});
+        }
+      } else {
+        // Para otros equipos, solo permitir si están disponibles
+        if(equipo.estado !== 'Disponible'){
+          return sendJson(res, 400, {error:`No se puede eliminar un equipo en estado "${equipo.estado}". Debe estar disponible.`});
+        }
+      }
+
       await db.prepare('DELETE FROM equipos WHERE id = ?').run(id);
       return sendJson(res, 200, {ok:true, message:'Equipo eliminado'});
     }
@@ -1381,8 +1394,12 @@ async function handleRequest(req, res){
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = await db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await db.prepare('SELECT id, estado, usuarioActual FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
+              // Verificar si el número ya está asignado a otro trabajador
+              if(existente.estado === 'Asignado' && existente.usuarioActual !== body.trabajador){
+                return sendJson(res, 400, {error: `El número telefónico ${it.serieEstado} ya está asignado a ${existente.usuarioActual}. Debe devolverse primero.`});
+              }
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
               await updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador, area: body.area, sede: body.sede});
@@ -1471,8 +1488,12 @@ async function handleRequest(req, res){
           // Si es una línea móvil (tipo LIN), buscar o crear equipo LIN
           if(!equipoId && it.tipo === 'LIN' && it.serieEstado){
             // Buscar si ya existe un equipo LIN con ese número de serie
-            const existente = await db.prepare('SELECT id FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
+            const existente = await db.prepare('SELECT id, estado, usuarioActual FROM equipos WHERE tipo=? AND serie=?').get('LIN', it.serieEstado);
             if(existente){
+              // Verificar si el número ya está asignado a otro trabajador
+              if(existente.estado === 'Asignado' && existente.usuarioActual && existente.usuarioActual !== (body.trabajador||movimiento.trabajador)){
+                return sendJson(res, 400, {error: `El número telefónico ${it.serieEstado} ya está asignado a ${existente.usuarioActual}. No puede asignarse a dos usuarios distintos.`});
+              }
               equipoId = existente.id;
               // Actualizar estado y usuario si cambió
               await updateEquipoFields(equipoId, {estado:'Asignado', usuarioActual: body.trabajador||movimiento.trabajador, area: body.area||movimiento.area, sede: body.sede});
@@ -1532,6 +1553,20 @@ async function handleRequest(req, res){
         await setTrabajadorActivo(trabajador, 0);
       }
       return sendJson(res, 200, {id: movId});
+    }
+    if(pathname.startsWith('/api/equipos/') && req.method === 'DELETE'){
+      const id = decodeURIComponent(pathname.split('/').pop());
+      const eq = await getEquipo(id);
+      if(!eq) return sendJson(res, 404, {error:'Equipo no encontrado'});
+      // Solo permitir eliminar si está en Disponible o En custodia (no Asignado)
+      if(eq.estado === 'Asignado'){
+        return sendJson(res, 400, {error:'No puedes eliminar un equipo asignado. Debe devolverse primero.'});
+      }
+      // Eliminar equipo
+      await db.prepare('DELETE FROM equipos WHERE id=?').run(id);
+      // Eliminar items asociados en movimientos
+      await db.prepare('DELETE FROM movimiento_items WHERE equipoId=?').run(id);
+      return sendJson(res, 200, {mensaje:'Equipo eliminado correctamente'});
     }
     if(pathname === '/api/bajas' && req.method === 'POST'){
       const body = await readBody(req);
