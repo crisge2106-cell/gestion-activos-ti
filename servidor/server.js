@@ -893,15 +893,7 @@ async function updateEquipoFields(id, fields){
   if(fields.nombre !== undefined){
     const nombre = (fields.nombre||'').trim();
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
-    // Solo validar si el nombre CAMBIÓ (no es el mismo que el actual)
-    if(nombre.toLowerCase() !== (cur.nombre||'').toLowerCase()){
-      // Obtener todos los equipos y buscar por nombre (case-insensitive)
-      const todos = await db.prepare('SELECT id, nombre FROM equipos').all();
-      const existente = (todos||[]).find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase());
-      if(existente && (existente.id || existente._id) !== id) {
-        throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
-      }
-    }
+    // Nota: No validar duplicados al actualizar - permitir cambios sin restricciones
   }
   await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
     .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.sede, merged.estado,
@@ -1349,17 +1341,11 @@ async function handleRequest(req, res){
       const area = body.area!==undefined ? body.area : existing.area;
       const sede = body.sede!==undefined ? body.sede : existing.sede;
       const activo = body.activo!==undefined ? (body.activo?1:0) : existing.activo;
-      if(nuevoNombre.toLowerCase() !== existing.nombre.toLowerCase()){
-        if(await getTrabajador(nuevoNombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-        await db.exec('BEGIN');
-        try{
-          await db.prepare('DELETE FROM trabajadores WHERE nombre = ? COLLATE NOCASE').run(existing.nombre);
-          await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(nuevoNombre, dni, area, sede, activo);
-          await db.exec('COMMIT');
-        }catch(err){ await db.exec('ROLLBACK'); throw err; }
-      } else {
-        await db.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE').run(dni, area, sede, activo, existing.nombre);
-      }
+
+      // Nota: Validación de duplicados desactivada para permitir actualizaciones sin restricciones
+      // Solo actualizar los campos proporcionados
+      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE')
+        .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
     if(pathname === '/api/cargos' && req.method === 'POST'){
