@@ -453,10 +453,9 @@
     <div class="grid3">
       <div class="field"><label>Serie / IMEI</label><input type="text" id="eqSerie"></div>
       <div class="field"><label>Fecha de compra</label><input type="date" id="eqFechaCompra"></div>
-      <div class="field"><label>Fecha de entrega</label><input type="date" id="eqFechaEntrega"></div>
-    </div>
-    <div class="field"><label>Sede</label>
-      <input type="text" id="eqSede" list="sedeOptions" autocomplete="off" value="LIMA">
+      <div class="field"><label>Sede</label>
+        <input type="text" id="eqSede" list="sedeOptions" autocomplete="off" value="LIMA">
+      </div>
     </div>
     <div class="grid3">
       <div class="field"><label>Estado</label>
@@ -1016,7 +1015,6 @@ function openEquipoModal(id){
     document.getElementById('eqModelo').value = e.modelo||'';
     document.getElementById('eqSerie').value = e.serie||'';
     document.getElementById('eqFechaCompra').value = e.fechaCompra||'';
-    document.getElementById('eqFechaEntrega').value = e.fechaEntrega||'';
     document.getElementById('eqSede').value = e.sede||'LIMA';
     document.getElementById('eqEstado').value = e.estado||'Disponible';
     document.getElementById('eqUsuario').value = e.usuarioActual||'';
@@ -1028,7 +1026,7 @@ function openEquipoModal(id){
     btnDelete.style.display = 'block';
   } else {
     document.getElementById('equipoModalTitle').textContent = 'Registrar equipo';
-    ['eqId','eqNombre','eqMarca','eqModelo','eqSerie','eqFechaCompra','eqFechaEntrega','eqUsuario','eqArea','eqObs','eqCpu','eqRam','eqDisco'].forEach(id2=>document.getElementById(id2).value='');
+    ['eqId','eqNombre','eqMarca','eqModelo','eqSerie','eqFechaCompra','eqUsuario','eqArea','eqObs','eqCpu','eqRam','eqDisco'].forEach(id2=>document.getElementById(id2).value='');
     document.getElementById('eqTipo').value = 'Laptop';
     document.getElementById('eqSede').value = 'LIMA';
     document.getElementById('eqEstado').value = 'Disponible';
@@ -1062,7 +1060,6 @@ async function saveEquipoModal(){
     modelo: document.getElementById('eqModelo').value.trim(),
     serie: document.getElementById('eqSerie').value.trim(),
     fechaCompra: document.getElementById('eqFechaCompra').value || null,
-    fechaEntrega: document.getElementById('eqFechaEntrega').value || null,
     sede: document.getElementById('eqSede').value.trim(),
     estado,
     usuarioActual: document.getElementById('eqUsuario').value.trim(),
