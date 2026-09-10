@@ -1008,7 +1008,7 @@ function renderInventario(){
     const info = equipoAlertInfo(e);
     const alertHtml = info ? (info.estado==='vencido'?'<span class="tag bad">Vencido</span>':info.estado==='proximo'?'<span class="tag warn">Próximo</span>':info.estado==='sin-fecha'?'<span class="muted">Sin fecha</span>':'<span class="tag ok">OK</span>') : '<span class="muted">—</span>';
     const fechaEnt = fechaEntregaEquipo(e.id);
-    const fechaEntregaHtml = fechaEnt ? fmtDate(fechaEnt) : (e.estado === 'Asignado' ? `<button class="btn-icon primary" title="Registrar fecha de entrega" onclick="openRegistrarFechaEntregaModal('${e.id}')">📅</button>` : '—');
+    const fechaEntregaHtml = (e.estado === 'Asignado') ? `<span style="display:flex; align-items:center; gap:8px;"><span>${fechaEnt ? fmtDate(fechaEnt) : '—'}</span><button class="btn-icon primary" title="Registrar/Actualizar fecha de entrega" onclick="openRegistrarFechaEntregaModal('${e.id}')">📅</button></span>` : '—';
     html += `<tr>
       <td><input type="checkbox" class="invRowChk" value="${e.id}" ${invSelected.has(e.id)?'checked':''} onchange="toggleInvSelect('${e.id}', this.checked)"></td>
       <td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)}</td><td>${escapeHtml(e.modelo)}</td>

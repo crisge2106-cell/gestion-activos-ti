@@ -1309,7 +1309,7 @@ async function handleRequest(req, res){
         SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
         FROM agentes_reportes ar
         LEFT JOIN equipos eq ON ar.equipoId = eq.id
-        ORDER BY ar.timestamp DESC
+        ORDER BY ar.fecha_ultima_actualizacion DESC
         LIMIT 100
       `).all();
       return sendJson(res, 200, { equipos, movimientos, mantenimientos, trabajadores, solicitudesCompra, inventarioReportes, agentesReportes });
