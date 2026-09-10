@@ -606,8 +606,11 @@
     </div>
     <div class="field">
       <label>Fecha de Entrega <span style="color:#d69e2e; font-size:12px;">*</span></label>
-      <input type="date" id="regFechFecha" style="width:100%;" required readonly onclick="this.showPicker()">
-      <small style="color:#d69e2e; font-weight:bold; margin-top:4px; display:block;">⚠️ DEBES hacer clic en el calendario (📅) y seleccionar la fecha. NO escribas manualmente.</small>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="date" id="regFechFecha" style="flex:1; padding:8px;" required>
+        <button type="button" onclick="document.getElementById('regFechFecha').showPicker()" style="padding:8px 12px; background:#4299e1; color:white; border:none; border-radius:6px; cursor:pointer; font-size:18px;">📅</button>
+      </div>
+      <small style="color:#718096; margin-top:4px; display:block;">Puedes hacer clic en 📅 o escribir la fecha en formato DD/MM/YYYY (ej: 21/03/2024)</small>
     </div>
     <div class="field">
       <label>Trabajador (Usuario actual)</label>
@@ -812,26 +815,40 @@ function openRegistrarFechaEntregaModal(eqId){
 
 async function guardarFechaEntrega(){
   const eqId = document.getElementById('regFechEqId').value;
-  const fechaRaw = document.getElementById('regFechFecha').value;
+  let fechaRaw = document.getElementById('regFechFecha').value;
   const errEl = document.getElementById('registrarFechaEntregaErr');
   errEl.style.display = 'none';
 
   console.log('[GUARDAR FECHA] equipoId:', eqId, 'fecha raw:', fechaRaw, 'tipo:', typeof fechaRaw);
 
   if(!fechaRaw || fechaRaw.trim() === ''){
-    errEl.textContent = '❌ Debes seleccionar una fecha. Usa el calendario (📅) para elegir.';
+    errEl.textContent = '❌ Debes seleccionar una fecha. Usa el calendario (📅) o escribe en formato DD/MM/YYYY';
     errEl.style.display='block';
     return;
   }
 
+  // Convertir formato DD/MM/YYYY a YYYY-MM-DD si es necesario
+  let fecha = fechaRaw;
+  if(fechaRaw.includes('/')) {
+    const partes = fechaRaw.split('/');
+    if(partes.length === 3 && partes[0].length === 2 && partes[1].length === 2 && partes[2].length === 4) {
+      fecha = `${partes[2]}-${partes[1]}-${partes[0]}`; // Convertir DD/MM/YYYY a YYYY-MM-DD
+      console.log('[GUARDAR FECHA] Convertido de DD/MM/YYYY a ISO:', fecha);
+    } else {
+      errEl.textContent = '❌ Formato de fecha incorrecto. Usa DD/MM/YYYY o selecciona el calendario';
+      errEl.style.display='block';
+      return;
+    }
+  }
+
   try{
-    console.log('[GUARDAR FECHA] Enviando:', { equipoId: eqId, fecha: fechaRaw });
+    console.log('[GUARDAR FECHA] Enviando:', { equipoId: eqId, fecha: fecha });
     const response = await apiPost('/api/equipos/registrar-entrega', {
       equipoId: eqId,
-      fecha: fechaRaw
+      fecha: fecha
     });
     console.log('[GUARDAR FECHA] Respuesta:', response);
-    errEl.textContent = '✅ Fecha de entrega registrada correctamente';
+    errEl.textContent = '✅ Fecha de entrega registrada correctamente: ' + fechaRaw;
     errEl.style.display='block';
     errEl.style.background='#f0fff4';
     errEl.style.color='#22543d';
