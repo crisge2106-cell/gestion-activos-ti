@@ -605,8 +605,9 @@
       <input type="text" id="regFechEqNombre" readonly style="width:100%; background:var(--gris-100); color:var(--gris-500);">
     </div>
     <div class="field">
-      <label>Fecha de Entrega</label>
-      <input type="date" id="regFechFecha" style="width:100%;">
+      <label>Fecha de Entrega <span style="color:#d69e2e; font-size:12px;">*</span></label>
+      <input type="date" id="regFechFecha" style="width:100%;" required>
+      <small style="color:#718096; margin-top:4px; display:block;">Haz clic en el calendario (📅) para seleccionar la fecha. Formato: DD/MM/YYYY</small>
     </div>
     <div class="field">
       <label>Trabajador (Usuario actual)</label>
@@ -811,20 +812,38 @@ function openRegistrarFechaEntregaModal(eqId){
 
 async function guardarFechaEntrega(){
   const eqId = document.getElementById('regFechEqId').value;
-  const fecha = document.getElementById('regFechFecha').value;
+  const fechaRaw = document.getElementById('regFechFecha').value;
   const errEl = document.getElementById('registrarFechaEntregaErr');
   errEl.style.display = 'none';
 
-  if(!fecha){ errEl.textContent = 'Ingresa la fecha de entrega'; errEl.style.display='block'; return; }
+  console.log('[GUARDAR FECHA] equipoId:', eqId, 'fecha raw:', fechaRaw, 'tipo:', typeof fechaRaw);
+
+  if(!fechaRaw || fechaRaw.trim() === ''){
+    errEl.textContent = '❌ Debes seleccionar una fecha. Usa el calendario (📅) para elegir.';
+    errEl.style.display='block';
+    return;
+  }
 
   try{
-    await apiPost('/api/equipos/registrar-entrega', {
+    console.log('[GUARDAR FECHA] Enviando:', { equipoId: eqId, fecha: fechaRaw });
+    const response = await apiPost('/api/equipos/registrar-entrega', {
       equipoId: eqId,
-      fecha: fecha
+      fecha: fechaRaw
     });
-    closeModal('registrarFechaEntregaModalBg');
-    await refreshState();
-  }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
+    console.log('[GUARDAR FECHA] Respuesta:', response);
+    errEl.textContent = '✅ Fecha de entrega registrada correctamente';
+    errEl.style.display='block';
+    errEl.style.background='#f0fff4';
+    errEl.style.color='#22543d';
+    setTimeout(() => {
+      closeModal('registrarFechaEntregaModalBg');
+      refreshState();
+    }, 500);
+  }catch(err){
+    console.error('[GUARDAR FECHA ERROR]', err);
+    errEl.textContent = '❌ Error: ' + err.message;
+    errEl.style.display='block';
+  }
 }
 
 let refreshing = false;
