@@ -606,8 +606,8 @@
     </div>
     <div class="field">
       <label>Fecha de Entrega <span style="color:#d69e2e; font-size:12px;">*</span></label>
-      <input type="date" id="regFechFecha" style="width:100%;" required>
-      <small style="color:#718096; margin-top:4px; display:block;">Haz clic en el calendario (📅) para seleccionar la fecha. Formato: DD/MM/YYYY</small>
+      <input type="date" id="regFechFecha" style="width:100%;" required readonly onclick="this.showPicker()">
+      <small style="color:#d69e2e; font-weight:bold; margin-top:4px; display:block;">⚠️ DEBES hacer clic en el calendario (📅) y seleccionar la fecha. NO escribas manualmente.</small>
     </div>
     <div class="field">
       <label>Trabajador (Usuario actual)</label>
