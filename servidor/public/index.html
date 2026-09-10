@@ -590,6 +590,44 @@
   </div>
 </div>
 
+<div class="modal-bg" id="registrarFechaEntregaModalBg">
+  <div class="modal" style="max-width:500px;">
+    <button class="close-x" onclick="closeModal('registrarFechaEntregaModalBg')">✕</button>
+    <h3>Registrar Fecha de Entrega</h3>
+    <div class="err" id="registrarFechaEntregaErr" style="display:none; background:#fff5f5; color:#c53030; padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:10px;"></div>
+    <div class="banner" style="background:#f0fff4; border-color:#48bb78; color:#22543d;">
+      📅 Registrar la fecha de entrega generará automáticamente el acta de entrega
+    </div>
+    <input type="hidden" id="regFechEqId">
+    <div class="field">
+      <label>Equipo</label>
+      <input type="text" id="regFechEqNombre" readonly style="width:100%; background:var(--gris-100); color:var(--gris-500);">
+    </div>
+    <div class="field">
+      <label>Fecha de Entrega</label>
+      <input type="date" id="regFechFecha" style="width:100%;">
+    </div>
+    <div class="field">
+      <label>Trabajador (Usuario actual)</label>
+      <input type="text" id="regFechTrabajador" readonly style="width:100%; background:var(--gris-100); color:var(--gris-500);">
+    </div>
+    <div class="grid2">
+      <div class="field">
+        <label>Área</label>
+        <input type="text" id="regFechArea" readonly style="background:var(--gris-100); color:var(--gris-500);">
+      </div>
+      <div class="field">
+        <label>Sede</label>
+        <input type="text" id="regFechSede" readonly style="background:var(--gris-100); color:var(--gris-500);">
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn secondary" onclick="closeModal('registrarFechaEntregaModalBg')">Cancelar</button>
+      <button class="btn" onclick="guardarFechaEntrega()">Registrar Entrega</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celular':24 };
 let DB = { equipos: [], movimientos: [], mantenimientos: [], trabajadores: [] };
@@ -754,6 +792,37 @@ async function saveProfile(){
     await apiPut('/api/profile', payload);
     errEl.style.display = 'none';
     closeProfileModal();
+  }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
+}
+
+function openRegistrarFechaEntregaModal(eqId){
+  const e = DB.equipos.find(x => x.id === eqId);
+  if(!e) return;
+  document.getElementById('regFechEqId').value = eqId;
+  document.getElementById('regFechEqNombre').value = escapeHtml(e.nombre||e.id);
+  document.getElementById('regFechFecha').value = todayISO();
+  document.getElementById('regFechTrabajador').value = escapeHtml(e.usuarioActual||'');
+  document.getElementById('regFechArea').value = escapeHtml(e.area||'');
+  document.getElementById('regFechSede').value = escapeHtml(e.sede||'');
+  document.getElementById('registrarFechaEntregaErr').style.display = 'none';
+  document.getElementById('registrarFechaEntregaModalBg').classList.add('active');
+}
+
+async function guardarFechaEntrega(){
+  const eqId = document.getElementById('regFechEqId').value;
+  const fecha = document.getElementById('regFechFecha').value;
+  const errEl = document.getElementById('registrarFechaEntregaErr');
+  errEl.style.display = 'none';
+
+  if(!fecha){ errEl.textContent = 'Ingresa la fecha de entrega'; errEl.style.display='block'; return; }
+
+  try{
+    await apiPost('/api/equipos/registrar-entrega', {
+      equipoId: eqId,
+      fecha: fecha
+    });
+    closeModal('registrarFechaEntregaModalBg');
+    await refreshState();
   }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
 }
 
@@ -932,11 +1001,13 @@ function renderInventario(){
   for(const e of rows){
     const info = equipoAlertInfo(e);
     const alertHtml = info ? (info.estado==='vencido'?'<span class="tag bad">Vencido</span>':info.estado==='proximo'?'<span class="tag warn">Próximo</span>':info.estado==='sin-fecha'?'<span class="muted">Sin fecha</span>':'<span class="tag ok">OK</span>') : '<span class="muted">—</span>';
+    const fechaEnt = fechaEntregaEquipo(e.id);
+    const fechaEntregaHtml = fechaEnt ? fmtDate(fechaEnt) : (e.estado === 'Asignado' ? `<button class="btn-icon primary" title="Registrar fecha de entrega" onclick="openRegistrarFechaEntregaModal('${e.id}')">📅</button>` : '—');
     html += `<tr>
       <td><input type="checkbox" class="invRowChk" value="${e.id}" ${invSelected.has(e.id)?'checked':''} onchange="toggleInvSelect('${e.id}', this.checked)"></td>
       <td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)}</td><td>${escapeHtml(e.modelo)}</td>
       <td>${escapeHtml(e.serie)}</td><td>${fmtDate(e.fechaCompra)}</td><td>${escapeHtml(e.sede)}</td>
-      <td>${estadoTag(e.estado)}</td><td>${escapeHtml(e.usuarioActual)}</td><td>${fmtDate(fechaEntregaEquipo(e.id))}</td><td>${alertHtml}</td>
+      <td>${estadoTag(e.estado)}</td><td>${escapeHtml(e.usuarioActual)}</td><td>${fechaEntregaHtml}</td><td>${alertHtml}</td>
       <td><div class="btn-group"><button class="btn-icon primary" title="Historial" onclick="openHistorial('${e.id}')">📋</button><button class="btn-icon secondary" title="Especificaciones técnicas" onclick="verEspecificacionesTecnicas('${e.id}')">💻</button><button class="btn-icon primary" title="Editar" onclick="openEquipoModal('${e.id}')">✏️</button></div></td>
     </tr>`;
   }

@@ -1318,6 +1318,27 @@ async function handleRequest(req, res){
       const body = await readBody(req);
       return sendJson(res, 200, await insertEquipo(body));
     }
+    if(pathname === '/api/equipos/registrar-entrega' && req.method === 'POST'){
+      const body = await readBody(req);
+      const equipoId = body.equipoId;
+      const fecha = body.fecha;
+      if(!equipoId) return sendJson(res, 400, {error:'equipoId es obligatorio'});
+      if(!fecha) return sendJson(res, 400, {error:'fecha es obligatoria'});
+      const equipo = await getEquipo(equipoId);
+      if(!equipo) return sendJson(res, 404, {error:'Equipo no encontrado'});
+      try{
+        const movId = await insertMovimiento({
+          tipo: 'Entrega',
+          fecha: fecha,
+          trabajador: equipo.usuarioActual||'',
+          area: equipo.area||'',
+          sede: equipo.sede||'',
+          observaciones: `Entrega registrada desde inventario`,
+          items: [{equipoId: equipoId, cantidad: 1}]
+        });
+        return sendJson(res, 200, {ok:true, movimientoId: movId});
+      }catch(err){ return sendJson(res, 500, {error: 'Error al registrar entrega: ' + err.message}); }
+    }
     if(pathname.startsWith('/api/equipos/') && req.method === 'PUT'){
       const id = decodeURIComponent(pathname.split('/').pop());
       const body = await readBody(req);
