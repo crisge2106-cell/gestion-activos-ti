@@ -967,9 +967,14 @@ function populateFilterOptions(){
   fillDatalist('invUsuarioFilterOptions', usuarios);
 }
 function fechaEntregaEquipo(equipoId){
-  const movs = DB.movimientos.filter(m=>m.tipo==='Asignacion' && m.items.some(it=>it.equipoId===equipoId));
+  const movs = DB.movimientos.filter(m=>m.items.some(it=>it.equipoId===equipoId));
   if(movs.length===0) return null;
-  return movs.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''))[0].fecha;
+  const sorted = movs.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  for(const m of sorted){
+    if(m.tipo==='Devolución') return null;
+    if(m.tipo==='Entrega' || m.tipo==='Asignacion') return m.fecha;
+  }
+  return null;
 }
 function estadoTag(estado){
   const map = {'Disponible':'ok','Asignado':'neutral','En custodia':'warn','Por reparar':'warn','De baja':'bad','Perdido/Robado':'bad','Vendido':'neutral'};
