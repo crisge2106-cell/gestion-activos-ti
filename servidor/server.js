@@ -654,12 +654,11 @@ async function seedUsersIfEmpty(){
     console.log('No se pudo verificar usuarios:', err.message);
   }
 
-  // Usuario de prueba: admin / admin123
-  const {salt, hash} = hashPassword('admin123');
+  // Usuario de prueba: Todos con contraseña temporal "TempPassword123"
   const defaults = [
-    {username:'admin', salt, hash}, // Usuario de prueba
-    {username:'cmore', salt:'a9221343754fa88ab44a51c16d51d8ea', hash:'bb813e8ea4d5dfd0680de7294c27f6692acbd705f65d3a6cea529ae9e7b2538d4bcb65fa20c5ed153666b0b90e2331edb3f247e9f816c1c2a833aa65eb393bbf'},
-    {username:'dvalnecia', salt:'960284915d484ffe07c5e65dd6087cfe', hash:'8d0bc56a9834741c7166d550c1f82b23090a4abb754d33ed9ddfba69497346613d6cd19eedc02461242249019dc894c3037f27adeebd6bcb4dfc917523159989'}
+    {username:'admin', salt:'4044533c66823a8bec7d0aa7ee572671', hash:'7806fa12432fb0e1e7a410c3565b197b9f0dab85f433bd17fe4ed8d9b5c3976e2ae492acbfcaa2947b32ace9a766564e9e03256fb9a1d2ff24513d3cfb35ad40'},
+    {username:'cmore', salt:'4044533c66823a8bec7d0aa7ee572671', hash:'7806fa12432fb0e1e7a410c3565b197b9f0dab85f433bd17fe4ed8d9b5c3976e2ae492acbfcaa2947b32ace9a766564e9e03256fb9a1d2ff24513d3cfb35ad40'},
+    {username:'dvalnecia', salt:'4044533c66823a8bec7d0aa7ee572671', hash:'7806fa12432fb0e1e7a410c3565b197b9f0dab85f433bd17fe4ed8d9b5c3976e2ae492acbfcaa2947b32ace9a766564e9e03256fb9a1d2ff24513d3cfb35ad40'}
   ];
 
   // Solo agregar usuarios que no existan - preserva usuarios existentes
@@ -736,7 +735,7 @@ function parseCookies(req){
 }
 
 function setSessionCookie(res, sid){
-  res.setHeader('Set-Cookie', `sid=${sid}; HttpOnly; Path=/; SameSite=Lax; Max-Age=${60*60*12}`);
+  res.setHeader('Set-Cookie', `sid=${sid}; HttpOnly; Path=/; Max-Age=${60*60*12}`);
 }
 
 async function deleteSession(sid){
@@ -1069,7 +1068,10 @@ async function handleRequest(req, res){
           console.log(`❌ Usuario no encontrado: ${body.username}`);
           return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
         }
-        if(!verifyPassword(body.password||'', user.salt, user.hash)){
+        console.log(`   User found. Salt: ${user.salt?.substring(0,8)}..., Hash: ${user.hash?.substring(0,16)}...`);
+        const passOk = verifyPassword(body.password||'', user.salt, user.hash);
+        console.log(`   Password verify result: ${passOk}`);
+        if(!passOk){
           console.log(`❌ Contraseña incorrecta para: ${body.username}`);
           return sendJson(res, 401, {error:'Usuario o contraseña incorrectos'});
         }

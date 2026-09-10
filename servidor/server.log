@@ -1,0 +1,64 @@
+🌍 Entorno: LOCAL
+(node:31856) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+📦 BD será: SQLite
+(Use `node --trace-warnings ...` to show where the warning was created)
+🔄 Inicializando BD (LOCAL)...
+🌍 MONGODB_URI env: NOT SET
+🌍 NODE_ENV: undefined
+🌍 VERCEL: undefined
+🔄 Inicializando SQLite...
+✅ Base de datos: SQLite
+   Path: D:\Proyectos\Gestion de activos TI\servidor\activos.db
+✅ LOCAL: Servidor escuchando en http://localhost:3335
+   Abre en este equipo, o accede desde: http://<IP-de-este-equipo>:3335
+[SEED] === INICIANDO SEED ===
+[SEED] ✅ seed.json encontrado
+[SEED] Seed contiene: 232 equipos, 240 movimientos
+[SEED] Verificando integridad de equipos...
+[SEED] COUNT(*) FROM equipos: 0
+[SEED] → Tabla equipos vacía, necesita fresh start
+[SEED] needsFreshStart: true
+[SEED] 🔄 FRESH START: limpiando y recargando TODA la BD...
+🧹 Limpiando TODAS las colecciones...
+  ✓ movimiento_items
+  ✓ movimientos
+  ✓ mantenimientos
+  ✓ equipos
+  ✓ trabajadores
+  ✓ solicitudes_compra
+  ✓ solicitudes_items
+  ✓ inventario_reportes
+  ✓ agentes_reportes
+✅ Limpieza completada
+[SEED] ✅ Tablas limpiadas
+[SEED] ✅ bulkLoad completado: 232 equipos insertados
+[SEED] ✅ Verificación después de bulkLoad:
+[SEED]    - 232 equipos en BD
+[SEED]    - 125 trabajadores TOTAL en BD
+[SEED]    - 125 trabajadores activos (activo=1) en BD
+[SEED] === FIN SEED ===
+[TRAB] === INICIANDO BACKFILL TRABAJADORES ===
+[TRAB] COUNT(*) FROM trabajadores: 125
+[TRAB] ✅ Trabajadores válidos ya cargados (125 registros), SKIPEANDO
+✅ Usuario creado: admin
+✅ Usuario creado: cmore
+✅ Usuario creado: dvalnecia
+✅ BD inicializada (LOCAL)
+📧 Login attempt: admin
+   User found. Salt: 4044533c..., Hash: 7806fa12432fb0e1...
+   Password verify result: true
+✅ Credenciales válidas: admin
+🔐 Creando sesión: admin
+🔐 Ejecutando INSERT INTO sessions...
+✅ Sesión creada: { changes: 1, lastInsertRowid: 1 }
+✅ Sesión creada: 7eca5622...
+✅ Cookie de sesión establecida
+📧 Login attempt: admin
+   User found. Salt: 4044533c..., Hash: 7806fa12432fb0e1...
+   Password verify result: true
+✅ Credenciales válidas: admin
+🔐 Creando sesión: admin
+🔐 Ejecutando INSERT INTO sessions...
+✅ Sesión creada: { changes: 1, lastInsertRowid: 2 }
+✅ Sesión creada: 6f51a088...
+✅ Cookie de sesión establecida
