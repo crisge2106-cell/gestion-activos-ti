@@ -300,6 +300,7 @@
     <p class="muted">Listado de todos los números telefónicos registrados en actas de entrega/devolución. Puedes usar esta información para asignar números a nuevas actas.</p>
     <div class="toolbar">
       <input type="text" id="telefonoDirectorioSearch" placeholder="Buscar por número, trabajador o área...">
+      <button class="btn" onclick="exportarDirectorioTelefonos()">📥 Exportar a Excel</button>
       <span class="muted" id="telefonoDirectorioCount"></span>
     </div>
     <div class="tablewrap"><table id="telefonoDirectorioTable"></table></div>
@@ -1849,6 +1850,84 @@ function renderDirectorioTelefonos(){
 }
 
 document.getElementById('telefonoDirectorioSearch').addEventListener('input', renderDirectorioTelefonos);
+
+function exportarDirectorioTelefonos(){
+  const q = (document.getElementById('telefonoDirectorioSearch').value||'').toLowerCase();
+  const movimientosMap = new Map();
+  for(const mov of DB.movimientos){
+    movimientosMap.set(mov.id, mov);
+  }
+
+  const telefonos = new Map();
+  for(const eq of DB.equipos){
+    if(eq.tipo === 'LIN'){
+      const numero = eq.serie;
+      if(!numero) continue;
+      if(!telefonos.has(numero)){
+        telefonos.set(numero, {
+          numero: numero,
+          linId: eq.id,
+          equipoNombre: eq.nombre,
+          estado: eq.estado,
+          usuarioActual: eq.usuarioActual,
+          area: eq.area,
+          contador: 0
+        });
+      }
+    }
+  }
+
+  for(const mov of DB.movimientos){
+    for(const it of mov.items){
+      if(it.equipoId){
+        const eq = DB.equipos.find(e => e.id === it.equipoId);
+        if(eq && eq.tipo === 'LIN'){
+          const numero = eq.serie;
+          if(!numero) continue;
+          if(!telefonos.has(numero)){
+            telefonos.set(numero, {
+              numero: numero,
+              linId: eq.id,
+              equipoNombre: eq.nombre,
+              estado: eq.estado,
+              usuarioActual: eq.usuarioActual,
+              area: eq.area,
+              contador: 0
+            });
+          }
+          telefonos.get(numero).contador++;
+        }
+      }
+    }
+  }
+
+  let items = Array.from(telefonos.values());
+  if(q){
+    items = items.filter(t => {
+      const blob = [t.numero, t.equipoNombre, t.usuarioActual, t.area].join(' ').toLowerCase();
+      return blob.includes(q);
+    });
+  }
+
+  items.sort((a,b) => b.contador - a.contador);
+
+  const headers = ['Número Telefónico', 'Equipo', 'Asignado a', 'Área', 'Estado', 'Veces Registrado'];
+  const rows = items.map(t => [
+    t.numero,
+    t.equipoNombre,
+    t.usuarioActual || '—',
+    t.area || '—',
+    t.estado,
+    t.contador
+  ]);
+
+  const csv = [headers.join(',')].concat(rows.map(r=>r.map(v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"').join(','))).join('\n');
+  const blob = new Blob(['﻿'+csv], {type:'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'directorio_telefonico_' + todayISO() + '.csv';
+  a.click();
+}
 
 function verDetalleLinea(linId){
   const lin = DB.equipos.find(e => e.id === linId);
