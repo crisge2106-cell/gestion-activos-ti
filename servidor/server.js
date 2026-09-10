@@ -1139,7 +1139,7 @@ async function handleRequest(req, res){
     }
     if(pathname === '/api/me' && req.method === 'GET'){
       const user = await getUser(session.username);
-      return sendJson(res, 200, {username: session.username, mustChangePassword: !!(user&&user.mustChangePassword)});
+      return sendJson(res, 200, {username: session.username, email: user?.email||'', mustChangePassword: !!(user&&user.mustChangePassword)});
     }
     if(pathname === '/api/change-password' && req.method === 'POST'){
       const body = await readBody(req);
@@ -1152,6 +1152,27 @@ async function handleRequest(req, res){
       const {salt, hash} = hashPassword(body.newPassword);
       await db.prepare('UPDATE users SET salt=?, hash=?, mustChangePassword=0 WHERE username=?').run(salt, hash, session.username);
       return sendJson(res, 200, {ok:true});
+    }
+    if(pathname === '/api/profile' && req.method === 'PUT'){
+      const body = await readBody(req);
+      const user = await getUser(session.username);
+      if(!user) return sendJson(res, 404, {error:'Usuario no encontrado'});
+      function validEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }
+      if(body.email !== undefined){
+        const email = (body.email||'').trim();
+        if(email && !validEmail(email)) return sendJson(res, 400, {error:'El correo no es válido'});
+        await db.prepare('UPDATE users SET email=? WHERE username=?').run(email||null, session.username);
+      }
+      if(body.newPassword){
+        if(!verifyPassword(body.currentPassword||'', user.salt, user.hash)){
+          return sendJson(res, 401, {error:'La contraseña actual no es correcta'});
+        }
+        if(body.newPassword.length < 6) return sendJson(res, 400, {error:'La nueva contraseña debe tener al menos 6 caracteres'});
+        const {salt, hash} = hashPassword(body.newPassword);
+        await db.prepare('UPDATE users SET salt=?, hash=? WHERE username=?').run(salt, hash, session.username);
+      }
+      const updatedUser = await getUser(session.username);
+      return sendJson(res, 200, {ok:true, user: {username: session.username, email: updatedUser?.email||''}});
     }
 
     function validEmail(email){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email); }

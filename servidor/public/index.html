@@ -104,6 +104,7 @@
   <div style="display:flex; align-items:center; gap:12px;">
     <div id="connStatus">Conectando...</div>
     <div id="userBadge" class="sub"></div>
+    <button class="btn secondary small" style="background:transparent; color:#fff; border-color:#fff;" onclick="openProfileModal()">👤 Mi Perfil</button>
     <button class="btn secondary small" style="background:transparent; color:#fff; border-color:#fff;" onclick="logout()">Cerrar sesión</button>
   </div>
 </header>
@@ -551,6 +552,44 @@
   </div>
 </div>
 
+<div class="modal-bg" id="profileModalBg">
+  <div class="modal" style="max-width:480px;">
+    <button class="close-x" onclick="closeProfileModal()">✕</button>
+    <h3>Mi Perfil</h3>
+    <div class="err" id="profileErr" style="display:none; background:#fff5f5; color:#c53030; padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:10px;"></div>
+    <div class="banner" style="background:#f0f9ff; border-color:#3b82f6; color:#1e40af;">
+      👤 Gestiona tu información de usuario del sistema
+    </div>
+    <div class="field">
+      <label>Usuario del sistema</label>
+      <input type="text" id="profileUsername" readonly style="width:100%; background:var(--gris-100); color:var(--gris-500);">
+    </div>
+    <div class="field">
+      <label>Correo de recuperación</label>
+      <input type="email" id="profileEmail" placeholder="tu@correo.com" style="width:100%;">
+      <div class="muted">Se usa para recuperar acceso si olvidas la contraseña</div>
+    </div>
+    <hr style="margin:16px 0; border:none; border-top:1px solid var(--gris-300);">
+    <h4 style="margin-top:0; color:var(--azul); font-size:14px;">Cambiar contraseña</h4>
+    <div class="field">
+      <label>Contraseña actual</label>
+      <input type="password" id="profileCurrentPass" placeholder="Ingresa tu contraseña actual" style="width:100%;">
+    </div>
+    <div class="field">
+      <label>Nueva contraseña</label>
+      <input type="password" id="profileNewPass1" placeholder="Mínimo 6 caracteres" style="width:100%;">
+    </div>
+    <div class="field">
+      <label>Confirmar nueva contraseña</label>
+      <input type="password" id="profileNewPass2" placeholder="Repite la nueva contraseña" style="width:100%;">
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn secondary" onclick="closeProfileModal()">Cancelar</button>
+      <button class="btn" onclick="saveProfile()">Guardar cambios</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celular':24 };
 let DB = { equipos: [], movimientos: [], mantenimientos: [], trabajadores: [] };
@@ -674,6 +713,48 @@ async function forceChangePassword(){
     await apiPost('/api/change-password', {newPassword: p1});
     closeModal('forceChangeModalBg');
   }catch(err){ errEl.textContent = err.message; errEl.style.display='block'; }
+}
+
+async function openProfileModal(){
+  try{
+    const user = await apiGet('/api/me');
+    document.getElementById('profileUsername').value = user.username;
+    document.getElementById('profileEmail').value = user.email||'';
+    document.getElementById('profileCurrentPass').value = '';
+    document.getElementById('profileNewPass1').value = '';
+    document.getElementById('profileNewPass2').value = '';
+    document.getElementById('profileErr').style.display = 'none';
+    document.getElementById('profileModalBg').classList.add('active');
+  }catch(err){
+    console.error('Error al abrir perfil:', err);
+  }
+}
+function closeProfileModal(){
+  closeModal('profileModalBg');
+}
+async function saveProfile(){
+  const email = document.getElementById('profileEmail').value.trim();
+  const currentPass = document.getElementById('profileCurrentPass').value;
+  const newPass1 = document.getElementById('profileNewPass1').value;
+  const newPass2 = document.getElementById('profileNewPass2').value;
+  const errEl = document.getElementById('profileErr');
+  errEl.style.display = 'none';
+
+  try{
+    const payload = {};
+    if(email) payload.email = email;
+    if(newPass1 || newPass2){
+      if(newPass1 !== newPass2){ errEl.textContent = 'Las nuevas contraseñas no coinciden'; errEl.style.display='block'; return; }
+      if(newPass1.length < 6){ errEl.textContent = 'La nueva contraseña debe tener al menos 6 caracteres'; errEl.style.display='block'; return; }
+      if(!currentPass){ errEl.textContent = 'Debes ingresar tu contraseña actual para cambiar la contraseña'; errEl.style.display='block'; return; }
+      payload.currentPassword = currentPass;
+      payload.newPassword = newPass1;
+    }
+    if(Object.keys(payload).length === 0){ errEl.textContent = 'No hay cambios para guardar'; errEl.style.display='block'; return; }
+    await apiPut('/api/profile', payload);
+    errEl.style.display = 'none';
+    closeProfileModal();
+  }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
 }
 
 let refreshing = false;
