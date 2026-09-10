@@ -445,7 +445,7 @@
     <div class="grid3">
       <div class="field"><label>Tipo</label>
         <input type="text" id="eqTipo" list="eqTipoOptions" autocomplete="off" value="Laptop">
-        <datalist id="eqTipoOptions"><option value="Laptop"><option value="PC"><option value="Impresora"><option value="Escaner"><option value="Celular"><option value="Accesorio"></datalist>
+        <datalist id="eqTipoOptions"><option value="Laptop"><option value="PC"><option value="Impresora"><option value="Escaner"><option value="Celular"><option value="Accesorio"><option value="LIN"></datalist>
       </div>
       <div class="field"><label>Marca</label><input type="text" id="eqMarca"></div>
       <div class="field"><label>Modelo</label><input type="text" id="eqModelo"></div>
@@ -1109,7 +1109,7 @@ function openEquipoModal(id){
     btnDelete.style.display = 'none';
   }
 }
-const EQ_TIPO_VALORES = ['Laptop','PC','Impresora','Escaner','Celular','Accesorio'];
+const EQ_TIPO_VALORES = ['Laptop','PC','Impresora','Escaner','Celular','Accesorio','LIN'];
 const EQ_ESTADO_VALORES = ['Disponible','Asignado','En custodia','Por reparar','De baja','Perdido/Robado','Vendido'];
 function matchCanonico(valores, typed){
   const t = (typed||'').trim();
