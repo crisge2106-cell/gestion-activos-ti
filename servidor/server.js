@@ -48,7 +48,7 @@ let ensureDBReady = null;
 const CREATE_TABLES_SQL = `
   CREATE TABLE IF NOT EXISTS equipos (
     id TEXT PRIMARY KEY,
-    tipo TEXT, marca TEXT, modelo TEXT, serie TEXT, fechaCompra TEXT,
+    tipo TEXT, marca TEXT, modelo TEXT, serie TEXT, fechaCompra TEXT, fechaEntrega TEXT,
     sede TEXT, estado TEXT, usuarioActual TEXT, area TEXT, observaciones TEXT,
     cpu TEXT, ram TEXT, disco TEXT, origen TEXT, nombre TEXT, telefonoAsignado TEXT
   );
@@ -894,8 +894,8 @@ async function updateEquipoFields(id, fields){
     if(!nombre) throw new Error('El nombre del equipo es obligatorio');
     // Nota: No validar duplicados al actualizar - permitir cambios sin restricciones
   }
-  await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
-    .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.sede, merged.estado,
+  await db.prepare(`UPDATE equipos SET nombre=?,tipo=?,marca=?,modelo=?,serie=?,fechaCompra=?,fechaEntrega=?,sede=?,estado=?,usuarioActual=?,area=?,observaciones=?,cpu=?,ram=?,disco=? WHERE id=?`)
+    .run(merged.nombre, merged.tipo, merged.marca, merged.modelo, merged.serie, merged.fechaCompra, merged.fechaEntrega, merged.sede, merged.estado,
       merged.usuarioActual, merged.area, merged.observaciones, merged.specs.cpu, merged.specs.ram, merged.specs.disco, id);
   return getEquipo(id);
 }
@@ -930,9 +930,9 @@ async function insertEquipo(e){
   }
 
   const id = await nextId('EQ','eq');
-  await db.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
-    id, nombre, e.tipo||'', e.marca||'', e.modelo||'', e.serie||'', e.fechaCompra||null, e.sede||'', e.estado||'Disponible',
+  await db.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,fechaEntrega,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
+    id, nombre, e.tipo||'', e.marca||'', e.modelo||'', e.serie||'', e.fechaCompra||null, e.fechaEntrega||null, e.sede||'', e.estado||'Disponible',
     e.usuarioActual||'', e.area||'', e.observaciones||'', (e.specs&&e.specs.cpu)||'', (e.specs&&e.specs.ram)||'',
     (e.specs&&e.specs.disco)||'', e.origen||'Manual'
   );
