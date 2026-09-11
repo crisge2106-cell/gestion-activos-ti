@@ -1125,7 +1125,7 @@ async function handleRequest(req, res){
     }
 
     // Endpoints públicos (sin autenticación)
-    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data'];
+    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates'];
     const esPublico = endpointsPublicos.some(ep => pathname === ep || pathname.startsWith(ep + '/'));
 
     const session = await getSession(req);
@@ -1447,6 +1447,53 @@ async function handleRequest(req, res){
       }catch(err){
         console.error('[IMPORT ERROR]', err.message);
         return sendJson(res, 500, {error:'Error en importación: ' + err.message});
+      }
+    }
+    if(pathname === '/api/admin/cleanup-duplicates' && req.method === 'POST'){
+      // Endpoint para limpiar duplicados de trabajadores
+      try{
+        console.log('[CLEANUP] Iniciando limpieza de duplicados...');
+
+        // Encontrar trabajadores duplicados
+        const duplicates = await db.prepare(`
+          SELECT nombre, COUNT(*) as count
+          FROM trabajadores
+          GROUP BY LOWER(nombre)
+          HAVING count > 1
+        `).all();
+
+        if(duplicates.length === 0){
+          return sendJson(res, 200, {ok:true, message:'No hay duplicados', cleaned: 0});
+        }
+
+        let totalCleaned = 0;
+
+        // Para cada nombre duplicado
+        for(const dup of duplicates){
+          // Obtener todos los registros ordenados (el primero = más reciente)
+          const records = await db.prepare(`
+            SELECT ROWID as id, nombre, dni
+            FROM trabajadores
+            WHERE LOWER(nombre) = LOWER(?)
+            ORDER BY ROWID DESC
+          `).all(dup.nombre);
+
+          // Mantener el primero (con más probabilidad de tener DNI)
+          const keeper = records[0];
+          const toDelete = records.slice(1);
+
+          for(const rec of toDelete){
+            console.log('[CLEANUP] Eliminando duplicado:', rec.nombre, '(ROWID:', rec.id, ')');
+            await db.prepare('DELETE FROM trabajadores WHERE ROWID = ?').run(rec.id);
+            totalCleaned++;
+          }
+        }
+
+        console.log('[CLEANUP] ✅ Limpieza completada - Eliminados:', totalCleaned, 'registros');
+        return sendJson(res, 200, {ok:true, message:'Limpieza completada', cleaned: totalCleaned});
+      }catch(err){
+        console.error('[CLEANUP ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en limpieza: ' + err.message});
       }
     }
     if(pathname === '/api/cargos' && req.method === 'POST'){
