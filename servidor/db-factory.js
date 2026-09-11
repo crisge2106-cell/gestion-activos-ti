@@ -345,7 +345,12 @@ function createMongoDBAdapter() {
       updates[col.trim()] = params[paramIndex++];
     });
 
-    const filter = buildWhereFilter('WHERE ' + whereMatch[1], params.slice(paramIndex));
+    let filter = buildWhereFilter('WHERE ' + whereMatch[1], params.slice(paramIndex));
+
+    // MONGODB FIX: Si hay un campo "nombre" en el filter, hacer búsqueda case-insensitive
+    if (filter.nombre && typeof filter.nombre === 'string') {
+      filter.nombre = { $regex: `^${filter.nombre}$`, $options: 'i' };
+    }
 
     const result = await collection.updateOne(filter, { $set: updates });
     return { changes: result.modifiedCount };
