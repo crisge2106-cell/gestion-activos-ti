@@ -1393,6 +1393,58 @@ async function handleRequest(req, res){
         .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
+    if(pathname === '/api/admin/import-data' && req.method === 'POST'){
+      // Endpoint de sincronización: importar datos de Vercel a LOCAL
+      const body = await readBody(req);
+      if(!body.equipos || !body.trabajadores || !body.movimientos){
+        return sendJson(res, 400, {error:'Datos inválidos. Se requieren: equipos, trabajadores, movimientos'});
+      }
+      try{
+        console.log('[IMPORT] Iniciando importación de datos...');
+
+        // Limpiar tablas (pero NO borrar, solo reemplazar)
+        await db.prepare('DELETE FROM equipos').run();
+        await db.prepare('DELETE FROM trabajadores').run();
+        await db.prepare('DELETE FROM movimientos').run();
+        await db.prepare('DELETE FROM movimiento_items').run();
+        console.log('[IMPORT] ✅ Tablas limpiadas');
+
+        // Importar equipos
+        const eqStmt = db.prepare(`INSERT INTO equipos (id,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen,nombre) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`);
+        for(const e of body.equipos){
+          eqStmt.run(e.id, e.tipo, e.marca, e.modelo, e.serie, e.fechaCompra, e.sede, e.estado, e.usuarioActual, e.area, e.observaciones, e.specs?.cpu||'', e.specs?.ram||'', e.specs?.disco||'', e.origen, e.nombre||'');
+        }
+        console.log('[IMPORT] ✅', body.equipos.length, 'equipos importados');
+
+        // Importar trabajadores
+        const trabStmt = db.prepare(`INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)`);
+        for(const t of body.trabajadores){
+          trabStmt.run(t.nombre, t.dni||'', t.area||'', t.sede||'', t.activo||1);
+        }
+        console.log('[IMPORT] ✅', body.trabajadores.length, 'trabajadores importados');
+
+        // Importar movimientos
+        const movStmt = db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`);
+        for(const m of body.movimientos){
+          movStmt.run(m.id, m.tipo, m.fecha, m.trabajador, m.dni||'', m.area||'', m.sede||'', m.observaciones||'', m.origen||'Vercel');
+        }
+        console.log('[IMPORT] ✅', body.movimientos.length, 'movimientos importados');
+
+        // Importar movimiento_items
+        const itemStmt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
+        for(const m of body.movimientos){
+          for(const it of (m.items||[])){
+            itemStmt.run(m.id, it.equipoId||'', it.cantidad||1, it.descripcion||'', it.marcaModelo||'', it.serieEstado||'');
+          }
+        }
+        console.log('[IMPORT] ✅ Items de movimientos importados');
+
+        return sendJson(res, 200, {ok:true, message:'Importación completada exitosamente', importedRecords:{equipos: body.equipos.length, trabajadores: body.trabajadores.length, movimientos: body.movimientos.length}});
+      }catch(err){
+        console.error('[IMPORT ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en importación: ' + err.message});
+      }
+    }
     if(pathname === '/api/cargos' && req.method === 'POST'){
       const body = await readBody(req);
       const trabajadorExistente = await getTrabajador(body.trabajador);
