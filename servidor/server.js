@@ -17,6 +17,7 @@ const net = require('net');
 const tls = require('tls');
 const db = require('./db-factory');
 const { fixTrabajadorIds } = require('./fix-trabajador-ids');
+const { fixMongoDBDuplicates } = require('./fix-mongodb-duplicates');
 const { execSync, spawn } = require('child_process');
 const ExcelJS = require('exceljs');
 
@@ -170,6 +171,7 @@ if (!isServerless) {
       await seedIfEmpty();
       await backfillTrabajadoresIfEmpty();
       await fixTrabajadorIds();
+      await fixMongoDBDuplicates();
       await seedUsersIfEmpty();
 
       console.log('✅ BD inicializada (LOCAL)');
@@ -194,6 +196,7 @@ if (!isServerless) {
         await seedIfEmpty();
         await backfillTrabajadoresIfEmpty();
         await fixTrabajadorIds();
+        await fixMongoDBDuplicates();
         await seedUsersIfEmpty();
 
         console.log('✅ BD inicializada (VERCEL)');
