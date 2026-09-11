@@ -1589,57 +1589,22 @@ async function handleRequest(req, res){
       }
     }
     if(pathname === '/api/admin/cleanup-duplicates-now' && req.method === 'POST'){
-      // Endpoint RÁPIDO y SEGURO para eliminar duplicados sin DNI
-      // Funciona en SQLite y MongoDB
+      // Endpoint para eliminar duplicados - ejecuta fixMongoDBDuplicates en MongoDB
       try{
-        console.log('[CLEANUP-NOW] Iniciando limpieza segura de duplicados...');
+        console.log('[CLEANUP-NOW] Iniciando limpieza exhaustiva de duplicados...');
 
-        // Obtener todos los trabajadores y agrupar por nombre (case-insensitive)
-        const allWorkers = await db.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
+        // Ejecutar la limpieza completa
+        await fixMongoDBDuplicates();
 
-        if(!allWorkers || allWorkers.length === 0){
-          return sendJson(res, 200, {ok:true, message:'No hay trabajadores', cleaned: 0});
-        }
+        // Contar trabajadores finales
+        const finalCount = await db.prepare('SELECT COUNT(*) as c FROM trabajadores').get();
 
-        // Agrupar por nombre (case-insensitive)
-        const grouped = {};
-        for(const w of allWorkers){
-          const key = (w.nombre || '').toLowerCase().trim();
-          if(!grouped[key]) grouped[key] = [];
-          grouped[key].push(w);
-        }
-
-        let totalCleaned = 0;
-
-        // Procesar duplicados
-        for(const [key, workers] of Object.entries(grouped)){
-          if(workers.length <= 1) continue; // No es duplicado
-
-          console.log(`[CLEANUP-NOW] Procesando: ${key} (${workers.length} registros)`);
-
-          // Separar con DNI y sin DNI
-          const withDni = workers.filter(w => w.dni && w.dni.trim());
-          const withoutDni = workers.filter(w => !w.dni || !w.dni.trim());
-
-          if(withDni.length === 0) continue; // No hay registro con DNI para mantener
-
-          // Eliminar solo los SIN DNI
-          for(const worker of withoutDni){
-            console.log(`[CLEANUP-NOW] Eliminando: ${worker.nombre} (sin DNI, id: ${worker.id})`);
-
-            if(worker.id){
-              // MongoDB: usar id
-              await db.prepare('DELETE FROM trabajadores WHERE id = ? AND (dni IS NULL OR dni = "")').run(worker.id);
-            } else {
-              // SQLite fallback: usar nombre exacto
-              await db.prepare('DELETE FROM trabajadores WHERE nombre = ? AND (dni IS NULL OR dni = "")').run(worker.nombre);
-            }
-            totalCleaned++;
-          }
-        }
-
-        console.log('[CLEANUP-NOW] ✅ Completado - Eliminados:', totalCleaned);
-        return sendJson(res, 200, {ok:true, message:`Limpieza completada - ${totalCleaned} duplicados eliminados`, cleaned: totalCleaned});
+        console.log('[CLEANUP-NOW] ✅ Completado - Total trabajadores:', finalCount.c);
+        return sendJson(res, 200, {
+          ok:true,
+          message:'Limpieza completada - Duplicados eliminados y IDs asignados',
+          totalTrabajadores: finalCount.c
+        });
       }catch(err){
         console.error('[CLEANUP-NOW ERROR]', err.message);
         return sendJson(res, 500, {error:'Error: ' + err.message});
