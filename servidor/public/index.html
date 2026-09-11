@@ -607,10 +607,10 @@
     <div class="field">
       <label>Fecha de Entrega <span style="color:#d69e2e; font-size:12px;">*</span></label>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="date" id="regFechFecha" style="flex:1; padding:8px;" required>
-        <button type="button" onclick="document.getElementById('regFechFecha').showPicker()" style="padding:8px 12px; background:#4299e1; color:white; border:none; border-radius:6px; cursor:pointer; font-size:18px;">📅</button>
+        <input type="text" id="regFechFecha" placeholder="DD/MM/YYYY" style="flex:1; padding:8px; font-size:16px;" pattern="\d{2}/\d{2}/\d{4}" required>
+        <button type="button" onclick="abrirDatePicker()" style="padding:8px 12px; background:#4299e1; color:white; border:none; border-radius:6px; cursor:pointer; font-size:20px; font-weight:bold;">📅</button>
       </div>
-      <small style="color:#718096; margin-top:4px; display:block;">Puedes hacer clic en 📅 o escribir la fecha en formato DD/MM/YYYY (ej: 21/03/2024)</small>
+      <small style="color:#d69e2e; font-weight:bold; margin-top:4px; display:block;">⚠️ OBLIGATORIO: Haz clic en 📅 y selecciona la fecha. NO escribas manualmente.</small>
     </div>
     <div class="field">
       <label>Trabajador (Usuario actual)</label>
@@ -800,12 +800,28 @@ async function saveProfile(){
   }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
 }
 
+function abrirDatePicker(){
+  // Crear un input date temporal para abrir el date picker nativo
+  const tempInput = document.createElement('input');
+  tempInput.type = 'date';
+  tempInput.value = todayISO();
+  tempInput.onchange = (e) => {
+    if(tempInput.value) {
+      // Convertir YYYY-MM-DD a DD/MM/YYYY
+      const [year, month, day] = tempInput.value.split('-');
+      document.getElementById('regFechFecha').value = `${day}/${month}/${year}`;
+      console.log('[DATE PICKER] Fecha seleccionada:', document.getElementById('regFechFecha').value);
+    }
+  };
+  tempInput.click();
+}
+
 function openRegistrarFechaEntregaModal(eqId){
   const e = DB.equipos.find(x => x.id === eqId);
   if(!e) return;
   document.getElementById('regFechEqId').value = eqId;
   document.getElementById('regFechEqNombre').value = escapeHtml(e.nombre||e.id);
-  document.getElementById('regFechFecha').value = todayISO();
+  document.getElementById('regFechFecha').value = '';
   document.getElementById('regFechTrabajador').value = escapeHtml(e.usuarioActual||'');
   document.getElementById('regFechArea').value = escapeHtml(e.area||'');
   document.getElementById('regFechSede').value = escapeHtml(e.sede||'');
@@ -1006,7 +1022,8 @@ function populateFilterOptions(){
 function fechaEntregaEquipo(equipoId){
   const movs = DB.movimientos.filter(m=>m.items.some(it=>it.equipoId===equipoId));
   if(movs.length===0) return null;
-  const sorted = movs.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
+  // Ordenar por ID DESC para obtener el movimiento más reciente (por orden de creación, no por fecha)
+  const sorted = movs.slice().sort((a,b)=>(b.id||'').localeCompare(a.id||''));
   for(const m of sorted){
     if(m.tipo==='Devolución') return null;
     if(m.tipo==='Entrega' || m.tipo==='Asignacion') return m.fecha;

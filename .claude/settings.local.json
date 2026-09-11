@@ -63,7 +63,15 @@
       "PowerShell($seed = Get-Content \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\seed.json\" | ConvertFrom-Json; $seed.equipos[0] | ConvertTo-Json)",
       "Bash(xargs grep -l \"/api/state\")",
       "Bash(node -e \"const s=require\\('./servidor/seed.json'\\); console.log\\('movimientos:', s.movimientos?.length || 0\\); console.log\\('movimiento_items:', s.movimiento_items?.length || 0\\);\")",
-      "Bash(node -e \"const s=require\\('./servidor/seed.json'\\); const m=s.movimientos[0]; console.log\\(JSON.stringify\\({id:m.id, trabajador:m.trabajador, tipo:m.tipo}, null, 2\\)\\);\")"
+      "Bash(node -e \"const s=require\\('./servidor/seed.json'\\); const m=s.movimientos[0]; console.log\\(JSON.stringify\\({id:m.id, trabajador:m.trabajador, tipo:m.tipo}, null, 2\\)\\);\")",
+      "PowerShell(Invoke-WebRequest -Uri http://localhost:3335/api/state -ErrorAction Stop -SkipHttpErrorCheck)",
+      "PowerShell(Stop-Process -Id 39436 -Force 2>/dev/null; Start-Sleep -Seconds 2; cd \"D:\\\\Proyectos\\\\Gestion de activos TI\"; node \"servidor\\\\server.js\" > $null 2>&1 &)",
+      "Bash(curl -s http://localhost:3335/api/state)",
+      "PowerShell(Get-NetTCPConnection -LocalPort 3335 -State Listen -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess | ForEach-Object { Get-Process -Id $_ -ErrorAction SilentlyContinue })",
+      "Bash(node -c \"D:\\\\Proyectos\\\\Gestion de activos TI\\\\servidor\\\\public\\\\index.html\")",
+      "Bash(cat)",
+      "Bash(node /tmp/check_db.js)",
+      "Bash(npm start *)"
     ]
   }
 }
