@@ -244,19 +244,30 @@ async function upsertTrabajador(t){
 async function getTrabajadores(){
   return await db.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
 }
-async function getTrabajador(nombre){
+// Búsqueda por ID (rápida, es el identificador único)
+async function getTrabajadorById(id){
+  if(!id) return null;
+  return await db.prepare('SELECT * FROM trabajadores WHERE id = ?').get(id);
+}
+// Búsqueda por nombre (case-insensitive, para compatibilidad)
+async function getTrabajadorByName(nombre){
   const n = (nombre||'').trim();
   if(!n) return null;
   // Buscar sin case sensitivity - funciona en SQLite y MongoDB
   const result = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) = LOWER(?)').get(n);
   return result;
 }
+// Función antigua (mantener compatibilidad)
+async function getTrabajador(nombre){
+  return getTrabajadorByName(nombre);
+}
 async function setTrabajadorActivo(nombre, activo){
   const n = (nombre||'').trim();
   if(!n) return;
   const existing = await getTrabajador(n);
   if(existing){
-    await db.prepare('UPDATE trabajadores SET activo=? WHERE LOWER(nombre) = LOWER(?)').run(activo?1:0, n);
+    // Usar ID para UPDATE (más confiable)
+    await db.prepare('UPDATE trabajadores SET activo=? WHERE id = ?').run(activo?1:0, existing.id);
   } else {
     await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
   }
@@ -1433,10 +1444,10 @@ async function handleRequest(req, res){
       const activo = body.activo!==undefined ? (body.activo?1:0) : existing.activo;
 
       // Nota: Validación de duplicados desactivada para permitir actualizaciones sin restricciones
-      console.log('[UPDATE TRAB]', {nombreOrig, nuevoNombre, dni, area, sede, activo});
-      // IMPORTANTE: Usar nombre exacto del registro existente para garantizar UPDATE en ambas BDs (SQLite y MongoDB)
-      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE nombre = ?')
-        .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
+      console.log('[UPDATE TRAB]', {id: existing.id, nombreOrig, nuevoNombre, dni, area, sede, activo});
+      // IMPORTANTE: Usar ID para UPDATE (es el identificador único)
+      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE id = ?')
+        .run(nuevoNombre, dni, area, sede, activo, existing.id);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
     if(pathname === '/api/admin/import-data' && req.method === 'POST'){
