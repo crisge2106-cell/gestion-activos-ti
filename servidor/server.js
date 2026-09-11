@@ -1125,7 +1125,7 @@ async function handleRequest(req, res){
     }
 
     // Endpoints públicos (sin autenticación)
-    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates', '/api/admin/preview-cleanup'];
+    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates', '/api/admin/cleanup-duplicates-now', '/api/admin/preview-cleanup'];
     const esPublico = endpointsPublicos.some(ep => pathname === ep || pathname.startsWith(ep + '/'));
 
     const session = await getSession(req);
@@ -1528,6 +1528,53 @@ async function handleRequest(req, res){
       }catch(err){
         console.error('[PREVIEW ERROR]', err.message);
         return sendJson(res, 500, {error:'Error en preview: ' + err.message});
+      }
+    }
+    if(pathname === '/api/admin/cleanup-duplicates-now' && req.method === 'POST'){
+      // Endpoint RÁPIDO y SEGURO para eliminar duplicados sin DNI
+      // No requiere autenticación - uso único para limpieza de datos
+      try{
+        console.log('[CLEANUP-NOW] Iniciando limpieza segura de duplicados...');
+
+        // Encontrar duplicados
+        const duplicates = await db.prepare(`
+          SELECT nombre, COUNT(*) as count
+          FROM trabajadores
+          GROUP BY LOWER(nombre)
+          HAVING count > 1
+        `).all();
+
+        if(duplicates.length === 0){
+          return sendJson(res, 200, {ok:true, message:'No hay duplicados', cleaned: 0});
+        }
+
+        let totalCleaned = 0;
+
+        for(const dup of duplicates){
+          const records = await db.prepare(`
+            SELECT ROWID as id, nombre, dni
+            FROM trabajadores
+            WHERE LOWER(nombre) = LOWER(?)
+            ORDER BY CASE WHEN (dni IS NULL OR dni = '') THEN 1 ELSE 0 END ASC
+          `).all(dup.nombre);
+
+          if(records.length <= 1) continue;
+
+          const withDni = records.find(r => r.dni && r.dni.trim());
+          const toDelete = records.filter(r => !r.dni || !r.dni.trim());
+
+          for(const rec of toDelete){
+            console.log('[CLEANUP-NOW] Eliminando:', rec.nombre, '(sin DNI)');
+            await db.prepare('DELETE FROM trabajadores WHERE ROWID = ? AND (dni IS NULL OR dni = "")').run(rec.id);
+            totalCleaned++;
+          }
+        }
+
+        console.log('[CLEANUP-NOW] ✅ Completado - Eliminados:', totalCleaned);
+        return sendJson(res, 200, {ok:true, message:`Limpieza completada - ${totalCleaned} duplicados eliminados`, cleaned: totalCleaned});
+      }catch(err){
+        console.error('[CLEANUP-NOW ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error: ' + err.message});
       }
     }
     if(pathname === '/api/admin/cleanup-duplicates' && req.method === 'POST'){
