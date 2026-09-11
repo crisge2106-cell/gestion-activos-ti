@@ -16,6 +16,7 @@ const crypto = require('crypto');
 const net = require('net');
 const tls = require('tls');
 const db = require('./db-factory');
+const { fixTrabajadorIds } = require('./fix-trabajador-ids');
 const { execSync, spawn } = require('child_process');
 const ExcelJS = require('exceljs');
 
@@ -68,7 +69,8 @@ const CREATE_TABLES_SQL = `
     equipoId TEXT, fecha TEXT, tipo TEXT, realizadoPor TEXT, descripcion TEXT
   );
   CREATE TABLE IF NOT EXISTS trabajadores (
-    nombre TEXT PRIMARY KEY,
+    id TEXT PRIMARY KEY,
+    nombre TEXT UNIQUE,
     dni TEXT, area TEXT, sede TEXT, activo INTEGER DEFAULT 1
   );
   CREATE TABLE IF NOT EXISTS counters (name TEXT PRIMARY KEY, value INTEGER);
@@ -167,7 +169,7 @@ if (!isServerless) {
 
       await seedIfEmpty();
       await backfillTrabajadoresIfEmpty();
-      await ensureTrabajadoresHaveIds();
+      await fixTrabajadorIds();
       await seedUsersIfEmpty();
 
       console.log('✅ BD inicializada (LOCAL)');
@@ -191,7 +193,7 @@ if (!isServerless) {
 
         await seedIfEmpty();
         await backfillTrabajadoresIfEmpty();
-        await ensureTrabajadoresHaveIds();
+        await fixTrabajadorIds();
         await seedUsersIfEmpty();
 
         console.log('✅ BD inicializada (VERCEL)');
@@ -229,6 +231,13 @@ async function nextId(prefix, counterName){
   return prefix + '-' + String(n).padStart(4, '0');
 }
 
+// Generar ID único para trabajadores (basado en timestamp + random)
+function generateTrabajadorId(){
+  const timestamp = Date.now().toString(36).toUpperCase();
+  const random = Math.random().toString(36).substr(2, 5).toUpperCase();
+  return `TRAB-${timestamp}-${random}`;
+}
+
 // ---------------------------------------------------------------------------
 // Trabajadores
 // ---------------------------------------------------------------------------
@@ -237,10 +246,11 @@ async function upsertTrabajador(t){
   if(!nombre) return;
   const existing = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) = LOWER(?)').get(nombre);
   if(existing){
-    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede), activo=1 WHERE LOWER(nombre) = LOWER(?)`)
-      .run(t.dni||'', t.area||'', t.sede||'', nombre);
+    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede), activo=1 WHERE id = ?`)
+      .run(t.dni||'', t.area||'', t.sede||'', existing.id);
   } else {
-    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,1)').run(nombre, t.dni||'', t.area||'', t.sede||'');
+    const id = generateTrabajadorId();
+    await db.prepare('INSERT INTO trabajadores (id,nombre,dni,area,sede,activo) VALUES (?,?,?,?,?,1)').run(id, nombre, t.dni||'', t.area||'', t.sede||'');
   }
 }
 async function getTrabajadores(){
@@ -271,7 +281,8 @@ async function setTrabajadorActivo(nombre, activo){
     // Usar ID para UPDATE (más confiable)
     await db.prepare('UPDATE trabajadores SET activo=? WHERE id = ?').run(activo?1:0, existing.id);
   } else {
-    await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
+    const id = generateTrabajadorId();
+    await db.prepare('INSERT INTO trabajadores (id,nombre,dni,area,sede,activo) VALUES (?,?,?,?,?,?)').run(id, n, '', '', '', activo?1:0);
   }
 }
 
@@ -1416,8 +1427,9 @@ async function handleRequest(req, res){
       const nombre = (body.nombre||'').trim();
       if(!nombre) return sendJson(res, 400, {error:'El nombre es obligatorio'});
       if(await getTrabajador(nombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
-      await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)')
-        .run(nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
+      const id = generateTrabajadorId();
+      await db.prepare('INSERT INTO trabajadores (id,nombre,dni,area,sede,activo) VALUES (?,?,?,?,?,?)')
+        .run(id, nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
       return sendJson(res, 200, await getTrabajador(nombre));
     }
     if(pathname.startsWith('/api/trabajadores/') && req.method === 'DELETE'){
@@ -1504,9 +1516,10 @@ async function handleRequest(req, res){
         console.log('[IMPORT] ✅', body.equipos.length, 'equipos importados');
 
         // Importar trabajadores
-        const trabStmt = db.prepare(`INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)`);
+        const trabStmt = db.prepare(`INSERT INTO trabajadores (id,nombre,dni,area,sede,activo) VALUES (?,?,?,?,?,?)`);
         for(const t of body.trabajadores){
-          trabStmt.run(t.nombre, t.dni||'', t.area||'', t.sede||'', t.activo||1);
+          const id = t.id || generateTrabajadorId();
+          trabStmt.run(id, t.nombre, t.dni||'', t.area||'', t.sede||'', t.activo||1);
         }
         console.log('[IMPORT] ✅', body.trabajadores.length, 'trabajadores importados');
 
