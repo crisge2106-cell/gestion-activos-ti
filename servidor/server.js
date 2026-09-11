@@ -1490,9 +1490,9 @@ async function handleRequest(req, res){
       }
     }
     if(pathname === '/api/admin/cleanup-duplicates' && req.method === 'POST'){
-      // Endpoint para limpiar duplicados de trabajadores
+      // Endpoint para limpiar duplicados de trabajadores - VERSIÓN SEGURA
       try{
-        console.log('[CLEANUP] Iniciando limpieza de duplicados...');
+        console.log('[CLEANUP] Iniciando limpieza segura de duplicados...');
 
         // Encontrar trabajadores duplicados
         const duplicates = await db.prepare(`
@@ -1507,30 +1507,51 @@ async function handleRequest(req, res){
         }
 
         let totalCleaned = 0;
+        let deletedRecords = [];
 
         // Para cada nombre duplicado
         for(const dup of duplicates){
-          // Obtener todos los registros ordenados (el primero = más reciente)
+          // Obtener todos los registros - PRIMERO con DNI, LUEGO sin DNI
           const records = await db.prepare(`
-            SELECT ROWID as id, nombre, dni
+            SELECT ROWID as id, nombre, dni, area, sede
             FROM trabajadores
             WHERE LOWER(nombre) = LOWER(?)
-            ORDER BY ROWID DESC
+            ORDER BY CASE WHEN (dni IS NULL OR dni = '') THEN 1 ELSE 0 END ASC, ROWID DESC
           `).all(dup.nombre);
 
-          // Mantener el primero (con más probabilidad de tener DNI)
+          if(records.length <= 1) continue; // No es duplicado
+
+          // El primero tiene DNI (gracias al ORDER BY)
           const keeper = records[0];
+
+          // Todos los demás son sin DNI (en este caso, solo 1 más, pero en general)
           const toDelete = records.slice(1);
 
+          console.log(`[CLEANUP] Procesando: ${dup.nombre}`);
+          console.log(`[CLEANUP] Mantener: ${keeper.nombre} (DNI: ${keeper.dni || '(vacío)'})`);
+
           for(const rec of toDelete){
-            console.log('[CLEANUP] Eliminando duplicado:', rec.nombre, '(ROWID:', rec.id, ')');
-            await db.prepare('DELETE FROM trabajadores WHERE ROWID = ?').run(rec.id);
+            if(rec.dni && rec.dni.trim()){
+              console.log(`[CLEANUP] PELIGRO: Intento eliminar registro CON DNI: ${rec.nombre} (DNI: ${rec.dni})`);
+              continue; // NO eliminar si tiene DNI
+            }
+
+            console.log(`[CLEANUP] Eliminando: ${rec.nombre} (DNI: ${rec.dni || '(vacío)'}) ROWID:${rec.id}`);
+            const result = await db.prepare(`
+              DELETE FROM trabajadores
+              WHERE ROWID = ?
+              AND LOWER(nombre) = LOWER(?)
+              AND (dni IS NULL OR dni = '')
+            `).run(rec.id, rec.nombre);
+
+            console.log(`[CLEANUP] Resultado DELETE:`, result);
             totalCleaned++;
+            deletedRecords.push({nombre: rec.nombre, dni: rec.dni, rowid: rec.id});
           }
         }
 
         console.log('[CLEANUP] ✅ Limpieza completada - Eliminados:', totalCleaned, 'registros');
-        return sendJson(res, 200, {ok:true, message:'Limpieza completada', cleaned: totalCleaned});
+        return sendJson(res, 200, {ok:true, message:'Limpieza completada', cleaned: totalCleaned, deletedRecords: deletedRecords});
       }catch(err){
         console.error('[CLEANUP ERROR]', err.message);
         return sendJson(res, 500, {error:'Error en limpieza: ' + err.message});
