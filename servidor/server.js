@@ -2257,14 +2257,20 @@ async function handleRequest(req, res){
 
     // ---- Gestión de Agentes y Reportes ----
     if(pathname === '/api/agentes/reportes' && req.method === 'GET'){
-      const reportes = await db.prepare(`
-        SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
-        FROM agentes_reportes ar
-        LEFT JOIN equipos eq ON ar.equipoId = eq.id
-        ORDER BY ar.timestamp DESC
-        LIMIT 100
-      `).all();
-      return sendJson(res, 200, {reportes});
+      try {
+        const reportes = await db.prepare(`
+          SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
+          FROM agentes_reportes ar
+          LEFT JOIN equipos eq ON ar.equipoId = eq.id
+          ORDER BY ar.timestamp DESC
+          LIMIT 100
+        `).all();
+        return sendJson(res, 200, {reportes});
+      } catch(err) {
+        // Si la tabla no existe, retornar array vacío
+        console.log('[REPORTES] Tabla agentes_reportes no disponible:', err.message);
+        return sendJson(res, 200, {reportes: []});
+      }
     }
 
     if(pathname.startsWith('/api/agentes/reportes/') && pathname.includes('/enlazar') && req.method === 'POST'){
