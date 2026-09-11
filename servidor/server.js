@@ -233,9 +233,9 @@ async function nextId(prefix, counterName){
 async function upsertTrabajador(t){
   const nombre = (t.nombre||'').trim();
   if(!nombre) return;
-  const existing = await db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get(nombre);
+  const existing = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) = LOWER(?)').get(nombre);
   if(existing){
-    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede), activo=1 WHERE nombre = ? COLLATE NOCASE`)
+    await db.prepare(`UPDATE trabajadores SET dni=COALESCE(NULLIF(?,''),dni), area=COALESCE(NULLIF(?,''),area), sede=COALESCE(NULLIF(?,''),sede), activo=1 WHERE LOWER(nombre) = LOWER(?)`)
       .run(t.dni||'', t.area||'', t.sede||'', nombre);
   } else {
     await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,1)').run(nombre, t.dni||'', t.area||'', t.sede||'');
@@ -256,7 +256,7 @@ async function setTrabajadorActivo(nombre, activo){
   if(!n) return;
   const existing = await getTrabajador(n);
   if(existing){
-    await db.prepare('UPDATE trabajadores SET activo=? WHERE nombre = ? COLLATE NOCASE').run(activo?1:0, n);
+    await db.prepare('UPDATE trabajadores SET activo=? WHERE LOWER(nombre) = LOWER(?)').run(activo?1:0, n);
   } else {
     await db.prepare('INSERT INTO trabajadores (nombre,dni,area,sede,activo) VALUES (?,?,?,?,?)').run(n, '', '', '', activo?1:0);
   }
@@ -1393,7 +1393,7 @@ async function handleRequest(req, res){
 
       // Nota: Validación de duplicados desactivada para permitir actualizaciones sin restricciones
       console.log('[UPDATE TRAB]', {nombreOrig, nuevoNombre, dni, area, sede, activo});
-      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE')
+      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE LOWER(nombre) = LOWER(?)')
         .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
