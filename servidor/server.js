@@ -2262,12 +2262,12 @@ async function handleRequest(req, res){
           SELECT ar.*, eq.nombre as nombre_equipo, eq.tipo as tipo_equipo
           FROM agentes_reportes ar
           LEFT JOIN equipos eq ON ar.equipoId = eq.id
-          ORDER BY ar.timestamp DESC
+          ORDER BY ar.id DESC
           LIMIT 100
         `).all();
         return sendJson(res, 200, {reportes});
       } catch(err) {
-        // Si la tabla no existe, retornar array vacío
+        // Si la tabla no existe o tiene problemas, retornar array vacío
         console.log('[REPORTES] Tabla agentes_reportes no disponible:', err.message);
         return sendJson(res, 200, {reportes: []});
       }
