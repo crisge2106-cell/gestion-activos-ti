@@ -171,7 +171,7 @@ if (!isServerless) {
       await seedIfEmpty();
       await backfillTrabajadoresIfEmpty();
       await fixTrabajadorIds();
-      await fixMongoDBDuplicates();
+      // await fixMongoDBDuplicates(); // DESACTIVADO: causó pérdida de datos
       await seedUsersIfEmpty();
 
       console.log('✅ BD inicializada (LOCAL)');
@@ -196,7 +196,7 @@ if (!isServerless) {
         await seedIfEmpty();
         await backfillTrabajadoresIfEmpty();
         await fixTrabajadorIds();
-        await fixMongoDBDuplicates();
+        // await fixMongoDBDuplicates(); // DESACTIVADO: causó pérdida de datos
         await seedUsersIfEmpty();
 
         console.log('✅ BD inicializada (VERCEL)');
