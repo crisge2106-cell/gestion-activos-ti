@@ -1434,7 +1434,8 @@ async function handleRequest(req, res){
 
       // Nota: Validación de duplicados desactivada para permitir actualizaciones sin restricciones
       console.log('[UPDATE TRAB]', {nombreOrig, nuevoNombre, dni, area, sede, activo});
-      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE LOWER(nombre) = LOWER(?)')
+      // IMPORTANTE: Usar nombre exacto del registro existente para garantizar UPDATE en ambas BDs (SQLite y MongoDB)
+      await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE nombre = ?')
         .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
     }
