@@ -1376,8 +1376,9 @@ async function handleRequest(req, res){
       return sendJson(res, 200, await getTrabajador(nombre));
     }
     if(pathname.startsWith('/api/trabajadores/') && req.method === 'PUT'){
-      const nombreOrig = decodeURIComponent(pathname.split('/').pop()).trim();
       const body = await readBody(req);
+      // Soportar nombre tanto en URL como en body
+      const nombreOrig = (body.nombreOriginal || decodeURIComponent(pathname.split('/').pop())).trim();
       const existing = await getTrabajador(nombreOrig);
       if(!existing) return sendJson(res, 404, {error:`Usuario no encontrado: "${nombreOrig}"`});
       const nuevoNombre = (body.nombre||existing.nombre).trim();
@@ -1387,8 +1388,7 @@ async function handleRequest(req, res){
       const activo = body.activo!==undefined ? (body.activo?1:0) : existing.activo;
 
       // Nota: Validación de duplicados desactivada para permitir actualizaciones sin restricciones
-      // Solo actualizar los campos proporcionados
-      console.log('[UPDATE TRAB]', {nombreOrig, nuevoNombre, dni, area, sede, activo, existingNombre: existing.nombre});
+      console.log('[UPDATE TRAB]', {nombreOrig, nuevoNombre, dni, area, sede, activo});
       await db.prepare('UPDATE trabajadores SET nombre=?, dni=?, area=?, sede=?, activo=? WHERE nombre = ? COLLATE NOCASE')
         .run(nuevoNombre, dni, area, sede, activo, existing.nombre);
       return sendJson(res, 200, await getTrabajador(nuevoNombre));
