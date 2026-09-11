@@ -167,6 +167,7 @@ if (!isServerless) {
 
       await seedIfEmpty();
       await backfillTrabajadoresIfEmpty();
+      await ensureTrabajadoresHaveIds();
       await seedUsersIfEmpty();
 
       console.log('✅ BD inicializada (LOCAL)');
@@ -190,6 +191,7 @@ if (!isServerless) {
 
         await seedIfEmpty();
         await backfillTrabajadoresIfEmpty();
+        await ensureTrabajadoresHaveIds();
         await seedUsersIfEmpty();
 
         console.log('✅ BD inicializada (VERCEL)');
@@ -634,6 +636,34 @@ async function backfillTrabajadoresIfEmpty(){
     console.error('[TRAB] ❌ Error critical en backfillTrabajadores:', err.message, err.stack);
   }
   console.log('[TRAB] === FIN BACKFILL TRABAJADORES ===');
+}
+
+async function ensureTrabajadoresHaveIds(){
+  console.log('[ID-MIGRATION] Verificando IDs en trabajadores...');
+  try {
+    const sinID = await db.prepare('SELECT COUNT(*) as c FROM trabajadores WHERE id IS NULL').get();
+
+    if(sinID && sinID.c > 0) {
+      console.log(`[ID-MIGRATION] ${sinID.c} trabajadores sin ID - iniciando migración...`);
+
+      const trabajadores = await db.prepare(`
+        SELECT rowid, nombre FROM trabajadores WHERE id IS NULL ORDER BY rowid ASC
+      `).all();
+
+      let contador = 1;
+      for(const trab of trabajadores) {
+        const id = `TRAB-${String(contador).padStart(4, '0')}`;
+        await db.prepare('UPDATE trabajadores SET id = ? WHERE rowid = ?').run(id, trab.rowid);
+        contador++;
+      }
+
+      console.log(`[ID-MIGRATION] ✅ Migración completada - ${contador - 1} IDs asignados`);
+    } else {
+      console.log('[ID-MIGRATION] ✅ Todos los trabajadores tienen ID');
+    }
+  } catch(err) {
+    console.error('[ID-MIGRATION] ⚠️ Error:', err.message);
+  }
 }
 
 // ---------------------------------------------------------------------------
