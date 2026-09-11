@@ -245,7 +245,11 @@ async function getTrabajadores(){
   return await db.prepare('SELECT * FROM trabajadores ORDER BY nombre').all();
 }
 async function getTrabajador(nombre){
-  return await db.prepare('SELECT * FROM trabajadores WHERE nombre = ? COLLATE NOCASE').get((nombre||'').trim());
+  const n = (nombre||'').trim();
+  if(!n) return null;
+  // Buscar sin case sensitivity - funciona en SQLite y MongoDB
+  const result = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) = LOWER(?)').get(n);
+  return result;
 }
 async function setTrabajadorActivo(nombre, activo){
   const n = (nombre||'').trim();
