@@ -1379,6 +1379,47 @@ async function handleRequest(req, res){
         .run(nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
       return sendJson(res, 200, await getTrabajador(nombre));
     }
+    if(pathname.startsWith('/api/trabajadores/') && req.method === 'DELETE'){
+      // Endpoint para eliminar SOLO duplicados sin DNI
+      const body = await readBody(req);
+      const nombreOrig = (body.nombreOriginal || decodeURIComponent(pathname.split('/').pop())).trim();
+
+      const records = await db.prepare(`
+        SELECT ROWID as id, nombre, dni, area, sede
+        FROM trabajadores
+        WHERE LOWER(nombre) = LOWER(?)
+      `).all(nombreOrig);
+
+      if(records.length === 0) return sendJson(res, 404, {error:`Usuario no encontrado: "${nombreOrig}"`});
+
+      // SOLO permitir DELETE si es un duplicado SIN DNI
+      const hasDni = records.some(r => r.dni && r.dni.trim());
+      const isDuplicate = records.length > 1;
+      const isEmptyDni = !nombreOrig || nombreOrig.trim() === '';
+
+      if(!isDuplicate){
+        return sendJson(res, 400, {error:'No se pueden eliminar usuarios. Solo desactivar. Excepción: duplicados sin DNI'});
+      }
+
+      if(hasDni && records.length > 1){
+        // Hay un registro con DNI, así que es un duplicado válido para eliminar
+        // SOLO eliminar los SIN DNI
+        const toDelete = records.filter(r => !r.dni || !r.dni.trim());
+
+        if(toDelete.length === 0){
+          return sendJson(res, 400, {error:'No hay registros sin DNI para eliminar'});
+        }
+
+        for(const rec of toDelete){
+          console.log('[DELETE TRAB DUPLICATE]', rec.nombre, '(Sin DNI)');
+          await db.prepare('DELETE FROM trabajadores WHERE ROWID = ? AND (dni IS NULL OR dni = "")').run(rec.id);
+        }
+
+        return sendJson(res, 200, {ok:true, message:`Duplicado sin DNI eliminado`, deleted: toDelete.length});
+      }
+
+      return sendJson(res, 400, {error:'No se puede eliminar. Solo duplicados sin DNI son eliminables'});
+    }
     if(pathname.startsWith('/api/trabajadores/') && req.method === 'PUT'){
       const body = await readBody(req);
       // Soportar nombre tanto en URL como en body
@@ -1560,8 +1601,11 @@ async function handleRequest(req, res){
     if(pathname === '/api/cargos' && req.method === 'POST'){
       const body = await readBody(req);
       const trabajadorExistente = await getTrabajador(body.trabajador);
+
+      // REGLA DE NEGOCIO: Si un trabajador inactivo recibe equipos, se reactiva automáticamente
       if(trabajadorExistente && trabajadorExistente.activo === 0){
-        return sendJson(res, 400, {error:'Este trabajador figura como inactivo (tiene una devolución por salida registrada). Actívalo en la pestaña Usuarios antes de asignarle un equipo.'});
+        console.log('[REACTIVAR TRABAJADOR]', body.trabajador, '- Asignando equipos a trabajador inactivo, reactivando...');
+        await setTrabajadorActivo(body.trabajador, true);
       }
       const items = [];
       for(const it of (body.items||[])){
@@ -1732,8 +1776,14 @@ async function handleRequest(req, res){
       const movId = await insertMovimiento({tipo: body.motivo, fecha: body.fecha, trabajador, dni:'', area: equipos[0].area, sede: equipos[0].sede,
         observaciones: body.observaciones, origen:'Manual', items});
       for(const eq of equipos) await updateEquipoFields(eq.id, {estado: body.estadoNuevo, usuarioActual: ''});
+
+      // REGLA DE NEGOCIO: Si devuelven todos los equipos por salida, marcar trabajador como "baja" (inactivo)
       if(body.motivo === 'Devolucion por salida' && trabajador){
-        await setTrabajadorActivo(trabajador, 0);
+        const equiposRestantes = await db.prepare('SELECT COUNT(*) as count FROM equipos WHERE usuarioActual = ? AND estado = "Asignado"').get(trabajador);
+        if(equiposRestantes && equiposRestantes.count === 0){
+          console.log('[TRABAJADOR BAJA]', trabajador, '- Devolvió todos los equipos por salida, marcado como inactivo');
+          await setTrabajadorActivo(trabajador, false);
+        }
       }
       return sendJson(res, 200, {id: movId});
     }
