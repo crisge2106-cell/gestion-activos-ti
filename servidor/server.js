@@ -1125,7 +1125,7 @@ async function handleRequest(req, res){
     }
 
     // Endpoints públicos (sin autenticación)
-    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates'];
+    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates', '/api/admin/preview-cleanup'];
     const esPublico = endpointsPublicos.some(ep => pathname === ep || pathname.startsWith(ep + '/'));
 
     const session = await getSession(req);
@@ -1447,6 +1447,46 @@ async function handleRequest(req, res){
       }catch(err){
         console.error('[IMPORT ERROR]', err.message);
         return sendJson(res, 500, {error:'Error en importación: ' + err.message});
+      }
+    }
+    if(pathname === '/api/admin/preview-cleanup' && req.method === 'GET'){
+      // PREVIEW: mostrar qué se eliminaría sin hacer cambios
+      try{
+        const duplicates = await db.prepare(`
+          SELECT nombre, COUNT(*) as count
+          FROM trabajadores
+          GROUP BY LOWER(nombre)
+          HAVING count > 1
+        `).all();
+
+        if(duplicates.length === 0){
+          return sendJson(res, 200, {ok:true, hasDuplicates: false, message:'No hay duplicados', preview: []});
+        }
+
+        let preview = [];
+        for(const dup of duplicates){
+          const records = await db.prepare(`
+            SELECT ROWID as id, nombre, dni, area, sede
+            FROM trabajadores
+            WHERE LOWER(nombre) = LOWER(?)
+            ORDER BY ROWID DESC
+          `).all(dup.nombre);
+
+          const keeper = records[0];
+          const toDelete = records.slice(1);
+
+          preview.push({
+            nombre: dup.nombre,
+            totalRecords: records.length,
+            keeper: keeper,
+            toDelete: toDelete
+          });
+        }
+
+        return sendJson(res, 200, {ok:true, hasDuplicates: true, message:`Encontrados ${duplicates.length} duplicados`, preview: preview});
+      }catch(err){
+        console.error('[PREVIEW ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en preview: ' + err.message});
       }
     }
     if(pathname === '/api/admin/cleanup-duplicates' && req.method === 'POST'){
