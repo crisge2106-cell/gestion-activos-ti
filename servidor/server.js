@@ -1188,7 +1188,7 @@ async function handleRequest(req, res){
     }
 
     // Endpoints públicos (sin autenticación)
-    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates', '/api/admin/cleanup-duplicates-now', '/api/admin/preview-cleanup'];
+    const endpointsPublicos = ['/api/inventario', '/api/config-agente', '/api/state', '/api/admin/import-data', '/api/admin/cleanup-duplicates', '/api/admin/cleanup-duplicates-now', '/api/admin/preview-cleanup', '/api/debug/', '/api/trabajadores/search', '/api/trabajadores/exact'];
     const esPublico = endpointsPublicos.some(ep => pathname === ep || pathname.startsWith(ep + '/'));
 
     const session = await getSession(req);
