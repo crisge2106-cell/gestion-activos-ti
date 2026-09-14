@@ -1332,6 +1332,45 @@ async function handleRequest(req, res){
       });
     }
 
+    // Endpoint DEBUG: listar todas las fechas de entrega para un usuario
+    if(pathname.startsWith('/api/debug/user-delivery-dates/') && req.method === 'GET'){
+      const usuario = decodeURIComponent(pathname.split('/').pop()).trim();
+      const equiposUsuario = DB.equipos.filter(e => e.usuarioActual === usuario);
+
+      const result = [];
+      for(const eq of equiposUsuario){
+        // Buscar movimientos para este equipo
+        const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC LIMIT 100').all();
+        const movEquipo = movs.filter(m => {
+          const items = DB.movimientos.find(dm => dm.id === m.id)?.items || [];
+          return items.some(it => it.equipoId === eq.id);
+        });
+
+        // Buscar fecha de entrega (último movimiento de tipo entrega)
+        let fechaEntrega = null;
+        for(const mov of movEquipo){
+          if((mov.tipo || '').toLowerCase() === 'entrega'){
+            fechaEntrega = mov.fecha;
+            break;
+          }
+        }
+
+        result.push({
+          equipoId: eq.id,
+          nombre: eq.nombre,
+          usuario: eq.usuarioActual,
+          fechaEntrega: fechaEntrega || 'SIN FECHA',
+          totalMovimientos: movEquipo.length
+        });
+      }
+
+      return sendJson(res, 200, {
+        usuario,
+        totalEquipos: equiposUsuario.length,
+        equipos: result
+      });
+    }
+
     // Endpoint DEBUG: intentar actualizar fecha
     if(pathname.startsWith('/api/debug/test-update-fecha/') && req.method === 'POST'){
       const movimientoId = decodeURIComponent(pathname.split('/').pop()).trim();
