@@ -162,6 +162,7 @@
     <div class="bulkbar" id="invBulkbar">
       <span><span class="count" id="invBulkCount">0</span> seleccionados</span>
       <button class="btn secondary small" onclick="bulkExportSeleccionados()">Exportar seleccionados (CSV)</button>
+      <button class="btn small" onclick="bulkUpdateFechaEntrega()">📅 Actualizar fecha de entrega</button>
       <button class="btn danger small" onclick="bulkBajaSeleccionados()">Dar de baja seleccionados</button>
       <button class="btn secondary small" onclick="clearInvSelection()">Cancelar selección</button>
     </div>
@@ -1129,6 +1130,42 @@ async function bulkBajaSeleccionados(){
   await refreshState();
   alert(`Baja masiva completada: ${ok} equipo(s) dados de baja${fail? ', ' + fail + ' con error':''}.`);
 }
+
+async function bulkUpdateFechaEntrega(){
+  const ids = [...invSelected];
+  if(ids.length===0) return alert('Selecciona al menos un equipo');
+
+  // Validar que todos pertenezcan al mismo usuario
+  const usuarios = [...new Set(DB.equipos.filter(e=>ids.includes(e.id)).map(e=>e.usuarioActual))];
+  if(usuarios.length === 0) return alert('Ninguno de los equipos seleccionados está asignado');
+  if(usuarios.length > 1) return alert(`Los equipos pertenecen a múltiples usuarios: ${usuarios.join(', ')}. Selecciona solo equipos del mismo usuario.`);
+
+  const usuario = usuarios[0];
+  const newDate = prompt(`Actualizar fecha de entrega para ${ids.length} equipo(s) de: ${usuario}\n\nNueva fecha (YYYY-MM-DD):`);
+  if(!newDate || newDate.trim()==='') return;
+
+  // Validar formato de fecha
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate.trim())){
+    return alert('Formato de fecha inválido. Usa YYYY-MM-DD');
+  }
+
+  try{
+    const res = await apiPost('/api/equipos/bulk/update-delivery-date', {
+      equipoIds: ids,
+      newDate: newDate.trim(),
+      usuario: usuario
+    });
+
+    if(res.ok){
+      invSelected.clear();
+      await refreshState();
+      alert(`✅ Fecha de entrega actualizada para ${res.actualizados.length} equipo(s)\n${res.message}`);
+    }
+  }catch(err){
+    alert('❌ Error al actualizar: ' + err.message);
+  }
+}
+
 ['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter'].forEach(id=>{
   document.getElementById(id).addEventListener('input', renderInventario);
   document.getElementById(id).addEventListener('change', renderInventario);
