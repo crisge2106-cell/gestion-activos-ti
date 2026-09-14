@@ -1176,7 +1176,19 @@ async function bulkUpdateFechaEntrega(){
   // Llenar modal
   document.getElementById('bulkUpdateCount').textContent = ids.length;
   document.getElementById('bulkUpdateUsuario').value = usuario;
-  document.getElementById('bulkUpdateFecha').value = todayISO();
+
+  // Buscar la fecha actual de los equipos (de su último movimiento de entrega)
+  let currentFecha = null;
+  for(const eqId of ids){
+    const fechaEq = fechaEntregaEquipo(eqId);
+    if(fechaEq){
+      currentFecha = fechaEq;
+      break;
+    }
+  }
+
+  // Mostrar fecha actual o vacío para que usuario la seleccione
+  document.getElementById('bulkUpdateFecha').value = currentFecha || '';
 
   // Abrir modal
   document.getElementById('bulkUpdateFechaModalBg').classList.add('active');
