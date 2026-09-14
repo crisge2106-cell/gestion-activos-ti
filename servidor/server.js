@@ -1347,11 +1347,11 @@ async function handleRequest(req, res){
             const items = await db.prepare('SELECT DISTINCT movimientoId FROM movimiento_items WHERE equipoId = ?').all(eq.id);
 
             let fechaEntrega = null;
-            // Buscar el último movimiento de entrega
+            // Buscar el último movimiento de asignación (fecha de entrega al trabajador)
             if(items && items.length > 0){
               for(const item of items){
                 const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(item.movimientoId);
-                if(mov && (mov.tipo || '').toLowerCase() === 'entrega'){
+                if(mov && (mov.tipo || '').toLowerCase() === 'asignacion'){
                   fechaEntrega = mov.fecha;
                   break; // Tomar el primero (más reciente)
                 }
@@ -1524,16 +1524,16 @@ async function handleRequest(req, res){
       if(!equipo) return sendJson(res, 404, {error:'Equipo no encontrado'});
       try{
         const movId = await insertMovimiento({
-          tipo: 'Entrega',
+          tipo: 'Asignacion',
           fecha: fecha,
           trabajador: equipo.usuarioActual||'',
           area: equipo.area||'',
           sede: equipo.sede||'',
-          observaciones: `Entrega registrada desde inventario`,
+          observaciones: `Asignación registrada desde inventario`,
           items: [{equipoId: equipoId, cantidad: 1}]
         });
         return sendJson(res, 200, {ok:true, movimientoId: movId});
-      }catch(err){ return sendJson(res, 500, {error: 'Error al registrar entrega: ' + err.message}); }
+      }catch(err){ return sendJson(res, 500, {error: 'Error al registrar asignación: ' + err.message}); }
     }
 
     // Actualizar fecha de entrega para múltiples equipos
@@ -1584,19 +1584,19 @@ async function handleRequest(req, res){
 
           let ultimoMovimiento = null;
 
-          // Buscar el movimiento de entrega más reciente
+          // Buscar el movimiento de asignación más reciente
           if(items && items.length > 0){
             const movimientoIds = items.map(i => i.movimientoId);
             console.log(`[BULK-UPDATE] Items encontrados para ${equipoId}: ${JSON.stringify(items)}`);
 
             // Buscar cada movimiento para encontrar el más reciente
             for(const movId of movimientoIds){
-              console.log(`[BULK-UPDATE] Buscando movimiento: ${movId} tipo: entrega`);
+              console.log(`[BULK-UPDATE] Buscando movimiento: ${movId} tipo: asignacion`);
               const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movId);
               console.log(`[BULK-UPDATE] Resultado búsqueda mov ${movId}:`, JSON.stringify(mov));
 
-              if(mov && (mov.tipo || '').toLowerCase() === 'entrega' && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
-                console.log(`[BULK-UPDATE] ✓ Encontrado movimiento de entrega: ${mov.id} fecha: ${mov.fecha}`);
+              if(mov && (mov.tipo || '').toLowerCase() === 'asignacion' && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
+                console.log(`[BULK-UPDATE] ✓ Encontrado movimiento de asignación: ${mov.id} fecha: ${mov.fecha}`);
                 ultimoMovimiento = mov;
               }
             }
@@ -1620,9 +1620,9 @@ async function handleRequest(req, res){
               INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `).run(
-              movId, 'Entrega', newDate, usuario,
+              movId, 'Asignacion', newDate, usuario,
               trab?.dni || '', trab?.area || '', trab?.sede || '',
-              'Entrega registrada (actualización masiva)', 'APP'
+              'Asignación registrada (actualización masiva)', 'APP'
             );
 
             // Agregar item
