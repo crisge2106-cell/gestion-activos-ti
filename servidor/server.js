@@ -1984,6 +1984,102 @@ async function handleRequest(req, res){
         return sendJson(res, 500, {error:'Error en limpieza: ' + err.message});
       }
     }
+
+    // Endpoint seguro: limpiar duplicados de MOVIMIENTOS (sin perder datos de equipos/usuarios/fechas)
+    if(pathname === '/api/admin/cleanup-movements' && req.method === 'POST'){
+      try{
+        console.log('[MOVEMENT-CLEANUP] Iniciando limpieza selectiva de movimientos duplicados...');
+
+        let stats = {
+          entrega_removed: 0,
+          orphans_removed: 0,
+          duplicates_removed: 0,
+          total_removed: 0
+        };
+
+        // 1. Eliminar movimientos tipo 'Entrega' (deben ser 'Asignacion')
+        console.log('[MOVEMENT-CLEANUP] Paso 1: Buscando movimientos tipo "Entrega"...');
+        const entregaMovs = await db.prepare('SELECT id FROM movimientos WHERE tipo = ?').all('Entrega');
+
+        if(entregaMovs.length > 0) {
+          for(const mov of entregaMovs) {
+            await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(mov.id);
+            await db.prepare('DELETE FROM movimientos WHERE id = ?').run(mov.id);
+          }
+          stats.entrega_removed = entregaMovs.length;
+          console.log(`[MOVEMENT-CLEANUP] Eliminados ${entregaMovs.length} movimientos tipo "Entrega"`);
+        }
+
+        // 2. Eliminar movimientos orfanos (sin items)
+        console.log('[MOVEMENT-CLEANUP] Paso 2: Buscando movimientos orfanos...');
+        const orfanos = await db.prepare(`
+          SELECT m.id FROM movimientos m
+          LEFT JOIN movimiento_items mi ON m.id = mi.movimientoId
+          WHERE mi.id IS NULL
+          AND m.tipo NOT IN ('Baja', 'Devolucion', 'Devolucion por renovacion', 'Devolucion por salida')
+        `).all();
+
+        if(orfanos.length > 0) {
+          for(const mov of orfanos) {
+            await db.prepare('DELETE FROM movimientos WHERE id = ?').run(mov.id);
+          }
+          stats.orphans_removed = orfanos.length;
+          console.log(`[MOVEMENT-CLEANUP] Eliminados ${orfanos.length} movimientos orfanos`);
+        }
+
+        // 3. Eliminar duplicados (mantener el primero)
+        console.log('[MOVEMENT-CLEANUP] Paso 3: Buscando duplicados...');
+        const duplicados = await db.prepare(`
+          SELECT trabajador, fecha, tipo, GROUP_CONCAT(id) as ids
+          FROM movimientos
+          WHERE tipo = 'Asignacion' AND fecha IS NOT NULL
+          GROUP BY trabajador, fecha, tipo
+          HAVING COUNT(*) > 1
+        `).all();
+
+        if(duplicados.length > 0) {
+          for(const dup of duplicados) {
+            const movIds = dup.ids.split(',').sort();
+            const paraEliminar = movIds.slice(1);
+
+            for(const movId of paraEliminar) {
+              await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(movId);
+              await db.prepare('DELETE FROM movimientos WHERE id = ?').run(movId);
+              stats.duplicates_removed++;
+            }
+          }
+          console.log(`[MOVEMENT-CLEANUP] Eliminados ${stats.duplicates_removed} movimientos duplicados`);
+        }
+
+        stats.total_removed = stats.entrega_removed + stats.orphans_removed + stats.duplicates_removed;
+
+        // Verificación final
+        const entregaFinal = await db.prepare('SELECT COUNT(*) as cnt FROM movimientos WHERE tipo = ?').get('Entrega');
+        const orfanosFinal = await db.prepare(`
+          SELECT COUNT(*) as cnt FROM movimientos m
+          LEFT JOIN movimiento_items mi ON m.id = mi.movimientoId
+          WHERE mi.id IS NULL
+          AND m.tipo NOT IN ('Baja', 'Devolucion', 'Devolucion por renovacion', 'Devolucion por salida')
+        `).get();
+
+        console.log('[MOVEMENT-CLEANUP] ✅ Limpieza completada');
+        console.log('[MOVEMENT-CLEANUP] Resultados:', stats);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Limpieza de movimientos completada',
+          stats: stats,
+          verification: {
+            entrega_remaining: entregaFinal.cnt,
+            orphans_remaining: orfanosFinal.cnt
+          }
+        });
+      }catch(err){
+        console.error('[MOVEMENT-CLEANUP ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en limpieza: ' + err.message});
+      }
+    }
+
     if(pathname === '/api/cargos' && req.method === 'POST'){
       const body = await readBody(req);
       const trabajadorExistente = await getTrabajador(body.trabajador);
