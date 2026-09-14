@@ -1993,56 +1993,86 @@ async function handleRequest(req, res){
     }
 
     // Endpoint seguro: limpiar duplicados de MOVIMIENTOS (sin perder datos de equipos/usuarios/fechas)
-    // Endpoint para regenerar items faltantes en actas
+    // Endpoint para regenerar items faltantes en actas (MODO ULTRA-AGRESIVO)
     if(pathname === '/api/admin/regenerate-acta-items' && req.method === 'POST'){
       try{
-        console.log('[REGENERATE-ACTA] Regenerando items faltantes en actas...');
+        console.log('[REGENERATE-ACTA] Regenerando items faltantes en actas (MODO ULTRA-AGRESIVO)...');
 
         let regenerados = 0;
+        let equiposSinMovimiento = 0;
 
-        // Buscar movimientos sin items
-        const movimientosSinItems = await db.prepare(`
-          SELECT m.* FROM movimientos m
-          LEFT JOIN movimiento_items mi ON m.id = mi.movimientoId
-          WHERE mi.id IS NULL
-          GROUP BY m.id
+        // ESTRATEGIA: Para cada EQUIPO ASIGNADO sin items en movimiento_items, crear movimiento + item
+        const equiposSinItems = await db.prepare(`
+          SELECT e.* FROM equipos e
+          LEFT JOIN movimiento_items mi ON e.id = mi.equipoId
+          WHERE e.estado IN ('Asignado', 'En reparación', 'En mantenimiento', 'En custodia')
+          AND e.usuarioActual IS NOT NULL
+          AND e.usuarioActual != ''
+          AND mi.id IS NULL
+          GROUP BY e.id
         `).all();
 
-        console.log(`[REGENERATE-ACTA] Movimientos sin items encontrados: ${movimientosSinItems.length}`);
+        console.log(`[REGENERATE-ACTA] Encontrados ${equiposSinItems.length} equipos asignados sin items en movimiento_items`);
 
-        for(const mov of movimientosSinItems){
-          // Buscar equipos que pertenecen a este trabajador en esa fecha
-          const equiposDelTrabajador = await db.prepare(`
-            SELECT * FROM equipos
-            WHERE usuarioActual = ?
-            AND estado = 'Asignado'
-            LIMIT 20
-          `).all(mov.trabajador);
+        for(const eq of equiposSinItems){
+          equiposSinMovimiento++;
 
-          console.log(`[REGENERATE-ACTA] Movimiento ${mov.id}: encontrados ${equiposDelTrabajador.length} equipos para ${mov.trabajador}`);
+          // Buscar o crear un movimiento de asignación para este equipo
+          let mov = await db.prepare(`
+            SELECT m.id FROM movimientos m
+            WHERE m.tipo = 'Asignacion' AND m.trabajador = ?
+            ORDER BY m.fecha DESC
+            LIMIT 1
+          `).get(eq.usuarioActual);
 
-          // Agregar items para este movimiento
-          for(const eq of equiposDelTrabajador){
+          let movId;
+
+          if(!mov){
+            // Crear nuevo movimiento de asignación
+            movId = await nextId('MOV', 'movimiento_counter');
+            const trab = await getTrabajador(eq.usuarioActual);
+
+            console.log(`[REGENERATE-ACTA] Creando movimiento ${movId} para ${eq.usuarioActual}`);
+
+            await db.prepare(`
+              INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+              movId, 'Asignacion', new Date().toISOString().split('T')[0], eq.usuarioActual,
+              trab?.dni || '', trab?.area || '', trab?.sede || '',
+              `Asignación de equipo (recuperación de datos)`, 'APP-RECOVERY'
+            );
+          } else {
+            movId = mov.id;
+            console.log(`[REGENERATE-ACTA] Reutilizando movimiento ${movId} para ${eq.usuarioActual}`);
+          }
+
+          // Ahora crear el item en movimiento_items
+          try {
             await db.prepare(`
               INSERT INTO movimiento_items (movimientoId, equipoId, cantidad, descripcion, marcaModelo, serieEstado)
               VALUES (?, ?, 1, ?, ?, ?)
             `).run(
-              mov.id, eq.id,
+              movId, eq.id,
               `${eq.tipo} ${eq.marca || ''}`.trim(),
               `${eq.marca || ''} ${eq.modelo || ''}`.trim(),
               eq.serie || ''
             );
             regenerados++;
+            console.log(`[REGENERATE-ACTA] ✓ Item creado: ${movId} → ${eq.id}`);
+          } catch(e) {
+            console.log(`[REGENERATE-ACTA] Item ya existe: ${movId} → ${eq.id}`);
           }
         }
 
-        console.log(`[REGENERATE-ACTA] ✅ Regeneración completada - ${regenerados} items creados`);
+        console.log(`[REGENERATE-ACTA] ✅ Regeneración completada - ${regenerados} items creados, ${equiposSinMovimiento} equipos procesados`);
 
         return sendJson(res, 200, {
           ok: true,
-          message: 'Items regenerados en actas',
+          message: 'Items regenerados en actas (modo ultra-agresivo)',
           itemsRegenerated: regenerados,
-          movimientosProcessados: movimientosSinItems.length
+          equiposProcessados: equiposSinMovimiento,
+          equiposSinItems: equiposSinItems.length
         });
       }catch(err){
         console.error('[REGENERATE-ACTA ERROR]', err.message);
