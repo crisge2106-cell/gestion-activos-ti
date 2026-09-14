@@ -634,6 +634,34 @@
   </div>
 </div>
 
+<!-- MODAL: Actualizar fecha de entrega masivamente -->
+<div class="modal-bg" id="bulkUpdateFechaModalBg">
+  <div class="modal" style="max-width:500px;">
+    <button class="close-x" onclick="closeModal('bulkUpdateFechaModalBg')">✕</button>
+    <h3>Actualizar Fecha de Entrega (Masivo)</h3>
+    <div class="banner" style="background:#f0fff4; border-color:#48bb78; color:#22543d; margin-bottom:15px;">
+      📅 Actualizará la fecha de entrega para <span id="bulkUpdateCount">0</span> equipo(s)
+    </div>
+    <div class="field">
+      <label>Trabajador</label>
+      <input type="text" id="bulkUpdateUsuario" readonly style="width:100%; background:var(--gris-100); color:var(--gris-500);">
+    </div>
+    <div class="field">
+      <label>Nueva Fecha de Entrega <span style="color:#d69e2e;">*</span></label>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <input type="date" id="bulkUpdateFecha" required style="flex:1; padding:8px; font-size:16px;">
+      </div>
+    </div>
+    <div class="banner" style="background:#fffaf0; border-color:#ed8936; color:#7c2d12; font-size:13px;">
+      ⚠️ Esta acción también actualizará automáticamente el acta de entrega (movimientos) de todos los equipos seleccionados.
+    </div>
+    <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:20px;">
+      <button class="btn secondary" onclick="closeModal('bulkUpdateFechaModalBg')">Cancelar</button>
+      <button class="btn" onclick="confirmBulkUpdateFecha()">Actualizar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 const ALERT_MESES = { 'Laptop':36, 'PC':36, 'Impresora':36, 'Escaner':36, 'Celular':24 };
 let DB = { equipos: [], movimientos: [], mantenimientos: [], trabajadores: [] };
@@ -1141,22 +1169,34 @@ async function bulkUpdateFechaEntrega(){
   if(usuarios.length > 1) return alert(`Los equipos pertenecen a múltiples usuarios: ${usuarios.join(', ')}. Selecciona solo equipos del mismo usuario.`);
 
   const usuario = usuarios[0];
-  const newDate = prompt(`Actualizar fecha de entrega para ${ids.length} equipo(s) de: ${usuario}\n\nNueva fecha (YYYY-MM-DD):`);
-  if(!newDate || newDate.trim()==='') return;
 
-  // Validar formato de fecha
-  if(!/^\d{4}-\d{2}-\d{2}$/.test(newDate.trim())){
-    return alert('Formato de fecha inválido. Usa YYYY-MM-DD');
-  }
+  // Guardar estado global para usar en confirmBulkUpdateFecha
+  window.bulkUpdateData = { equipoIds: ids, usuario };
+
+  // Llenar modal
+  document.getElementById('bulkUpdateCount').textContent = ids.length;
+  document.getElementById('bulkUpdateUsuario').value = usuario;
+  document.getElementById('bulkUpdateFecha').value = todayISO();
+
+  // Abrir modal
+  document.getElementById('bulkUpdateFechaModalBg').classList.add('active');
+}
+
+async function confirmBulkUpdateFecha(){
+  if(!window.bulkUpdateData) return;
+
+  const fecha = document.getElementById('bulkUpdateFecha').value;
+  if(!fecha) return alert('Selecciona una fecha');
 
   try{
     const res = await apiPost('/api/equipos/bulk/update-delivery-date', {
-      equipoIds: ids,
-      newDate: newDate.trim(),
-      usuario: usuario
+      equipoIds: window.bulkUpdateData.equipoIds,
+      newDate: fecha,
+      usuario: window.bulkUpdateData.usuario
     });
 
     if(res.ok){
+      closeModal('bulkUpdateFechaModalBg');
       invSelected.clear();
       await refreshState();
       alert(`✅ Fecha de entrega actualizada para ${res.actualizados.length} equipo(s)\n${res.message}`);

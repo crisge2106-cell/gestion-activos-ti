@@ -1443,16 +1443,27 @@ async function handleRequest(req, res){
 
         console.log(`[BULK-UPDATE] Actualizando ${equipoIds.length} equipos para usuario: ${usuario}`);
 
-        // Verificar que todos los equipos pertenezcan al mismo usuario
-        const equipos = await db.prepare('SELECT id, usuarioActual FROM equipos WHERE id IN (' + equipoIds.map(() => '?').join(',') + ')').all(...equipoIds);
+        // Verificar que todos los equipos existan y pertenezcan al usuario especificado
+        const equiposNoEncontrados = [];
+        const equiposIncorrectos = [];
 
-        if(equipos.length !== equipoIds.length){
-          return sendJson(res, 400, {error:`No se encontraron todos los equipos. Esperado: ${equipoIds.length}, Encontrado: ${equipos.length}`});
+        for(const id of equipoIds){
+          const eq = await getEquipo(id);
+          if(!eq){
+            equiposNoEncontrados.push(id);
+          } else if(eq.usuarioActual !== usuario){
+            equiposIncorrectos.push({id, usuarioActual: eq.usuarioActual});
+          }
         }
 
-        const usuariosEnEquipos = [...new Set(equipos.map(e => e.usuarioActual))];
-        if(usuariosEnEquipos.length > 1 || (usuariosEnEquipos.length === 1 && usuariosEnEquipos[0] !== usuario)){
-          return sendJson(res, 400, {error:`Los equipos pertenecen a diferentes usuarios. Se requiere que todos pertenezcan a: ${usuario}`});
+        if(equiposNoEncontrados.length > 0){
+          console.log(`[BULK-UPDATE] Equipos no encontrados: ${equiposNoEncontrados.join(', ')}`);
+          return sendJson(res, 400, {error:`Equipos no encontrados: ${equiposNoEncontrados.join(', ')}`});
+        }
+
+        if(equiposIncorrectos.length > 0){
+          const detalles = equiposIncorrectos.map(e => `${e.id} (asignado a ${e.usuarioActual})`).join(', ');
+          return sendJson(res, 400, {error:`Los equipos no pertenecen a ${usuario}: ${detalles}`});
         }
 
         // Actualizar/crear movimientos de entrega para cada equipo
