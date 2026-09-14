@@ -1293,6 +1293,17 @@ async function handleRequest(req, res){
       return sendJson(res, 200, {ok:true});
     }
 
+    // Endpoint para buscar un trabajador por nombre (DEBUG)
+    if(pathname.startsWith('/api/trabajadores/search/') && req.method === 'GET'){
+      const nombreBuscado = decodeURIComponent(pathname.split('/').pop()).trim();
+      const resultado = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) LIKE LOWER(?) LIMIT 10').all(`%${nombreBuscado}%`);
+      return sendJson(res, 200, {
+        busqueda: nombreBuscado,
+        encontrados: resultado.length,
+        resultados: resultado
+      });
+    }
+
     if(pathname === '/api/state' && req.method === 'GET'){
       // Cargar datos con LIMIT para performance
       const equiposRaw = await db.prepare('SELECT * FROM equipos ORDER BY id LIMIT 500').all();
