@@ -2231,28 +2231,35 @@ async function handleRequest(req, res){
 
         let eliminados = 0;
 
-        // Buscar grupos de movimientos duplicados (mismo tipo, trabajador, fecha)
-        const duplicados = await db.prepare(`
-          SELECT trabajador, fecha, tipo, GROUP_CONCAT(id) as ids
-          FROM movimientos
-          GROUP BY trabajador, fecha, tipo
-          HAVING COUNT(*) > 1
-        `).all();
+        // Obtener todos los movimientos
+        const movimientos = await db.prepare('SELECT * FROM movimientos ORDER BY id').all();
 
-        console.log(`[CLEANUP-DUPS] Encontrados ${duplicados.length} grupos con duplicados`);
+        // Agrupar por trabajador, fecha, tipo en JavaScript
+        const grupos = {};
+        for(const mov of movimientos || []){
+          const clave = `${mov.trabajador}|${mov.fecha}|${mov.tipo}`;
+          if(!grupos[clave]) grupos[clave] = [];
+          grupos[clave].push(mov.id);
+        }
 
-        for(const grupo of duplicados || []){
-          const ids = grupo.ids.split(',').sort(); // Ordenar para mantener el primero
-          const paraEliminar = ids.slice(1); // Todos menos el primero
+        console.log(`[CLEANUP-DUPS] Procesando ${movimientos.length} movimientos...`);
 
-          console.log(`[CLEANUP-DUPS] ${grupo.trabajador} (${grupo.tipo}): manteniendo ${ids[0]}, eliminando ${paraEliminar.length}`);
+        // Eliminar duplicados (mantener solo el primero de cada grupo)
+        for(const clave in grupos){
+          const ids = grupos[clave].sort(); // Ordenar para mantener el primero
+          if(ids.length > 1){
+            const paraEliminar = ids.slice(1); // Todos menos el primero
+            const [trabajador, fecha, tipo] = clave.split('|');
 
-          for(const id of paraEliminar){
-            // Eliminar items del movimiento
-            await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(id);
-            // Eliminar movimiento
-            await db.prepare('DELETE FROM movimientos WHERE id = ?').run(id);
-            eliminados++;
+            console.log(`[CLEANUP-DUPS] ${trabajador} (${tipo}): manteniendo ${ids[0]}, eliminando ${paraEliminar.length}`);
+
+            for(const id of paraEliminar){
+              // Eliminar items del movimiento
+              await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(id);
+              // Eliminar movimiento
+              await db.prepare('DELETE FROM movimientos WHERE id = ?').run(id);
+              eliminados++;
+            }
           }
         }
 
@@ -2262,7 +2269,7 @@ async function handleRequest(req, res){
           ok: true,
           message: 'Movimientos duplicados eliminados',
           movimientosEliminados: eliminados,
-          gruposConDuplicados: duplicados.length
+          gruposConDuplicados: Object.keys(grupos).filter(k => grupos[k].length > 1).length
         });
       }catch(err){
         console.error('[CLEANUP-DUPS ERROR]', err.message);
