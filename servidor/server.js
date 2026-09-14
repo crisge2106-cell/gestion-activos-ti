@@ -2008,16 +2008,26 @@ async function handleRequest(req, res){
         let regenerados = 0;
         let equiposSinMovimiento = 0;
 
-        // ESTRATEGIA: Para cada EQUIPO ASIGNADO sin items en movimiento_items, crear movimiento + item
-        const equiposSinItems = await db.prepare(`
-          SELECT e.* FROM equipos e
-          LEFT JOIN movimiento_items mi ON e.id = mi.equipoId
-          WHERE e.estado IN ('Asignado', 'En reparación', 'En mantenimiento', 'En custodia')
-          AND e.usuarioActual IS NOT NULL
-          AND e.usuarioActual != ''
-          AND mi.id IS NULL
-          GROUP BY e.id
+        // ESTRATEGIA: Buscar equipoIds en movimiento_items, luego encontrar equipos asignados que NO estén en esa lista
+        // Esto funciona mejor con MongoDB que LEFT JOIN
+        const equiposConItems = await db.prepare(`
+          SELECT DISTINCT equipoId FROM movimiento_items
         `).all();
+
+        const equipoIdsConItems = new Set((equiposConItems || []).map(e => e.equipoId || e.id));
+
+        // Ahora obtener TODOS los equipos asignados
+        const todosLosEquiposAsignados = await db.prepare(`
+          SELECT * FROM equipos
+          WHERE estado IN ('Asignado', 'En reparación', 'En mantenimiento', 'En custodia')
+          AND usuarioActual IS NOT NULL
+          AND usuarioActual != ''
+        `).all();
+
+        // Filtrar equipos SIN items
+        const equiposSinItems = (todosLosEquiposAsignados || []).filter(eq =>
+          !equipoIdsConItems.has(eq.id)
+        );
 
         console.log(`[REGENERATE-ACTA] Encontrados ${equiposSinItems.length} equipos asignados sin items en movimiento_items`);
 
