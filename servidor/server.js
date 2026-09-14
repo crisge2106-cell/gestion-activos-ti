@@ -2563,6 +2563,24 @@ async function handleRequest(req, res){
       await bulkLoad(JSON.parse(fs.readFileSync(SEED_PATH, 'utf8')));
       return sendJson(res, 200, {ok:true});
     }
+    if(pathname.startsWith('/api/acta/debug/') && req.method === 'GET'){
+      const movId = decodeURIComponent(pathname.split('/').pop());
+      const movs = await getMovimientos();
+      const m = movs.find(x=>x.id===movId);
+      return sendJson(res, 200, {
+        movimientoId: movId,
+        encontrado: !!m,
+        movimiento: m ? {
+          id: m.id,
+          tipo: m.tipo,
+          fecha: m.fecha,
+          trabajador: m.trabajador,
+          items_count: m.items ? m.items.length : 0,
+          items: m.items ? m.items.slice(0, 3) : []
+        } : null
+      });
+    }
+
     if(pathname.startsWith('/api/acta/') && req.method === 'GET'){
       const movId = decodeURIComponent(pathname.split('/').pop());
       const html = await renderActaHtml(movId);
