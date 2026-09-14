@@ -1470,21 +1470,33 @@ async function handleRequest(req, res){
         const movimientosActualizados = [];
 
         for(const equipoId of equipoIds){
-          // Buscar el último movimiento de entrega para este equipo
-          const ultimoMovimiento = await db.prepare(`
-            SELECT * FROM movimientos
-            WHERE tipo = 'entrega'
-            AND id IN (
-              SELECT movimientoId FROM movimiento_items WHERE equipoId = ?
-            )
-            ORDER BY fecha DESC LIMIT 1
-          `).get(equipoId);
+          // Buscar items del equipo en movimientos
+          const items = await db.prepare(`
+            SELECT movimientoId FROM movimiento_items WHERE equipoId = ?
+          `).all(equipoId);
+
+          let ultimoMovimiento = null;
+
+          // Buscar el movimiento de entrega más reciente
+          if(items && items.length > 0){
+            const movimientoIds = items.map(i => i.movimientoId);
+            console.log(`[BULK-UPDATE] Items encontrados para ${equipoId}: ${movimientoIds.join(', ')}`);
+
+            // Buscar cada movimiento para encontrar el más reciente
+            for(const movId of movimientoIds){
+              const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ? AND tipo = ?').get(movId, 'entrega');
+              if(mov && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
+                ultimoMovimiento = mov;
+              }
+            }
+          }
 
           if(ultimoMovimiento){
             // Actualizar el movimiento existente
-            console.log(`[BULK-UPDATE] Actualizando movimiento: ${ultimoMovimiento.id}`);
-            await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newDate, ultimoMovimiento.id);
-            movimientosActualizados.push({equipoId, movimientoId: ultimoMovimiento.id, accion: 'actualizado'});
+            console.log(`[BULK-UPDATE] Actualizando movimiento: ${ultimoMovimiento.id} con fecha: ${newDate}`);
+            const updateResult = await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newDate, ultimoMovimiento.id);
+            console.log(`[BULK-UPDATE] Resultado UPDATE: ${JSON.stringify(updateResult)}`);
+            movimientosActualizados.push({equipoId, movimientoId: ultimoMovimiento.id, accion: 'actualizado', fecha: newDate});
           } else {
             // Crear nuevo movimiento si no existe
             console.log(`[BULK-UPDATE] Creando nuevo movimiento para equipoId: ${equipoId}`);
