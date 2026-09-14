@@ -1619,65 +1619,72 @@ async function handleRequest(req, res){
           return sendJson(res, 400, {error:`Los equipos no pertenecen a ${usuario}: ${detalles}`});
         }
 
-        // Actualizar/crear movimientos de entrega para cada equipo
+        // Actualizar/crear UN SOLO movimiento con todos los equipos
+        console.log(`[BULK-UPDATE] Agrupando ${equipoIds.length} equipos en 1 acta`);
+
+        // Buscar si existe un movimiento de asignación para estos equipos en la fecha objetivo
+        let movimientoGrupo = null;
+
+        // Intentar encontrar un movimiento existente de asignación para este usuario y fecha
+        const movimientosExistentes = await db.prepare(`
+          SELECT DISTINCT m.id FROM movimientos m
+          WHERE m.tipo = 'Asignacion' AND m.trabajador = ? AND m.fecha = ?
+          LIMIT 1
+        `).get(usuario, newDate);
+
+        if(movimientosExistentes && movimientosExistentes.id){
+          movimientoGrupo = movimientosExistentes.id;
+          console.log(`[BULK-UPDATE] Reutilizando movimiento existente: ${movimientoGrupo}`);
+        } else {
+          // Crear un nuevo movimiento que agrupe todos los equipos
+          movimientoGrupo = await nextId('MOV', 'movimiento_counter');
+          const trab = await getTrabajador(usuario);
+
+          console.log(`[BULK-UPDATE] Creando nuevo movimiento grupal: ${movimientoGrupo}`);
+
+          await db.prepare(`
+            INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+          `).run(
+            movimientoGrupo, 'Asignacion', newDate, usuario,
+            trab?.dni || '', trab?.area || '', trab?.sede || '',
+            `Asignación de ${equipoIds.length} equipos`, 'APP'
+          );
+        }
+
+        // Agregar todos los equipos al movimiento grupal
         const movimientosActualizados = [];
 
         for(const equipoId of equipoIds){
-          // Buscar items del equipo en movimientos
-          const items = await db.prepare(`
-            SELECT movimientoId FROM movimiento_items WHERE equipoId = ?
-          `).all(equipoId);
+          // Verificar si este equipo ya está en el movimiento grupal
+          const yaExiste = await db.prepare(
+            'SELECT id FROM movimiento_items WHERE movimientoId = ? AND equipoId = ?'
+          ).get(movimientoGrupo, equipoId);
 
-          let ultimoMovimiento = null;
-
-          // Buscar el movimiento de asignación más reciente
-          if(items && items.length > 0){
-            const movimientoIds = items.map(i => i.movimientoId);
-            console.log(`[BULK-UPDATE] Items encontrados para ${equipoId}: ${JSON.stringify(items)}`);
-
-            // Buscar cada movimiento para encontrar el más reciente
-            for(const movId of movimientoIds){
-              console.log(`[BULK-UPDATE] Buscando movimiento: ${movId} tipo: asignacion`);
-              const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movId);
-              console.log(`[BULK-UPDATE] Resultado búsqueda mov ${movId}:`, JSON.stringify(mov));
-
-              if(mov && (mov.tipo || '').toLowerCase() === 'asignacion' && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
-                console.log(`[BULK-UPDATE] ✓ Encontrado movimiento de asignación: ${mov.id} fecha: ${mov.fecha}`);
-                ultimoMovimiento = mov;
-              }
-            }
-          }
-
-          console.log(`[BULK-UPDATE] ultimoMovimiento final para ${equipoId}:`, ultimoMovimiento ? ultimoMovimiento.id : 'NULL');
-
-          if(ultimoMovimiento){
-            // Actualizar el movimiento existente
-            console.log(`[BULK-UPDATE] Actualizando movimiento: ${ultimoMovimiento.id} con fecha: ${newDate}`);
-            const updateResult = await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newDate, ultimoMovimiento.id);
-            console.log(`[BULK-UPDATE] Resultado UPDATE para ${ultimoMovimiento.id}:`, JSON.stringify(updateResult));
-            movimientosActualizados.push({equipoId, movimientoId: ultimoMovimiento.id, accion: 'actualizado', fecha: newDate});
-          } else {
-            // Crear nuevo movimiento si no existe
-            console.log(`[BULK-UPDATE] Creando nuevo movimiento para equipoId: ${equipoId}`);
-            const movId = await nextId('MOV', 'movimiento_counter');
-            const trab = await getTrabajador(usuario);
+          if(!yaExiste){
+            // Obtener datos del equipo para los items
+            const eq = await getEquipo(equipoId);
 
             await db.prepare(`
-              INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+              INSERT INTO movimiento_items (movimientoId, equipoId, cantidad, descripcion, marcaModelo, serieEstado)
+              VALUES (?, ?, 1, ?, ?, ?)
             `).run(
-              movId, 'Asignacion', newDate, usuario,
-              trab?.dni || '', trab?.area || '', trab?.sede || '',
-              'Asignación registrada (actualización masiva)', 'APP'
+              movimientoGrupo, equipoId,
+              `${eq.tipo} ${eq.marca || ''}`.trim(),
+              `${eq.marca || ''} ${eq.modelo || ''}`.trim(),
+              eq.serie || ''
             );
 
-            // Agregar item
-            await db.prepare('INSERT INTO movimiento_items (movimientoId, equipoId, cantidad) VALUES (?, ?, 1)')
-              .run(movId, equipoId);
-
-            movimientosActualizados.push({equipoId, movimientoId: movId, accion: 'creado'});
+            console.log(`[BULK-UPDATE] Agregado ${equipoId} al acta grupal`);
           }
+
+          movimientosActualizados.push({equipoId, movimientoId: movimientoGrupo});
         }
+
+        // Actualizar fecha del movimiento por si acaso
+        await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newDate, movimientoGrupo);
+
+        console.log(`[BULK-UPDATE] ✅ Completado - ${equipoIds.length} equipos en 1 acta: ${movimientoGrupo}`);
 
         console.log(`[BULK-UPDATE] ✅ Completado - ${movimientosActualizados.length} movimientos actualizados`);
         return sendJson(res, 200, {
