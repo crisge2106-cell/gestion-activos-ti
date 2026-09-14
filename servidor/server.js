@@ -1994,7 +1994,14 @@ async function handleRequest(req, res){
 
     // Endpoint seguro: limpiar duplicados de MOVIMIENTOS (sin perder datos de equipos/usuarios/fechas)
     // Endpoint para regenerar items faltantes en actas (MODO ULTRA-AGRESIVO)
+    // Permite acceso desde localhost (development) o con autenticación
     if(pathname === '/api/admin/regenerate-acta-items' && req.method === 'POST'){
+      const isLocalhost = req.headers.host?.startsWith('localhost');
+      const isAuthenticated = !!session?.username;
+
+      if(!isLocalhost && !isAuthenticated){
+        return sendJson(res, 401, {error:'No autenticado. Este endpoint solo funciona desde localhost o con sesión activa.'});
+      }
       try{
         console.log('[REGENERATE-ACTA] Regenerando items faltantes en actas (MODO ULTRA-AGRESIVO)...');
 
