@@ -2224,6 +2224,116 @@ async function handleRequest(req, res){
       }
     }
 
+    // Endpoint para eliminar movimientos duplicados
+    if(pathname === '/api/admin/cleanup-duplicate-movements' && req.method === 'POST'){
+      try{
+        console.log('[CLEANUP-DUPS] Eliminando movimientos duplicados...');
+
+        let eliminados = 0;
+
+        // Buscar grupos de movimientos duplicados (mismo tipo, trabajador, fecha)
+        const duplicados = await db.prepare(`
+          SELECT trabajador, fecha, tipo, GROUP_CONCAT(id) as ids
+          FROM movimientos
+          GROUP BY trabajador, fecha, tipo
+          HAVING COUNT(*) > 1
+        `).all();
+
+        console.log(`[CLEANUP-DUPS] Encontrados ${duplicados.length} grupos con duplicados`);
+
+        for(const grupo of duplicados || []){
+          const ids = grupo.ids.split(',').sort(); // Ordenar para mantener el primero
+          const paraEliminar = ids.slice(1); // Todos menos el primero
+
+          console.log(`[CLEANUP-DUPS] ${grupo.trabajador} (${grupo.tipo}): manteniendo ${ids[0]}, eliminando ${paraEliminar.length}`);
+
+          for(const id of paraEliminar){
+            // Eliminar items del movimiento
+            await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(id);
+            // Eliminar movimiento
+            await db.prepare('DELETE FROM movimientos WHERE id = ?').run(id);
+            eliminados++;
+          }
+        }
+
+        console.log(`[CLEANUP-DUPS] ✅ Completado - ${eliminados} movimientos eliminados`);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Movimientos duplicados eliminados',
+          movimientosEliminados: eliminados,
+          gruposConDuplicados: duplicados.length
+        });
+      }catch(err){
+        console.error('[CLEANUP-DUPS ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error: ' + err.message});
+      }
+    }
+
+    // Endpoint para regenerar items en movimientos de Devolución
+    if(pathname === '/api/admin/fix-devolucion-items' && req.method === 'POST'){
+      try{
+        console.log('[FIX-DEVOLUCION] Regenerando items en devoluciones...');
+
+        let itemsCreados = 0;
+
+        // Obtener todos los movimientos de devolución
+        const devoluciones = await db.prepare(`
+          SELECT * FROM movimientos WHERE tipo LIKE '%Devolucion%'
+        `).all();
+
+        console.log(`[FIX-DEVOLUCION] Procesando ${devoluciones.length} devoluciones...`);
+
+        for(const dev of devoluciones || []){
+          // Para cada devolución, buscar los equipos que tiene ese trabajador
+          // (estos fueron los que devolvió)
+          const equiposDelTrabajador = await db.prepare(`
+            SELECT DISTINCT e.* FROM equipos e
+            JOIN movimiento_items mi ON e.id = mi.equipoId
+            JOIN movimientos m ON mi.movimientoId = m.id
+            WHERE m.trabajador = ? AND m.tipo = 'Asignacion'
+            ORDER BY e.id
+          `).all(dev.trabajador);
+
+          console.log(`[FIX-DEVOLUCION] ${dev.id}: encontrados ${equiposDelTrabajador.length} equipos para ${dev.trabajador}`);
+
+          for(const eq of equiposDelTrabajador || []){
+            try {
+              // Insertar item en la devolución
+              await db.prepare(`
+                INSERT INTO movimiento_items (movimientoId, equipoId, cantidad, descripcion, marcaModelo, serieEstado, numeroTelefonico1, numeroTelefonico2)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+              `).run(
+                dev.id,
+                eq.id,
+                1,
+                `${eq.tipo} ${eq.marca || ''}`.trim(),
+                `${eq.marca || ''} ${eq.modelo || ''}`.trim(),
+                eq.serie || '',
+                null,
+                null
+              );
+              itemsCreados++;
+            } catch(e) {
+              // Item ya existe, ignorar
+            }
+          }
+        }
+
+        console.log(`[FIX-DEVOLUCION] ✅ Completado - ${itemsCreados} items creados`);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Items en devoluciones regenerados',
+          itemsCreados: itemsCreados,
+          devolucionesProcessadas: devoluciones.length
+        });
+      }catch(err){
+        console.error('[FIX-DEVOLUCION ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error: ' + err.message});
+      }
+    }
+
     if(pathname === '/api/admin/cleanup-movements' && req.method === 'POST'){
       try{
         console.log('[MOVEMENT-CLEANUP] Iniciando limpieza selectiva de movimientos duplicados...');
