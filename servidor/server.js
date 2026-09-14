@@ -268,9 +268,17 @@ async function getTrabajadorById(id){
 async function getTrabajadorByName(nombre){
   const n = (nombre||'').trim();
   if(!n) return null;
-  // Buscar sin case sensitivity - funciona en SQLite y MongoDB
-  const result = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) = LOWER(?)').get(n);
-  return result;
+
+  // Primero intentar búsqueda exacta (más rápida)
+  let result = await db.prepare('SELECT * FROM trabajadores WHERE nombre = ?').get(n);
+  if(result) return result;
+
+  // Si no encuentra, intentar con LIKE (case-insensitive en ambas BD)
+  // Usar LIKE con % para una búsqueda flexible
+  result = await db.prepare('SELECT * FROM trabajadores WHERE nombre LIKE ?').get(n);
+  if(result) return result;
+
+  return null;
 }
 // Función antigua (mantener compatibilidad)
 async function getTrabajador(nombre){
@@ -1296,11 +1304,22 @@ async function handleRequest(req, res){
     // Endpoint para buscar un trabajador por nombre (DEBUG)
     if(pathname.startsWith('/api/trabajadores/search/') && req.method === 'GET'){
       const nombreBuscado = decodeURIComponent(pathname.split('/').pop()).trim();
-      const resultado = await db.prepare('SELECT * FROM trabajadores WHERE LOWER(nombre) LIKE LOWER(?) LIMIT 10').all(`%${nombreBuscado}%`);
+      const resultado = await db.prepare('SELECT * FROM trabajadores WHERE nombre LIKE ? LIMIT 10').all(`%${nombreBuscado}%`);
       return sendJson(res, 200, {
         busqueda: nombreBuscado,
         encontrados: resultado.length,
         resultados: resultado
+      });
+    }
+
+    // Endpoint para debug: búsqueda exacta
+    if(pathname.startsWith('/api/trabajadores/exact/') && req.method === 'GET'){
+      const nombreBuscado = decodeURIComponent(pathname.split('/').pop()).trim();
+      const resultado = await db.prepare('SELECT * FROM trabajadores WHERE nombre = ?').get(nombreBuscado);
+      return sendJson(res, 200, {
+        busqueda: nombreBuscado,
+        encontrado: !!resultado,
+        resultado: resultado || null
       });
     }
 
