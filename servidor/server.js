@@ -2164,6 +2164,66 @@ async function handleRequest(req, res){
       }
     }
 
+    // Endpoint para REALMENTE arreglar los items (DELETE + INSERT, no UPDATE)
+    if(pathname === '/api/admin/fix-movimiento-items-aggressive' && req.method === 'POST'){
+      try{
+        console.log('[FIX-ITEMS-AGGRESSIVE] Regenerando TODOS los movimiento_items correctamente...');
+
+        let deletados = 0;
+        let creados = 0;
+
+        // 1. Eliminar TODOS los movimiento_items
+        await db.prepare('DELETE FROM movimiento_items').run();
+
+        // 2. Obtener todos los movimientos de tipo Asignacion y Devolucion
+        const movimientos = await db.prepare(`
+          SELECT * FROM movimientos WHERE tipo IN ('Asignacion', 'Devolucion', 'Devolucion por renovacion', 'Devolucion por salida')
+        `).all();
+
+        console.log(`[FIX-ITEMS-AGGRESSIVE] Regenerando items para ${movimientos.length} movimientos...`);
+
+        for(const mov of movimientos || []){
+          // Buscar equipos asignados a este trabajador
+          const equipos = await db.prepare(`
+            SELECT * FROM equipos
+            WHERE usuarioActual = ? AND estado IN ('Asignado', 'En reparación', 'En mantenimiento', 'En custodia')
+            ORDER BY id
+          `).all(mov.trabajador);
+
+          console.log(`[FIX-ITEMS-AGGRESSIVE] ${mov.id}: regenerando ${equipos.length} items`);
+
+          for(const eq of equipos || []){
+            // Insertar item CORRECTO
+            await db.prepare(`
+              INSERT INTO movimiento_items (movimientoId, equipoId, cantidad, descripcion, marcaModelo, serieEstado)
+              VALUES (?, ?, ?, ?, ?, ?)
+            `).run(
+              mov.id,
+              eq.id,
+              1,  // cantidad
+              `${eq.tipo} ${eq.marca || ''}`.trim(),  // descripcion: tipo + marca
+              `${eq.marca || ''} ${eq.modelo || ''}`.trim(),  // marcaModelo: marca + modelo
+              eq.serie || ''  // serieEstado: serie
+            );
+            creados++;
+          }
+        }
+
+        console.log(`[FIX-ITEMS-AGGRESSIVE] ✅ Completado - ${creados} items regenerados`);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Todos los movimiento_items regenerados correctamente',
+          itemsDeleted: deletados,
+          itemsCreated: creados,
+          movimientosProcessados: movimientos.length
+        });
+      }catch(err){
+        console.error('[FIX-ITEMS-AGGRESSIVE ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error: ' + err.message});
+      }
+    }
+
     if(pathname === '/api/admin/cleanup-movements' && req.method === 'POST'){
       try{
         console.log('[MOVEMENT-CLEANUP] Iniciando limpieza selectiva de movimientos duplicados...');
