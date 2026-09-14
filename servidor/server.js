@@ -1428,6 +1428,87 @@ async function handleRequest(req, res){
         return sendJson(res, 200, {ok:true, movimientoId: movId});
       }catch(err){ return sendJson(res, 500, {error: 'Error al registrar entrega: ' + err.message}); }
     }
+
+    // Actualizar fecha de entrega para múltiples equipos
+    if(pathname === '/api/equipos/bulk/update-delivery-date' && req.method === 'POST'){
+      try{
+        const body = await readBody(req);
+        const { equipoIds, newDate, usuario } = body;
+
+        if(!equipoIds || !Array.isArray(equipoIds) || equipoIds.length === 0){
+          return sendJson(res, 400, {error:'equipoIds debe ser un array no vacío'});
+        }
+        if(!newDate) return sendJson(res, 400, {error:'newDate es obligatorio'});
+        if(!usuario) return sendJson(res, 400, {error:'usuario es obligatorio'});
+
+        console.log(`[BULK-UPDATE] Actualizando ${equipoIds.length} equipos para usuario: ${usuario}`);
+
+        // Verificar que todos los equipos pertenezcan al mismo usuario
+        const equipos = await db.prepare('SELECT id, usuarioActual FROM equipos WHERE id IN (' + equipoIds.map(() => '?').join(',') + ')').all(...equipoIds);
+
+        if(equipos.length !== equipoIds.length){
+          return sendJson(res, 400, {error:`No se encontraron todos los equipos. Esperado: ${equipoIds.length}, Encontrado: ${equipos.length}`});
+        }
+
+        const usuariosEnEquipos = [...new Set(equipos.map(e => e.usuarioActual))];
+        if(usuariosEnEquipos.length > 1 || (usuariosEnEquipos.length === 1 && usuariosEnEquipos[0] !== usuario)){
+          return sendJson(res, 400, {error:`Los equipos pertenecen a diferentes usuarios. Se requiere que todos pertenezcan a: ${usuario}`});
+        }
+
+        // Actualizar/crear movimientos de entrega para cada equipo
+        const movimientosActualizados = [];
+
+        for(const equipoId of equipoIds){
+          // Buscar el último movimiento de entrega para este equipo
+          const ultimoMovimiento = await db.prepare(`
+            SELECT * FROM movimientos
+            WHERE tipo = 'entrega'
+            AND id IN (
+              SELECT movimientoId FROM movimiento_items WHERE equipoId = ?
+            )
+            ORDER BY fecha DESC LIMIT 1
+          `).get(equipoId);
+
+          if(ultimoMovimiento){
+            // Actualizar el movimiento existente
+            console.log(`[BULK-UPDATE] Actualizando movimiento: ${ultimoMovimiento.id}`);
+            await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newDate, ultimoMovimiento.id);
+            movimientosActualizados.push({equipoId, movimientoId: ultimoMovimiento.id, accion: 'actualizado'});
+          } else {
+            // Crear nuevo movimiento si no existe
+            console.log(`[BULK-UPDATE] Creando nuevo movimiento para equipoId: ${equipoId}`);
+            const movId = await nextId('MOV', 'movimiento_counter');
+            const trab = await getTrabajador(usuario);
+
+            await db.prepare(`
+              INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            `).run(
+              movId, 'entrega', newDate, usuario,
+              trab?.dni || '', trab?.area || '', trab?.sede || '',
+              'Entrega registrada (actualización masiva)', 'APP'
+            );
+
+            // Agregar item
+            await db.prepare('INSERT INTO movimiento_items (movimientoId, equipoId, cantidad) VALUES (?, ?, 1)')
+              .run(movId, equipoId);
+
+            movimientosActualizados.push({equipoId, movimientoId: movId, accion: 'creado'});
+          }
+        }
+
+        console.log(`[BULK-UPDATE] ✅ Completado - ${movimientosActualizados.length} movimientos actualizados`);
+        return sendJson(res, 200, {
+          ok: true,
+          message: `Fecha de entrega actualizada para ${movimientosActualizados.length} equipos`,
+          actualizados: movimientosActualizados
+        });
+      }catch(err){
+        console.error('[BULK-UPDATE ERROR]', err.message);
+        return sendJson(res, 500, {error: 'Error: ' + err.message});
+      }
+    }
+
     if(pathname.startsWith('/api/equipos/') && req.method === 'PUT'){
       const id = decodeURIComponent(pathname.split('/').pop());
       const body = await readBody(req);
