@@ -2097,6 +2097,73 @@ async function handleRequest(req, res){
       }
     }
 
+    // Endpoint para corregir los valores en movimiento_items
+    if(pathname === '/api/admin/fix-movimiento-items-values' && req.method === 'POST'){
+      try{
+        console.log('[FIX-ITEMS] Corrigiendo valores en movimiento_items...');
+
+        let corregidos = 0;
+
+        // Obtener todos los movimiento_items
+        const items = await db.prepare('SELECT * FROM movimiento_items').all();
+
+        console.log(`[FIX-ITEMS] Total items a revisar: ${items.length}`);
+
+        for(const item of items || []){
+          // Obtener el equipo asociado
+          const eq = await getEquipo(item.equipoId);
+          if(!eq) continue;
+
+          // Los valores correctos deben ser:
+          // cantidad: 1 (o la cantidad original)
+          // descripcion: tipo + marca (ej: "Celular XIAOMI")
+          // marcaModelo: marca + modelo (ej: "XIAOMI REDMI NOTE 14")
+          // serieEstado: serie (ej: "862844076098464")
+
+          const cantidadCorrecta = 1;
+          const descripcionCorrecta = `${eq.tipo} ${eq.marca || ''}`.trim();
+          const marcaModeloCorrecta = `${eq.marca || ''} ${eq.modelo || ''}`.trim();
+          const serieEstadoCorrecta = eq.serie || '';
+
+          // Verificar si los valores son incorrectos
+          const necesitaCorreccion =
+            (item.cantidad !== cantidadCorrecta && typeof item.cantidad !== 'number') ||
+            item.descripcion !== descripcionCorrecta ||
+            item.marcaModelo !== marcaModeloCorrecta ||
+            item.serieEstado !== serieEstadoCorrecta;
+
+          if(necesitaCorreccion){
+            console.log(`[FIX-ITEMS] Corrigiendo ${item.equipoId}: desc="${item.descripcion}" -> "${descripcionCorrecta}"`);
+
+            await db.prepare(`
+              UPDATE movimiento_items
+              SET cantidad=?, descripcion=?, marcaModelo=?, serieEstado=?
+              WHERE id=?
+            `).run(
+              cantidadCorrecta,
+              descripcionCorrecta,
+              marcaModeloCorrecta,
+              serieEstadoCorrecta,
+              item.id
+            );
+            corregidos++;
+          }
+        }
+
+        console.log(`[FIX-ITEMS] ✅ Corrección completada - ${corregidos} items corregidos`);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Valores en movimiento_items corregidos',
+          itemsCorrected: corregidos,
+          totalItemsReviewed: items.length
+        });
+      }catch(err){
+        console.error('[FIX-ITEMS ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en corrección: ' + err.message});
+      }
+    }
+
     if(pathname === '/api/admin/cleanup-movements' && req.method === 'POST'){
       try{
         console.log('[MOVEMENT-CLEANUP] Iniciando limpieza selectiva de movimientos duplicados...');
