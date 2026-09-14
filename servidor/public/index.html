@@ -834,6 +834,8 @@ function abrirDatePicker(){
   const tempInput = document.createElement('input');
   tempInput.type = 'date';
   tempInput.value = todayISO();
+  tempInput.style.display = 'none';
+
   tempInput.onchange = (e) => {
     if(tempInput.value) {
       // Convertir YYYY-MM-DD a DD/MM/YYYY
@@ -841,7 +843,15 @@ function abrirDatePicker(){
       document.getElementById('regFechFecha').value = `${day}/${month}/${year}`;
       console.log('[DATE PICKER] Fecha seleccionada:', document.getElementById('regFechFecha').value);
     }
+    // Remover el input temporal del DOM
+    try { document.body.removeChild(tempInput); } catch(e) {}
   };
+
+  // Agregar el input al DOM para que funcione el date picker
+  document.body.appendChild(tempInput);
+
+  // Focus y click para abrir el picker
+  tempInput.focus();
   tempInput.click();
 }
 
