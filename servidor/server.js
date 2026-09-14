@@ -2293,13 +2293,11 @@ async function handleRequest(req, res){
 
         for(const dev of devoluciones || []){
           // Para cada devolución, buscar los equipos que tiene ese trabajador
-          // (estos fueron los que devolvió)
+          // Simplemente buscar equipos asignados a ese trabajador
           const equiposDelTrabajador = await db.prepare(`
-            SELECT DISTINCT e.* FROM equipos e
-            JOIN movimiento_items mi ON e.id = mi.equipoId
-            JOIN movimientos m ON mi.movimientoId = m.id
-            WHERE m.trabajador = ? AND m.tipo = 'Asignacion'
-            ORDER BY e.id
+            SELECT * FROM equipos
+            WHERE usuarioActual = ?
+            ORDER BY id
           `).all(dev.trabajador);
 
           console.log(`[FIX-DEVOLUCION] ${dev.id}: encontrados ${equiposDelTrabajador.length} equipos para ${dev.trabajador}`);
