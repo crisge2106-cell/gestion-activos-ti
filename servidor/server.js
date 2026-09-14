@@ -1993,6 +1993,63 @@ async function handleRequest(req, res){
     }
 
     // Endpoint seguro: limpiar duplicados de MOVIMIENTOS (sin perder datos de equipos/usuarios/fechas)
+    // Endpoint para regenerar items faltantes en actas
+    if(pathname === '/api/admin/regenerate-acta-items' && req.method === 'POST'){
+      try{
+        console.log('[REGENERATE-ACTA] Regenerando items faltantes en actas...');
+
+        let regenerados = 0;
+
+        // Buscar movimientos sin items
+        const movimientosSinItems = await db.prepare(`
+          SELECT m.* FROM movimientos m
+          LEFT JOIN movimiento_items mi ON m.id = mi.movimientoId
+          WHERE mi.id IS NULL
+          GROUP BY m.id
+        `).all();
+
+        console.log(`[REGENERATE-ACTA] Movimientos sin items encontrados: ${movimientosSinItems.length}`);
+
+        for(const mov of movimientosSinItems){
+          // Buscar equipos que pertenecen a este trabajador en esa fecha
+          const equiposDelTrabajador = await db.prepare(`
+            SELECT * FROM equipos
+            WHERE usuarioActual = ?
+            AND estado = 'Asignado'
+            LIMIT 20
+          `).all(mov.trabajador);
+
+          console.log(`[REGENERATE-ACTA] Movimiento ${mov.id}: encontrados ${equiposDelTrabajador.length} equipos para ${mov.trabajador}`);
+
+          // Agregar items para este movimiento
+          for(const eq of equiposDelTrabajador){
+            await db.prepare(`
+              INSERT INTO movimiento_items (movimientoId, equipoId, cantidad, descripcion, marcaModelo, serieEstado)
+              VALUES (?, ?, 1, ?, ?, ?)
+            `).run(
+              mov.id, eq.id,
+              `${eq.tipo} ${eq.marca || ''}`.trim(),
+              `${eq.marca || ''} ${eq.modelo || ''}`.trim(),
+              eq.serie || ''
+            );
+            regenerados++;
+          }
+        }
+
+        console.log(`[REGENERATE-ACTA] ✅ Regeneración completada - ${regenerados} items creados`);
+
+        return sendJson(res, 200, {
+          ok: true,
+          message: 'Items regenerados en actas',
+          itemsRegenerated: regenerados,
+          movimientosProcessados: movimientosSinItems.length
+        });
+      }catch(err){
+        console.error('[REGENERATE-ACTA ERROR]', err.message);
+        return sendJson(res, 500, {error:'Error en regeneración: ' + err.message});
+      }
+    }
+
     if(pathname === '/api/admin/cleanup-movements' && req.method === 'POST'){
       try{
         console.log('[MOVEMENT-CLEANUP] Iniciando limpieza selectiva de movimientos duplicados...');
