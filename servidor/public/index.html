@@ -1059,8 +1059,9 @@ function fechaEntregaEquipo(equipoId){
     return aId.localeCompare(bId) * -1; // Multiplicar por -1 para DESC
   });
   for(const m of sorted){
-    if(m.tipo==='Devolución') return null;
-    if(m.tipo==='Entrega' || m.tipo==='Asignacion') return m.fecha;
+    const tipo = (m.tipo || '').toLowerCase();
+    if(tipo==='devolución') return null;
+    if(tipo==='entrega' || tipo==='asignacion' || tipo==='asignación') return m.fecha;
   }
   return null;
 }
