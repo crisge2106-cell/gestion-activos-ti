@@ -1332,6 +1332,36 @@ async function handleRequest(req, res){
       });
     }
 
+    // Endpoint DEBUG: intentar actualizar fecha
+    if(pathname.startsWith('/api/debug/test-update-fecha/') && req.method === 'POST'){
+      const movimientoId = decodeURIComponent(pathname.split('/').pop()).trim();
+      const body = await readBody(req);
+      const newFecha = body.fecha;
+
+      console.log(`[DEBUG-UPDATE] Intentando actualizar ${movimientoId} a fecha: ${newFecha}`);
+
+      // Primero verificar que existe
+      const antes = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movimientoId);
+      console.log(`[DEBUG-UPDATE] Movimiento ANTES:`, JSON.stringify(antes));
+
+      // Intentar UPDATE
+      const updateResult = await db.prepare('UPDATE movimientos SET fecha = ? WHERE id = ?').run(newFecha, movimientoId);
+      console.log(`[DEBUG-UPDATE] Resultado UPDATE:`, JSON.stringify(updateResult));
+
+      // Verificar después
+      const despues = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movimientoId);
+      console.log(`[DEBUG-UPDATE] Movimiento DESPUES:`, JSON.stringify(despues));
+
+      return sendJson(res, 200, {
+        movimientoId,
+        newFecha,
+        antes,
+        updateResult,
+        despues,
+        cambio: despues?.fecha !== antes?.fecha ? 'SÍ' : 'NO'
+      });
+    }
+
     // Endpoint para debug: búsqueda exacta
     if(pathname.startsWith('/api/trabajadores/exact/') && req.method === 'GET'){
       const nombreBuscado = decodeURIComponent(pathname.split('/').pop()).trim();
