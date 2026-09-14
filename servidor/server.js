@@ -1334,41 +1334,59 @@ async function handleRequest(req, res){
 
     // Endpoint DEBUG: listar todas las fechas de entrega para un usuario
     if(pathname.startsWith('/api/debug/user-delivery-dates/') && req.method === 'GET'){
-      const usuario = decodeURIComponent(pathname.split('/').pop()).trim();
-      const equiposUsuario = DB.equipos.filter(e => e.usuarioActual === usuario);
+      try{
+        const usuario = decodeURIComponent(pathname.split('/').pop()).trim();
 
-      const result = [];
-      for(const eq of equiposUsuario){
-        // Buscar movimientos para este equipo
-        const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC LIMIT 100').all();
-        const movEquipo = movs.filter(m => {
-          const items = DB.movimientos.find(dm => dm.id === m.id)?.items || [];
-          return items.some(it => it.equipoId === eq.id);
-        });
+        // Obtener equipos del usuario
+        const equiposUsuario = await db.prepare('SELECT * FROM equipos WHERE usuarioActual = ?').all(usuario);
 
-        // Buscar fecha de entrega (último movimiento de tipo entrega)
-        let fechaEntrega = null;
-        for(const mov of movEquipo){
-          if((mov.tipo || '').toLowerCase() === 'entrega'){
-            fechaEntrega = mov.fecha;
-            break;
+        const result = [];
+        for(const eq of equiposUsuario || []){
+          try {
+            // Buscar items del equipo en movimiento_items
+            const items = await db.prepare('SELECT DISTINCT movimientoId FROM movimiento_items WHERE equipoId = ?').all(eq.id);
+
+            let fechaEntrega = null;
+            // Buscar el último movimiento de entrega
+            if(items && items.length > 0){
+              for(const item of items){
+                const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(item.movimientoId);
+                if(mov && (mov.tipo || '').toLowerCase() === 'entrega'){
+                  fechaEntrega = mov.fecha;
+                  break; // Tomar el primero (más reciente)
+                }
+              }
+            }
+
+            result.push({
+              equipoId: eq.id,
+              nombre: eq.nombre,
+              usuario: eq.usuarioActual,
+              fechaEntrega: fechaEntrega || 'SIN FECHA',
+              movimientos: items ? items.length : 0
+            });
+          } catch(equipoErr) {
+            console.error(`[DEBUG] Error procesando equipo ${eq.id}:`, equipoErr.message);
+            result.push({
+              equipoId: eq.id,
+              nombre: eq.nombre,
+              usuario: eq.usuarioActual,
+              fechaEntrega: 'ERROR',
+              movimientos: 0,
+              error: equipoErr.message
+            });
           }
         }
 
-        result.push({
-          equipoId: eq.id,
-          nombre: eq.nombre,
-          usuario: eq.usuarioActual,
-          fechaEntrega: fechaEntrega || 'SIN FECHA',
-          totalMovimientos: movEquipo.length
+        return sendJson(res, 200, {
+          usuario,
+          totalEquipos: equiposUsuario ? equiposUsuario.length : 0,
+          equipos: result
         });
+      } catch(err) {
+        console.error('[DEBUG] Error en endpoint user-delivery-dates:', err.message);
+        return sendJson(res, 500, { error: err.message });
       }
-
-      return sendJson(res, 200, {
-        usuario,
-        totalEquipos: equiposUsuario.length,
-        equipos: result
-      });
     }
 
     // Endpoint DEBUG: intentar actualizar fecha
@@ -1577,7 +1595,7 @@ async function handleRequest(req, res){
               const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movId);
               console.log(`[BULK-UPDATE] Resultado búsqueda mov ${movId}:`, JSON.stringify(mov));
 
-              if(mov && mov.tipo === 'entrega' && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
+              if(mov && (mov.tipo || '').toLowerCase() === 'entrega' && (!ultimoMovimiento || (mov.fecha || '') > (ultimoMovimiento.fecha || ''))){
                 console.log(`[BULK-UPDATE] ✓ Encontrado movimiento de entrega: ${mov.id} fecha: ${mov.fecha}`);
                 ultimoMovimiento = mov;
               }
@@ -1602,7 +1620,7 @@ async function handleRequest(req, res){
               INSERT INTO movimientos (id, tipo, fecha, trabajador, dni, area, sede, observaciones, origen)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
             `).run(
-              movId, 'entrega', newDate, usuario,
+              movId, 'Entrega', newDate, usuario,
               trab?.dni || '', trab?.area || '', trab?.sede || '',
               'Entrega registrada (actualización masiva)', 'APP'
             );
