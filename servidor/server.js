@@ -1440,7 +1440,20 @@ async function handleRequest(req, res){
       const body = await readBody(req);
       const nombre = (body.nombre||'').trim();
       if(!nombre) return sendJson(res, 400, {error:'El nombre es obligatorio'});
-      if(await getTrabajador(nombre)) return sendJson(res, 400, {error:'Ya existe un usuario con ese nombre'});
+
+      const existing = await getTrabajador(nombre);
+      if(existing){
+        // Si existe pero está INACTIVO, permitir reactivar
+        if(!existing.activo){
+          console.log(`[REACTIVATE] Reactivando usuario: ${nombre}`);
+          await db.prepare('UPDATE trabajadores SET dni=?, area=?, sede=?, activo=1 WHERE id = ?')
+            .run(body.dni||existing.dni||'', body.area||existing.area||'', body.sede||existing.sede||'', existing.id);
+          return sendJson(res, 200, await getTrabajador(nombre));
+        }
+        // Si está ACTIVO, rechazar
+        return sendJson(res, 400, {error:'Ya existe un usuario activo con ese nombre'});
+      }
+
       const id = generateTrabajadorId();
       await db.prepare('INSERT INTO trabajadores (id,nombre,dni,area,sede,activo) VALUES (?,?,?,?,?,?)')
         .run(id, nombre, body.dni||'', body.area||'', body.sede||'', body.activo===0?0:1);
