@@ -1006,7 +1006,53 @@ async function insertEquipo(e){
   return getEquipo(id);
 }
 
+// Verificar si existe un movimiento similar (para evitar duplicados)
+async function findSimilarMovimiento(m){
+  if(!m.fecha || !m.trabajador) return null;
+
+  // Buscar movimiento del mismo tipo, fecha, trabajador (últimos 7 días)
+  const movs = await db.prepare(`
+    SELECT m.id, COUNT(DISTINCT mi.equipoId) as eq_count
+    FROM movimientos m
+    LEFT JOIN movimiento_items mi ON m.id = mi.movimientoId
+    WHERE m.tipo = ? AND m.trabajador = ? AND m.fecha = ?
+    GROUP BY m.id
+  `).all(m.tipo, m.trabajador, m.fecha);
+
+  if(!movs || movs.length === 0) return null;
+
+  // Si hay movimientos con el mismo tipo/fecha/trabajador
+  // verificar que tengan los mismos equipos
+  if(m.items && m.items.length > 0) {
+    const newEquipoIds = m.items.map(it => it.equipoId).sort();
+
+    for(const mov of movs) {
+      if(mov.eq_count !== newEquipoIds.length) continue;
+
+      const existingItems = await db.prepare(`
+        SELECT DISTINCT equipoId FROM movimiento_items WHERE movimientoId = ?
+      `).all(mov.id);
+
+      const existingIds = existingItems.map(it => it.equipoId).sort();
+
+      // Si los equipos son idénticos, es un duplicado
+      if(JSON.stringify(existingIds) === JSON.stringify(newEquipoIds)) {
+        return mov.id; // Retornar ID del duplicado encontrado
+      }
+    }
+  }
+
+  return null;
+}
+
 async function insertMovimiento(m){
+  // Verificar duplicados
+  const duplicado = await findSimilarMovimiento(m);
+  if(duplicado) {
+    console.log(`[DEDUP] Movimiento duplicado detectado: ${duplicado}, retornando existente`);
+    return duplicado;
+  }
+
   const id = await nextId('MV','mv');
   await db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
     .run(id, m.tipo, m.fecha||null, m.trabajador||'', m.dni||'', m.area||'', m.sede||'', m.observaciones||'', m.origen||'Manual');
