@@ -1312,6 +1312,26 @@ async function handleRequest(req, res){
       });
     }
 
+    // Endpoint DEBUG: ver movimientos de un equipo
+    if(pathname.startsWith('/api/debug/movimientos-equipo/') && req.method === 'GET'){
+      const equipoId = decodeURIComponent(pathname.split('/').pop()).trim();
+      const items = await db.prepare('SELECT * FROM movimiento_items WHERE equipoId = ?').all(equipoId);
+      const movimientos = [];
+      if(items && items.length > 0){
+        for(const item of items){
+          const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(item.movimientoId);
+          movimientos.push(mov);
+        }
+      }
+      return sendJson(res, 200, {
+        equipoId,
+        items: items || [],
+        movimientos,
+        totalItems: (items || []).length,
+        totalMovimientos: movimientos.length
+      });
+    }
+
     // Endpoint para debug: búsqueda exacta
     if(pathname.startsWith('/api/trabajadores/exact/') && req.method === 'GET'){
       const nombreBuscado = decodeURIComponent(pathname.split('/').pop()).trim();
