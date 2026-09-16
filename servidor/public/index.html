@@ -835,6 +835,11 @@ function abrirDatePicker(){
   tempInput.type = 'date';
   tempInput.value = todayISO();
   tempInput.style.display = 'none';
+  tempInput.style.position = 'absolute';
+  tempInput.style.top = '0';
+  tempInput.style.left = '0';
+  tempInput.style.width = '100%';
+  tempInput.style.height = '100%';
 
   tempInput.onchange = (e) => {
     if(tempInput.value) {
@@ -844,6 +849,10 @@ function abrirDatePicker(){
       console.log('[DATE PICKER] Fecha seleccionada:', document.getElementById('regFechFecha').value);
     }
     // Remover el input temporal del DOM
+    try { document.body.removeChild(tempInput); } catch(e) {}
+  };
+
+  tempInput.onblur = () => {
     try { document.body.removeChild(tempInput); } catch(e) {}
   };
 

@@ -1637,7 +1637,7 @@ async function handleRequest(req, res){
           console.log(`[BULK-UPDATE] Reutilizando movimiento existente: ${movimientoGrupo}`);
         } else {
           // Crear un nuevo movimiento que agrupe todos los equipos
-          movimientoGrupo = await nextId('MOV', 'movimiento_counter');
+          movimientoGrupo = await nextId('MV', 'mv');
           const trab = await getTrabajador(usuario);
 
           console.log(`[BULK-UPDATE] Creando nuevo movimiento grupal: ${movimientoGrupo}`);
@@ -2046,7 +2046,7 @@ async function handleRequest(req, res){
 
           if(!mov){
             // Crear nuevo movimiento de asignación
-            movId = await nextId('MOV', 'movimiento_counter');
+            movId = await nextId('MV', 'mv');
             const trab = await getTrabajador(eq.usuarioActual);
 
             console.log(`[REGENERATE-ACTA] Creando movimiento ${movId} para ${eq.usuarioActual}`);
