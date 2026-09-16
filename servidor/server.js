@@ -2622,6 +2622,14 @@ async function handleRequest(req, res){
       }
       return sendJson(res, 200, {id: movId});
     }
+    if(pathname.startsWith('/api/actas/') && req.method === 'DELETE'){
+      const movId = decodeURIComponent(pathname.split('/').pop());
+      const movimiento = await db.prepare('SELECT * FROM movimientos WHERE id=?').get(movId);
+      if(!movimiento) return sendJson(res, 404, {error:'Acta no encontrada'});
+      await db.prepare('DELETE FROM movimiento_items WHERE movimientoId=?').run(movId);
+      await db.prepare('DELETE FROM movimientos WHERE id=?').run(movId);
+      return sendJson(res, 200, {ok:true});
+    }
     if(pathname.startsWith('/api/equipos/') && req.method === 'DELETE'){
       const id = decodeURIComponent(pathname.split('/').pop());
       const eq = await getEquipo(id);

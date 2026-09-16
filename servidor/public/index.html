@@ -1282,11 +1282,13 @@ async function saveEquipoModal(){
   if(!nombre){ alert('Ingresa el nombre del equipo'); return; }
   if(!tipo){ alert('Elige un tipo válido de la lista (' + EQ_TIPO_VALORES.join(', ') + ')'); return; }
   if(!estado){ alert('Elige un estado válido de la lista (' + EQ_ESTADO_VALORES.join(', ') + ')'); return; }
-  // Validar que el nombre no sea duplicado
-  const existente = DB.equipos.find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase() && e.id !== id);
-  if(existente){
-    alert('Ya existe un equipo con el nombre "' + nombre + '". Los nombres deben ser únicos.');
-    return;
+  // Validar que el nombre no sea duplicado SOLO si estamos creando un nuevo equipo
+  if(!id){
+    const existente = DB.equipos.find(e => e.nombre && e.nombre.toLowerCase() === nombre.toLowerCase());
+    if(existente){
+      alert('Ya existe un equipo con el nombre "' + nombre + '". Los nombres deben ser únicos.');
+      return;
+    }
   }
   const obj = {
     nombre,
@@ -1736,6 +1738,16 @@ async function actualizarCargo(movId){
   finally{ btn.disabled = false; btn.textContent = 'Guardar entrega y generar acta'; btn.onclick = saveCargo; }
 }
 
+async function eliminarActa(movId, trabajador, fecha){
+  const msg = `¿Eliminar el acta de ${trabajador} (${fecha})?\n\nEsta acción no se puede deshacer.`;
+  if(!confirm(msg)) return;
+  try{
+    await apiDelete('/api/actas/'+encodeURIComponent(movId));
+    await refreshState();
+    renderCargos();
+  }catch(err){ alert('Error al eliminar: ' + err.message); }
+}
+
 function getEquipoQuick(id){ return DB.equipos.find(e=>e.id===id); }
 
 // ---------- DEVOLUCIONES ----------
@@ -1885,7 +1897,7 @@ function renderCargos(){
       });
       if(!tieneNumero) continue;
     }
-    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(movTipoLabel(m.tipo))}</td><td>${escapeHtml(m.trabajador)}</td><td>${escapeHtml(m.sede)}</td><td>${m.items.length}</td><td><div class="btn-group"><button class="btn-icon primary" title="Ver / Imprimir acta" onclick="verActa('${m.id}')">📄</button><button class="btn-icon primary" title="Editar cargo" onclick="editarCargo('${m.id}')">✏️</button></div></td></tr>`;
+    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(movTipoLabel(m.tipo))}</td><td>${escapeHtml(m.trabajador)}</td><td>${escapeHtml(m.sede)}</td><td>${m.items.length}</td><td><div class="btn-group"><button class="btn-icon primary" title="Ver / Imprimir acta" onclick="verActa('${m.id}')">📄</button><button class="btn-icon primary" title="Editar cargo" onclick="editarCargo('${m.id}')">✏️</button><button class="btn-icon danger" title="Eliminar acta" onclick="eliminarActa('${m.id}', '${escapeHtml(m.trabajador)}', '${fmtDate(m.fecha)}')">🗑️</button></div></td></tr>`;
   }
   document.getElementById('cargosTable').innerHTML = html;
 }
