@@ -1511,7 +1511,7 @@ async function handleRequest(req, res){
         return obj;
       });
 
-      const movs = await db.prepare('SELECT * FROM movimientos ORDER BY fecha DESC LIMIT 1000').all();
+      const movs = await db.prepare('SELECT * FROM movimientos ORDER BY id DESC LIMIT 2000').all();
       const items = await db.prepare('SELECT * FROM movimiento_items LIMIT 5000').all();
       const byMov = {};
       for(const it of (items || [])){

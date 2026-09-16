@@ -1222,6 +1222,7 @@ async function confirmBulkUpdateFecha(){
       closeModal('bulkUpdateFechaModalBg');
       invSelected.clear();
       await refreshState();
+      renderInventario();
       alert(`✅ Fecha de entrega actualizada para ${res.actualizados.length} equipo(s)\n${res.message}`);
     }
   }catch(err){
