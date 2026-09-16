@@ -2878,36 +2878,6 @@ async function handleRequest(req, res){
       return res.end(html);
     }
 
-    // DELETE acta (movimiento)
-    if(pathname.startsWith('/api/actas/') && req.method === 'DELETE'){
-      try{
-        const movId = decodeURIComponent(pathname.split('/').pop());
-
-        console.log('[DELETE-ACTA] Eliminando acta:', movId);
-
-        // Verificar que existe
-        const mov = await db.prepare('SELECT * FROM movimientos WHERE id = ?').get(movId);
-        if(!mov) return sendJson(res, 404, {error:'Acta no encontrada'});
-
-        // Eliminar items primero
-        await db.prepare('DELETE FROM movimiento_items WHERE movimientoId = ?').run(movId);
-
-        // Luego eliminar movimiento
-        await db.prepare('DELETE FROM movimientos WHERE id = ?').run(movId);
-
-        console.log('[DELETE-ACTA] ✅ Acta eliminada:', movId);
-
-        return sendJson(res, 200, {
-          ok: true,
-          message: 'Acta eliminada correctamente',
-          movimientoId: movId
-        });
-      }catch(err){
-        console.error('[DELETE-ACTA ERROR]', err.message);
-        return sendJson(res, 500, {error:'Error al eliminar: ' + err.message});
-      }
-    }
-
     // ---- Endpoints de Inventario (Agente) ----
     if(pathname === '/api/inventario' && req.method === 'POST'){
       const body = await readBody(req);

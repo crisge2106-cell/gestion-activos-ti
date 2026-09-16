@@ -1736,28 +1736,6 @@ async function actualizarCargo(movId){
   finally{ btn.disabled = false; btn.textContent = 'Guardar entrega y generar acta'; btn.onclick = saveCargo; }
 }
 
-// Eliminar acta
-async function eliminarActa(movId, trabajador, fecha){
-  if(!confirm(`¿Estás seguro de que quieres eliminar el acta de ${trabajador} del ${fecha}?\n\nEsta acción no se puede deshacer.`)){
-    return;
-  }
-
-  try{
-    const response = await fetch(`/api/actas/${encodeURIComponent(movId)}`, {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
-    });
-    const data = await response.json();
-    if(!response.ok) throw new Error(data.error || 'Error al eliminar');
-
-    alert('Acta eliminada correctamente');
-    await refreshState();
-    renderCargos();
-  }catch(err){
-    alert('Error al eliminar: ' + err.message);
-  }
-}
-
 function getEquipoQuick(id){ return DB.equipos.find(e=>e.id===id); }
 
 // ---------- DEVOLUCIONES ----------
@@ -1907,7 +1885,7 @@ function renderCargos(){
       });
       if(!tieneNumero) continue;
     }
-    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(movTipoLabel(m.tipo))}</td><td>${escapeHtml(m.trabajador)}</td><td>${escapeHtml(m.sede)}</td><td>${m.items.length}</td><td><div class="btn-group"><button class="btn-icon primary" title="Ver / Imprimir acta" onclick="verActa('${m.id}')">📄</button><button class="btn-icon primary" title="Editar cargo" onclick="editarCargo('${m.id}')">✏️</button><button class="btn-icon" style="color:#dc2626;" title="Eliminar acta" onclick="eliminarActa('${m.id}', '${escapeHtml(m.trabajador)}', '${fmtDate(m.fecha)}')">🗑️</button></div></td></tr>`;
+    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(movTipoLabel(m.tipo))}</td><td>${escapeHtml(m.trabajador)}</td><td>${escapeHtml(m.sede)}</td><td>${m.items.length}</td><td><div class="btn-group"><button class="btn-icon primary" title="Ver / Imprimir acta" onclick="verActa('${m.id}')">📄</button><button class="btn-icon primary" title="Editar cargo" onclick="editarCargo('${m.id}')">✏️</button></div></td></tr>`;
   }
   document.getElementById('cargosTable').innerHTML = html;
 }
