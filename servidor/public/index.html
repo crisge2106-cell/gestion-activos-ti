@@ -608,10 +608,9 @@
     <div class="field">
       <label>Fecha de Entrega <span style="color:#d69e2e; font-size:12px;">*</span></label>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="text" id="regFechFecha" placeholder="DD/MM/YYYY" style="flex:1; padding:8px; font-size:16px;" pattern="\d{2}/\d{2}/\d{4}" required>
-        <button type="button" onclick="abrirDatePicker()" style="padding:8px 12px; background:#4299e1; color:white; border:none; border-radius:6px; cursor:pointer; font-size:20px; font-weight:bold;">📅</button>
+        <input type="date" id="regFechFecha" style="flex:1; padding:8px; font-size:16px;" required>
       </div>
-      <small style="color:#d69e2e; font-weight:bold; margin-top:4px; display:block;">⚠️ OBLIGATORIO: Haz clic en 📅 y selecciona la fecha. NO escribas manualmente.</small>
+      <small style="color:#22543d; font-weight:normal; margin-top:4px; display:block;">📅 Selecciona la fecha del calendario</small>
     </div>
     <div class="field">
       <label>Trabajador (Usuario actual)</label>
@@ -829,85 +828,6 @@ async function saveProfile(){
   }catch(err){ errEl.textContent = 'Error: ' + err.message; errEl.style.display='block'; }
 }
 
-function abrirDatePicker(){
-  const fechaInput = document.getElementById('regFechFecha');
-
-  // Crear un input date completamente separado y limpio
-  const tempInput = document.createElement('input');
-  tempInput.type = 'date';
-  tempInput.id = 'tempDateInput_' + Date.now();
-
-  // Parsear fecha actual si existe (DD/MM/YYYY a YYYY-MM-DD)
-  const currentValue = fechaInput.value.trim();
-  if(currentValue && currentValue.includes('/')) {
-    const [day, month, year] = currentValue.split('/');
-    if(day && month && year) {
-      tempInput.value = `${year}-${month}-${day}`;
-    }
-  } else {
-    tempInput.value = todayISO();
-  }
-
-  // Estilos: completamente oculto pero funcional
-  tempInput.style.position = 'absolute';
-  tempInput.style.width = '1px';
-  tempInput.style.height = '1px';
-  tempInput.style.opacity = '0';
-  tempInput.style.border = 'none';
-  tempInput.style.padding = '0';
-  tempInput.style.margin = '0';
-  tempInput.style.top = '-9999px';
-  tempInput.style.left = '-9999px';
-  tempInput.style.zIndex = '-10000';
-  tempInput.style.pointerEvents = 'none';
-
-  let handled = false;
-
-  tempInput.onchange = (e) => {
-    if(tempInput.value && !handled) {
-      handled = true;
-      // Convertir YYYY-MM-DD a DD/MM/YYYY
-      const [year, month, day] = tempInput.value.split('-');
-      fechaInput.value = `${day}/${month}/${year}`;
-      console.log('[DATE PICKER] Fecha seleccionada:', fechaInput.value);
-      cleanup();
-    }
-  };
-
-  tempInput.oncancel = () => {
-    cleanup();
-  };
-
-  function cleanup() {
-    try {
-      setTimeout(() => {
-        if(document.body.contains(tempInput)) {
-          document.body.removeChild(tempInput);
-        }
-      }, 100);
-    } catch(e) {
-      console.log('[DATE PICKER] Error removiendo input:', e.message);
-    }
-  }
-
-  // Agregar al DOM
-  document.body.appendChild(tempInput);
-
-  // Abrir el picker - intentar showPicker primero (mejor soporte)
-  try {
-    console.log('[DATE PICKER] Intentando showPicker()');
-    tempInput.showPicker();
-  } catch(err) {
-    console.log('[DATE PICKER] showPicker no disponible, intentando click');
-    try {
-      tempInput.click();
-    } catch(err2) {
-      console.error('[DATE PICKER ERROR]', err2.message);
-      cleanup();
-      alert('El date picker no funciona en tu navegador. Por favor escribe la fecha en formato DD/MM/YYYY');
-    }
-  }
-}
 
 function openRegistrarFechaEntregaModal(eqId){
   const e = DB.equipos.find(x => x.id === eqId);
@@ -931,23 +851,19 @@ async function guardarFechaEntrega(){
   console.log('[GUARDAR FECHA] equipoId:', eqId, 'fecha raw:', fechaRaw, 'tipo:', typeof fechaRaw);
 
   if(!fechaRaw || fechaRaw.trim() === ''){
-    errEl.textContent = '❌ Debes seleccionar una fecha. Usa el calendario (📅) o escribe en formato DD/MM/YYYY';
+    errEl.textContent = '❌ Debes seleccionar una fecha usando el calendario';
     errEl.style.display='block';
     return;
   }
 
-  // Convertir formato DD/MM/YYYY a YYYY-MM-DD si es necesario
+  // El input date proporciona fechas en formato YYYY-MM-DD automáticamente
   let fecha = fechaRaw;
-  if(fechaRaw.includes('/')) {
-    const partes = fechaRaw.split('/');
-    if(partes.length === 3 && partes[0].length === 2 && partes[1].length === 2 && partes[2].length === 4) {
-      fecha = `${partes[2]}-${partes[1]}-${partes[0]}`; // Convertir DD/MM/YYYY a YYYY-MM-DD
-      console.log('[GUARDAR FECHA] Convertido de DD/MM/YYYY a ISO:', fecha);
-    } else {
-      errEl.textContent = '❌ Formato de fecha incorrecto. Usa DD/MM/YYYY o selecciona el calendario';
-      errEl.style.display='block';
-      return;
-    }
+
+  // Validar que sea formato YYYY-MM-DD (del input date)
+  if(!fecha.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    errEl.textContent = '❌ Formato de fecha incorrecto. Por favor usa el calendario para seleccionar';
+    errEl.style.display='block';
+    return;
   }
 
   try{
