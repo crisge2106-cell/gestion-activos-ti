@@ -830,38 +830,76 @@ async function saveProfile(){
 }
 
 function abrirDatePicker(){
+  const fechaInput = document.getElementById('regFechFecha');
+
   // Crear un input date temporal para abrir el date picker nativo
   const tempInput = document.createElement('input');
   tempInput.type = 'date';
-  tempInput.value = todayISO();
+
+  // Parsear fecha actual si existe (DD/MM/YYYY a YYYY-MM-DD)
+  const currentValue = fechaInput.value.trim();
+  if(currentValue && currentValue.includes('/')) {
+    const [day, month, year] = currentValue.split('/');
+    if(day && month && year) {
+      tempInput.value = `${year}-${month}-${day}`;
+    }
+  } else {
+    tempInput.value = todayISO();
+  }
+
   tempInput.style.display = 'none';
-  tempInput.style.position = 'absolute';
+  tempInput.style.position = 'fixed';
   tempInput.style.top = '0';
   tempInput.style.left = '0';
-  tempInput.style.width = '100%';
-  tempInput.style.height = '100%';
+  tempInput.style.opacity = '0';
+
+  let fechaSeleccionada = false;
 
   tempInput.onchange = (e) => {
     if(tempInput.value) {
+      fechaSeleccionada = true;
       // Convertir YYYY-MM-DD a DD/MM/YYYY
       const [year, month, day] = tempInput.value.split('-');
-      document.getElementById('regFechFecha').value = `${day}/${month}/${year}`;
-      console.log('[DATE PICKER] Fecha seleccionada:', document.getElementById('regFechFecha').value);
+      fechaInput.value = `${day}/${month}/${year}`;
+      console.log('[DATE PICKER] Fecha seleccionada:', fechaInput.value);
+      cleanup();
     }
-    // Remover el input temporal del DOM
-    try { document.body.removeChild(tempInput); } catch(e) {}
   };
 
   tempInput.onblur = () => {
-    try { document.body.removeChild(tempInput); } catch(e) {}
+    // Si no se seleccionó nada después de 500ms, limpiar
+    setTimeout(() => {
+      if(!fechaSeleccionada) cleanup();
+    }, 500);
   };
+
+  function cleanup() {
+    try {
+      document.body.removeChild(tempInput);
+    } catch(e) {
+      console.log('[DATE PICKER] Error removiendo input:', e.message);
+    }
+  }
 
   // Agregar el input al DOM para que funcione el date picker
   document.body.appendChild(tempInput);
 
-  // Focus y click para abrir el picker
-  tempInput.focus();
-  tempInput.click();
+  // Intentar abrir el picker
+  try {
+    tempInput.focus();
+    tempInput.click();
+
+    // Fallback: si el click no abre el picker después de 1s, forzar
+    setTimeout(() => {
+      if(!fechaSeleccionada && document.body.contains(tempInput)) {
+        tempInput.showPicker?.();
+      }
+    }, 500);
+  } catch(err) {
+    console.error('[DATE PICKER ERROR]', err.message);
+    cleanup();
+    alert('El date picker no funciona en tu navegador. Por favor escribe la fecha en formato DD/MM/YYYY');
+  }
 }
 
 function openRegistrarFechaEntregaModal(eqId){
@@ -2680,6 +2718,7 @@ async function saveUsuario(){
     else await apiPost('/api/trabajadores', obj);
     closeModal('usuarioModalBg');
     await refreshState();
+    renderAll();
   }catch(err){ alert('Error al guardar: ' + err.message); }
 }
 async function toggleUsuarioActivo(nombreEnc, nuevoActivo){
@@ -2687,6 +2726,7 @@ async function toggleUsuarioActivo(nombreEnc, nuevoActivo){
   try{
     await apiPut('/api/trabajadores/'+encodeURIComponent(nombre), {activo: nuevoActivo ? 1 : 0});
     await refreshState();
+    renderAll();
   }catch(err){ alert('Error: ' + err.message); }
 }
 
