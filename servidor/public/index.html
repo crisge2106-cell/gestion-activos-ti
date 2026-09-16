@@ -156,6 +156,10 @@
       <input type="text" id="invEstadoFilter" list="invEstadoFilterOptions" autocomplete="off" placeholder="Todos los estados"><datalist id="invEstadoFilterOptions"></datalist>
       <input type="text" id="invSedeFilter" list="invSedeFilterOptions" autocomplete="off" placeholder="Todas las sedes"><datalist id="invSedeFilterOptions"></datalist>
       <input type="text" id="invUsuarioFilter" list="invUsuarioFilterOptions" autocomplete="off" placeholder="Filtrar por usuario"><datalist id="invUsuarioFilterOptions"></datalist>
+      <input type="date" id="invFechaEntregaDesde" placeholder="Fecha entrega desde">
+      <input type="date" id="invFechaEntregaHasta" placeholder="Fecha entrega hasta">
+      <input type="date" id="invFechaCompraDesde" placeholder="Fecha compra desde">
+      <input type="date" id="invFechaCompraHasta" placeholder="Fecha compra hasta">
       <button class="btn" onclick="openEquipoModal()">+ Registrar equipo</button>
       <span class="muted" id="invCount"></span>
     </div>
@@ -1031,17 +1035,30 @@ function populateFilterOptions(){
 function fechaEntregaEquipo(equipoId){
   const movs = DB.movimientos.filter(m=>m.items.some(it=>it.equipoId===equipoId));
   if(movs.length===0) return null;
-  // Ordenar por ID DESC para obtener el movimiento más reciente (por orden de creación, no por fecha)
-  // IDs siguen patrón MV-0001, MV-0002, etc., así que comparación string funciona correctamente
   const sorted = movs.slice().sort((a,b)=>{
     const aId = a.id || '';
     const bId = b.id || '';
-    return aId.localeCompare(bId) * -1; // Multiplicar por -1 para DESC
+    return aId.localeCompare(bId) * -1;
   });
   for(const m of sorted){
     const tipo = (m.tipo || '').toLowerCase();
     if(tipo==='devolución') return null;
     if(tipo==='entrega' || tipo==='asignacion' || tipo==='asignación') return m.fecha;
+  }
+  return null;
+}
+function obtenerUltimoUsuarioEquipo(equipoId){
+  const movs = DB.movimientos.filter(m=>m.items.some(it=>it.equipoId===equipoId));
+  if(movs.length===0) return null;
+  const sorted = movs.slice().sort((a,b)=>{
+    const aId = a.id || '';
+    const bId = b.id || '';
+    return aId.localeCompare(bId) * -1;
+  });
+  for(const m of sorted){
+    const tipo = (m.tipo || '').toLowerCase();
+    if(tipo==='devolución') return null;
+    if(tipo==='entrega' || tipo==='asignacion' || tipo==='asignación') return m.trabajador;
   }
   return null;
 }
@@ -1056,11 +1073,28 @@ function renderInventario(){
   const estadoF = (document.getElementById('invEstadoFilter').value||'').toLowerCase();
   const sedeF = (document.getElementById('invSedeFilter').value||'').toLowerCase();
   const usuarioF = (document.getElementById('invUsuarioFilter').value||'').toLowerCase();
+  const fechaEntDesde = document.getElementById('invFechaEntregaDesde').value;
+  const fechaEntHasta = document.getElementById('invFechaEntregaHasta').value;
+  const fechaCompDesde = document.getElementById('invFechaCompraDesde').value;
+  const fechaCompHasta = document.getElementById('invFechaCompraHasta').value;
   let rows = DB.equipos.filter(e=>{
     if(tipoF && !(e.tipo||'').toLowerCase().includes(tipoF)) return false;
     if(estadoF && !(e.estado||'').toLowerCase().includes(estadoF)) return false;
     if(sedeF && !(e.sede||'').toLowerCase().includes(sedeF)) return false;
     if(usuarioF && !(e.usuarioActual||'').toLowerCase().includes(usuarioF)) return false;
+    if(fechaEntDesde || fechaEntHasta){
+      const fEnt = fechaEntregaEquipo(e.id);
+      if(fEnt){
+        if(fechaEntDesde && fEnt < fechaEntDesde) return false;
+        if(fechaEntHasta && fEnt > fechaEntHasta) return false;
+      }else if(fechaEntDesde || fechaEntHasta) return false;
+    }
+    if(fechaCompDesde || fechaCompHasta){
+      if(e.fechaCompra){
+        if(fechaCompDesde && e.fechaCompra < fechaCompDesde) return false;
+        if(fechaCompHasta && e.fechaCompra > fechaCompHasta) return false;
+      }else if(fechaCompDesde || fechaCompHasta) return false;
+    }
     if(q){
       const blob = [e.nombre,e.marca,e.modelo,e.serie,e.usuarioActual,e.area].join(' ').toLowerCase();
       if(!blob.includes(q)) return false;
@@ -1202,7 +1236,7 @@ async function confirmBulkUpdateFecha(){
   }
 }
 
-['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter'].forEach(id=>{
+['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter','invFechaEntregaDesde','invFechaEntregaHasta','invFechaCompraDesde','invFechaCompraHasta'].forEach(id=>{
   document.getElementById(id).addEventListener('input', renderInventario);
   document.getElementById(id).addEventListener('change', renderInventario);
 });
@@ -1777,10 +1811,11 @@ function renderDevoluciones(){
   const trabajadores = [...new Set(DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual).map(e=>e.usuarioActual))].sort();
   fillDatalist('devTrabajadorOptions', trabajadores);
   renderDevEquiposList();
-  const rows = DB.equipos.filter(e=>['En custodia','Por reparar'].includes(e.estado));
+  const rows = DB.equipos.filter(e=>['En custodia','Por reparar','Disponible'].includes(e.estado));
   let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Estado</th><th>Últ. usuario</th></tr>';
   for(const e of rows){
-    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
+    const ultUsuario = obtenerUltimoUsuarioEquipo(e.id);
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(ultUsuario||'—')}</td></tr>`;
   }
   document.getElementById('custodiaTable').innerHTML = html;
 }
