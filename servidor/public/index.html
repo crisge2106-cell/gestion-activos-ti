@@ -248,6 +248,10 @@
   </div>
   <div class="card">
     <h2>Equipos actualmente en custodia / por reparar</h2>
+    <div class="toolbar">
+      <input type="text" id="custodiaSearch" placeholder="Buscar por ID, nombre, tipo, marca, modelo, serie, usuario...">
+      <span class="muted" id="custodiaCount"></span>
+    </div>
     <div class="tablewrap"><table id="custodiaTable"></table></div>
   </div>
 </div>
@@ -1807,13 +1811,26 @@ function renderDevEquiposList(){
     </label>`;
   }).join('');
 }
+let custodiaRows = [];
 function renderDevoluciones(){
   const trabajadores = [...new Set(DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual).map(e=>e.usuarioActual))].sort();
   fillDatalist('devTrabajadorOptions', trabajadores);
   renderDevEquiposList();
-  const rows = DB.equipos.filter(e=>['En custodia','Por reparar','Disponible'].includes(e.estado));
+  custodiaRows = DB.equipos.filter(e=>['En custodia','Por reparar','Disponible'].includes(e.estado));
+  renderCustodiaTable();
+}
+function renderCustodiaTable(){
+  const q = (document.getElementById('custodiaSearch')?.value||'').toLowerCase();
+  let filteredRows = custodiaRows;
+  if(q){
+    filteredRows = custodiaRows.filter(e=>{
+      const blob = [e.id, e.nombre, e.tipo, e.marca, e.modelo, e.serie, e.sede, e.estado, obtenerUltimoUsuarioEquipo(e.id)].join(' ').toLowerCase();
+      return blob.includes(q);
+    });
+  }
+  document.getElementById('custodiaCount').textContent = filteredRows.length + ' equipo(s)';
   let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Estado</th><th>Últ. usuario</th></tr>';
-  for(const e of rows){
+  for(const e of filteredRows){
     const ultUsuario = obtenerUltimoUsuarioEquipo(e.id);
     html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(ultUsuario||'—')}</td></tr>`;
   }
@@ -1821,6 +1838,8 @@ function renderDevoluciones(){
 }
 document.getElementById('devTrabajador').addEventListener('input', renderDevEquiposList);
 document.getElementById('devTrabajador').addEventListener('change', renderDevEquiposList);
+document.getElementById('custodiaSearch').addEventListener('input', renderCustodiaTable);
+document.getElementById('custodiaSearch').addEventListener('change', renderCustodiaTable);
 
 // ---------- BAJAS ----------
 async function saveBaja(){
