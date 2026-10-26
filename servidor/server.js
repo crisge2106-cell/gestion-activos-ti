@@ -944,6 +944,20 @@ async function getMantenimientos(){
   return await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC').all();
 }
 
+function normTipoMov(t){
+  return String(t||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+}
+async function ultimoUsuarioEquipo(equipoId){
+  const movs = (await getMovimientos())
+    .filter(m=>m.items.some(it=>it.equipoId===equipoId))
+    .sort((a,b)=>String(b.id).localeCompare(String(a.id)));
+  for(const m of movs){
+    const tipo = normTipoMov(m.tipo);
+    if(tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) return m.trabajador||'';
+  }
+  return '';
+}
+
 async function getEquipo(id){
   const e = await db.prepare('SELECT * FROM equipos WHERE id = ?').get(id);
   if(!e) return null;
@@ -2610,7 +2624,16 @@ async function handleRequest(req, res){
       const items = equipos.map(eq=>({equipoId: eq.id, cantidad:1, descripcion:`${eq.tipo} ${eq.marca||''} ${eq.modelo||''}`.trim(), marcaModelo:`${eq.marca||''} ${eq.modelo||''}`.trim(), serieEstado: eq.serie}));
       const movId = await insertMovimiento({tipo: body.motivo, fecha: body.fecha, trabajador, dni:'', area: equipos[0].area, sede: equipos[0].sede,
         observaciones: body.observaciones, origen:'Manual', items});
-      for(const eq of equipos) await updateEquipoFields(eq.id, {estado: body.estadoNuevo, usuarioActual: ''});
+      const obsPorEquipo = body.observacionesPorEquipo || {};
+      for(const eq of equipos){
+        const falla = (obsPorEquipo[eq.id]||'').trim();
+        const fields = {estado: falla ? 'Por reparar' : 'Disponible', usuarioActual: ''};
+        if(falla){
+          const nuevaObs = `${body.fecha||new Date().toISOString().slice(0,10)}: ${falla}`;
+          fields.observaciones = eq.observaciones ? `${eq.observaciones} | ${nuevaObs}` : nuevaObs;
+        }
+        await updateEquipoFields(eq.id, fields);
+      }
 
       // REGLA DE NEGOCIO: Si devuelven todos los equipos por salida, marcar trabajador como "baja" (inactivo)
       if(body.motivo === 'Devolucion por salida' && trabajador){
@@ -2646,7 +2669,8 @@ async function handleRequest(req, res){
       const eq = await getEquipo(body.equipoId);
       if(!eq) return sendJson(res, 404, {error:'Equipo no encontrado'});
       const obsFull = body.motivo + (body.observaciones? ' — ' + body.observaciones : '');
-      const movId = await insertMovimiento({tipo:'Baja', fecha: body.fecha, trabajador: eq.usuarioActual, dni:'', area: eq.area, sede: eq.sede,
+      const trabajadorBaja = eq.usuarioActual || await ultimoUsuarioEquipo(eq.id);
+      const movId = await insertMovimiento({tipo:'Baja', fecha: body.fecha, trabajador: trabajadorBaja, dni:'', area: eq.area, sede: eq.sede,
         observaciones: obsFull, origen:'Manual',
         items:[{equipoId: eq.id, cantidad:1, descripcion:`${eq.tipo} ${eq.marca||''} ${eq.modelo||''}`.trim(), marcaModelo:`${eq.marca||''} ${eq.modelo||''}`.trim(), serieEstado: eq.serie}]});
       await updateEquipoFields(eq.id, {estado:'De baja', usuarioActual:''});

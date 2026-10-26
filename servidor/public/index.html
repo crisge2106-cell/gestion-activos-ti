@@ -203,7 +203,7 @@
     </div>
     <div class="grid2">
       <div class="field"><label>Sede</label>
-        <input type="text" id="cSede" list="sedeOptions" autocomplete="off" value="LIMA">
+        <input type="text" id="cSede" list="sedeOptions" autocomplete="off">
       </div>
       <div class="field"><label>Observaciones</label><input type="text" id="cObs" placeholder="Opcional"></div>
     </div>
@@ -228,8 +228,10 @@
     <div class="grid3">
       <div class="field"><label>Trabajador</label><input type="text" id="devTrabajador" list="devTrabajadorOptions" autocomplete="off" placeholder="Buscar trabajador..."><datalist id="devTrabajadorOptions"></datalist></div>
       <div class="field"><label>Motivo</label>
-        <input type="text" id="devMotivo" list="devMotivoOptions" autocomplete="off" value="Devolución por salida del trabajador">
-        <datalist id="devMotivoOptions"><option value="Devolución por salida del trabajador"><option value="Devolución por renovación"></datalist>
+        <select id="devMotivo">
+          <option value="Devolución por salida del trabajador">Devolución por salida del trabajador</option>
+          <option value="Devolución por renovación">Devolución por renovación</option>
+        </select>
       </div>
       <div class="field"><label>Fecha de devolución</label><input type="date" id="devFecha"></div>
     </div>
@@ -237,13 +239,7 @@
       <label>Equipos asignados a este trabajador (marca los que devuelve)</label>
       <div id="devEquiposList" class="muted" style="border:1px solid var(--borde); border-radius:6px; padding:8px;">Selecciona un trabajador para ver sus equipos.</div>
     </div>
-    <div class="grid3">
-      <div class="field"><label>Estado luego de devolución</label>
-        <input type="text" id="devEstadoNuevo" list="devEstadoNuevoOptions" autocomplete="off" value="Disponible">
-        <datalist id="devEstadoNuevoOptions"><option value="Disponible"><option value="En custodia"><option value="Por reparar"></datalist>
-      </div>
-      <div class="field" style="grid-column:span 2;"><label>Observaciones</label><input type="text" id="devObs"></div>
-    </div>
+    <div class="field"><label>Observaciones del acta</label><input type="text" id="devObs"></div>
     <button class="btn" id="btnSaveDev" onclick="saveDevolucion()">Registrar devolución y generar acta</button>
   </div>
   <div class="card">
@@ -264,10 +260,13 @@
       <div class="field"><label>Equipo</label><input type="text" id="bajaEquipo" list="bajaEquipoOptions" autocomplete="off" placeholder="Buscar equipo..."><datalist id="bajaEquipoOptions"></datalist></div>
       <div class="field"><label>Fecha de baja</label><input type="date" id="bajaFecha"></div>
       <div class="field"><label>Motivo</label>
-        <input type="text" id="bajaMotivo" list="bajaMotivoOptions" autocomplete="off" value="Obsolescencia / fin de vida útil">
-        <datalist id="bajaMotivoOptions">
-          <option value="Obsolescencia / fin de vida útil"><option value="Daño irreparable"><option value="Pérdida o robo"><option value="Venta"><option value="Otro">
-        </datalist>
+        <select id="bajaMotivo">
+          <option value="Obsolescencia / fin de vida útil">Obsolescencia / fin de vida útil</option>
+          <option value="Daño irreparable">Daño irreparable</option>
+          <option value="Pérdida o robo">Pérdida o robo</option>
+          <option value="Venta">Venta</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
     </div>
     <div class="field"><label>Observaciones</label><input type="text" id="bajaObs" style="width:100%"></div>
@@ -287,8 +286,12 @@
       <div class="field"><label>Equipo</label><input type="text" id="mEquipo" list="mEquipoOptions" autocomplete="off" placeholder="Buscar equipo..."><datalist id="mEquipoOptions"></datalist></div>
       <div class="field"><label>Fecha</label><input type="date" id="mFecha"></div>
       <div class="field"><label>Tipo</label>
-        <input type="text" id="mTipo" list="mTipoOptions" autocomplete="off" value="Mantenimiento preventivo">
-        <datalist id="mTipoOptions"><option value="Mantenimiento preventivo"><option value="Reparación"><option value="Cambio de repuesto"><option value="Otro"></datalist>
+        <select id="mTipo">
+          <option value="Mantenimiento preventivo">Mantenimiento preventivo</option>
+          <option value="Reparación">Reparación</option>
+          <option value="Cambio de repuesto">Cambio de repuesto</option>
+          <option value="Otro">Otro</option>
+        </select>
       </div>
       <div class="field"><label>Realizado por</label><input type="text" id="mPor"></div>
     </div>
@@ -464,13 +467,19 @@
       <div class="field"><label>Serie / IMEI</label><input type="text" id="eqSerie"></div>
       <div class="field"><label>Fecha de compra</label><input type="date" id="eqFechaCompra"></div>
       <div class="field"><label>Sede</label>
-        <input type="text" id="eqSede" list="sedeOptions" autocomplete="off" value="LIMA">
+        <input type="text" id="eqSede" list="sedeOptions" autocomplete="off">
       </div>
     </div>
     <div class="grid3">
       <div class="field"><label>Estado</label>
-        <input type="text" id="eqEstado" list="eqEstadoOptions" autocomplete="off" value="Disponible">
-        <datalist id="eqEstadoOptions"><option value="Disponible"><option value="Asignado"><option value="En custodia"><option value="Por reparar"><option value="De baja"><option value="Perdido/Robado"><option value="Vendido"></datalist>
+        <select id="eqEstado">
+          <option value="Disponible">Disponible</option>
+          <option value="Asignado">Asignado</option>
+          <option value="Por reparar">Por reparar</option>
+          <option value="De baja">De baja</option>
+          <option value="Perdido/Robado">Perdido/Robado</option>
+          <option value="Vendido">Vendido</option>
+        </select>
       </div>
       <div class="field"><label>Usuario actual</label><input type="text" id="eqUsuario" list="eqUsuarioOptions" autocomplete="off" placeholder="Buscar usuario..."><datalist id="eqUsuarioOptions"></datalist></div>
       <div class="field"><label>Área</label><input type="text" id="eqArea"></div>
@@ -1060,9 +1069,8 @@ function obtenerUltimoUsuarioEquipo(equipoId){
     return aId.localeCompare(bId) * -1;
   });
   for(const m of sorted){
-    const tipo = (m.tipo || '').toLowerCase();
-    if(tipo==='devolución') return null;
-    if(tipo==='entrega' || tipo==='asignacion' || tipo==='asignación') return m.trabajador;
+    const tipo = (m.tipo || '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+    if(tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) return m.trabajador || null;
   }
   return null;
 }
@@ -1262,7 +1270,10 @@ function openEquipoModal(id){
     document.getElementById('eqSerie').value = e.serie||'';
     document.getElementById('eqFechaCompra').value = e.fechaCompra||'';
     document.getElementById('eqSede').value = e.sede||'LIMA';
-    document.getElementById('eqEstado').value = e.estado||'Disponible';
+    const estadoSel = document.getElementById('eqEstado');
+    const estadoActual = e.estado||'Disponible';
+    if(![...estadoSel.options].some(o=>o.value===estadoActual)) estadoSel.add(new Option(estadoActual, estadoActual));
+    estadoSel.value = estadoActual;
     document.getElementById('eqUsuario').value = e.usuarioActual||'';
     document.getElementById('eqArea').value = e.area||'';
     document.getElementById('eqObs').value = e.observaciones||'';
@@ -1766,8 +1777,7 @@ function resetDevolucionForm(){
   try{
     document.getElementById('devTrabajador').value='';
     document.getElementById('devFecha').value = todayISO();
-    document.getElementById('devMotivo').value='';
-    document.getElementById('devEstadoNuevo').value='Disponible';
+    document.getElementById('devMotivo').value='Devolución por salida del trabajador';
     document.getElementById('devObs').value='';
     document.getElementById('devEquiposList').innerHTML='Selecciona un trabajador para ver sus equipos.';
     console.log('[RESET] Formulario de devolución limpiado correctamente');
@@ -1783,12 +1793,13 @@ async function saveDevolucion(){
   if(equipoIds.length===0){ alert('Marca al menos un equipo a devolver'); return; }
   const motivo = resolveByLabel(MOTIVO_DEVOLUCION_LABELS, document.getElementById('devMotivo').value);
   const fecha = document.getElementById('devFecha').value || todayISO();
-  const estadoNuevo = document.getElementById('devEstadoNuevo').value;
+  const observacionesPorEquipo = {};
+  document.querySelectorAll('#devEquiposList .devFalla').forEach(i=>{ if(i.value.trim()) observacionesPorEquipo[i.dataset.id] = i.value.trim(); });
   const obs = document.getElementById('devObs').value.trim();
   const btn = document.getElementById('btnSaveDev');
   btn.disabled = true;
   try{
-    const res = await apiPost('/api/devoluciones', {trabajador, equipoIds, motivo, fecha, estadoNuevo, observaciones:obs});
+    const res = await apiPost('/api/devoluciones', {trabajador, equipoIds, motivo, fecha, observacionesPorEquipo, observaciones:obs});
     await refreshState();
     verActa(res.id);
     resetDevolucionForm();
@@ -1799,16 +1810,20 @@ function renderDevEquiposList(){
   const trabajador = document.getElementById('devTrabajador').value;
   const cont = document.getElementById('devEquiposList');
   const previouslyChecked = new Set([...cont.querySelectorAll('.devChk:checked')].map(c=>c.value));
+  const previousFallas = Object.fromEntries([...cont.querySelectorAll('.devFalla')].map(i=>[i.dataset.id, i.value]));
   const hadAny = cont.querySelectorAll('.devChk').length > 0;
   if(!trabajador){ cont.innerHTML = 'Selecciona un trabajador para ver sus equipos.'; return; }
   const equipos = DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual===trabajador);
   if(equipos.length===0){ cont.innerHTML = 'Este trabajador no tiene equipos asignados actualmente.'; return; }
   cont.innerHTML = equipos.map(e=>{
     const checked = hadAny ? previouslyChecked.has(e.id) : true;
-    return `<label style="display:flex; align-items:center; gap:8px; padding:5px 2px; border-bottom:1px solid var(--gris-200); color:var(--gris-900); font-size:13px;">
-      <input type="checkbox" class="devChk" value="${e.id}" ${checked?'checked':''}>
-      <span>${escapeHtml(e.tipo)} — ${escapeHtml(e.marca)} ${escapeHtml(e.modelo)} (${escapeHtml(e.serie)||'s/n'})</span>
-    </label>`;
+    return `<div style="display:flex; align-items:center; gap:8px; padding:5px 2px; border-bottom:1px solid var(--gris-200);">
+      <label style="display:flex; align-items:center; gap:8px; flex:1; color:var(--gris-900); font-size:13px;">
+        <input type="checkbox" class="devChk" value="${e.id}" ${checked?'checked':''}>
+        <span>${escapeHtml(e.tipo)} — ${escapeHtml(e.marca)} ${escapeHtml(e.modelo)} (${escapeHtml(e.serie)||'s/n'})</span>
+      </label>
+      <input type="text" class="devFalla" data-id="${e.id}" value="${escapeHtml(previousFallas[e.id]||'')}" placeholder="Falla / observación (si aplica)" style="flex:1;">
+    </div>`;
   }).join('');
 }
 let custodiaRows = [];
@@ -1816,7 +1831,15 @@ function renderDevoluciones(){
   const trabajadores = [...new Set(DB.equipos.filter(e=>e.estado==='Asignado' && e.usuarioActual).map(e=>e.usuarioActual))].sort();
   fillDatalist('devTrabajadorOptions', trabajadores);
   renderDevEquiposList();
-  custodiaRows = DB.equipos.filter(e=>['En custodia','Por reparar','Disponible'].includes(e.estado));
+  const enDevolucion = DB.equipos.filter(e=>['Disponible','Por reparar'].includes(e.estado));
+  const vistos = new Set();
+  custodiaRows = enDevolucion.filter(e=>{
+    if(!e.serie || !e.serie.trim()) return true;
+    const clave = e.serie.trim().toUpperCase();
+    if(vistos.has(clave)) return false;
+    vistos.add(clave);
+    return true;
+  });
   renderCustodiaTable();
 }
 function renderCustodiaTable(){
@@ -1829,12 +1852,22 @@ function renderCustodiaTable(){
     });
   }
   document.getElementById('custodiaCount').textContent = filteredRows.length + ' equipo(s)';
-  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Estado</th><th>Últ. usuario</th></tr>';
+  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Estado</th><th>Últ. usuario</th><th></th></tr>';
   for(const e of filteredRows){
     const ultUsuario = obtenerUltimoUsuarioEquipo(e.id);
-    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(ultUsuario||'—')}</td></tr>`;
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${estadoTag(e.estado)}</td><td>${escapeHtml(ultUsuario||'—')}</td><td><button class="btn-icon danger" title="Eliminar equipo" onclick="eliminarEquipoDevolucion('${e.id}')">🗑️</button></td></tr>`;
   }
   document.getElementById('custodiaTable').innerHTML = html;
+}
+async function eliminarEquipoDevolucion(id){
+  const eq = DB.equipos.find(e=>e.id===id);
+  if(!eq) return;
+  if(!confirm(`¿Eliminar el equipo ${id} (${eq.tipo} ${eq.marca||''} ${eq.modelo||''} ${eq.serie||''})? Esta acción no se puede deshacer.`)) return;
+  try{
+    await apiDelete('/api/equipos/' + encodeURIComponent(id));
+    await refreshState();
+    renderAll();
+  }catch(err){ alert('Error al eliminar: ' + err.message); }
 }
 document.getElementById('devTrabajador').addEventListener('input', renderDevEquiposList);
 document.getElementById('devTrabajador').addEventListener('change', renderDevEquiposList);
@@ -1861,9 +1894,9 @@ async function saveBaja(){
 function renderBajas(){
   fillEquipoDatalist('bajaEquipoOptions', e=>!['De baja','Vendido'].includes(e.estado));
   const rows = DB.equipos.filter(e=>e.estado==='De baja');
-  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Observaciones</th></tr>';
+  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Últ. usuario</th><th>Observaciones</th></tr>';
   for(const e of rows){
-    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${escapeHtml(obtenerUltimoUsuarioEquipo(e.id)||'—')}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
   }
   document.getElementById('bajasTable').innerHTML = html;
 }
