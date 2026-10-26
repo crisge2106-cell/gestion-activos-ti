@@ -1067,7 +1067,9 @@ async function insertMovimiento(m){
     return duplicado;
   }
 
-  const id = await nextId('MV','mv');
+  let id;
+  do { id = await nextId('MV','mv'); }
+  while (await db.prepare('SELECT id FROM movimientos WHERE id = ?').get(id));
   await db.prepare(`INSERT INTO movimientos (id,tipo,fecha,trabajador,dni,area,sede,observaciones,origen) VALUES (?,?,?,?,?,?,?,?,?)`)
     .run(id, m.tipo, m.fecha||null, m.trabajador||'', m.dni||'', m.area||'', m.sede||'', m.observaciones||'', m.origen||'Manual');
   const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado) VALUES (?,?,?,?,?,?)`);
