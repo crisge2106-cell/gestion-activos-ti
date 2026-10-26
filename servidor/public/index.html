@@ -1070,7 +1070,7 @@ function obtenerUltimoUsuarioEquipo(equipoId){
   });
   for(const m of sorted){
     const tipo = (m.tipo || '').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
-    if(tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) return m.trabajador || null;
+    if((tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) && m.trabajador) return m.trabajador;
   }
   return null;
 }

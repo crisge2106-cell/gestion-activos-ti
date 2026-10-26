@@ -953,7 +953,7 @@ async function ultimoUsuarioEquipo(equipoId){
     .sort((a,b)=>String(b.id).localeCompare(String(a.id)));
   for(const m of movs){
     const tipo = normTipoMov(m.tipo);
-    if(tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) return m.trabajador||'';
+    if((tipo==='entrega' || tipo==='asignacion' || tipo.startsWith('devolucion')) && m.trabajador) return m.trabajador;
   }
   return '';
 }
