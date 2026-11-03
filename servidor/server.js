@@ -67,7 +67,7 @@ const CREATE_TABLES_SQL = `
   );
   CREATE TABLE IF NOT EXISTS mantenimientos (
     id TEXT PRIMARY KEY,
-    equipoId TEXT, fecha TEXT, tipo TEXT, realizadoPor TEXT, descripcion TEXT
+    equipoId TEXT, fecha TEXT, tipo TEXT, realizadoPor TEXT, descripcion TEXT, usuario TEXT
   );
   CREATE TABLE IF NOT EXISTS trabajadores (
     id TEXT PRIMARY KEY,
@@ -159,6 +159,14 @@ const CREATE_TABLES_SQL = `
   );
 `;
 
+async function migrarMantenimientoUsuario(){
+  if (db.getType() !== 'sqlite') return;
+  const columnas = await db.prepare('PRAGMA table_info(mantenimientos)').all();
+  if (!columnas.some(c => c.name === 'usuario')) {
+    await db.exec('ALTER TABLE mantenimientos ADD COLUMN usuario TEXT');
+  }
+}
+
 if (!isServerless) {
   // LOCAL: Inicializar inmediatamente
   (async () => {
@@ -167,6 +175,7 @@ if (!isServerless) {
       await db.init();
 
       await db.exec(CREATE_TABLES_SQL);
+      await migrarMantenimientoUsuario();
 
       await seedIfEmpty();
       await backfillTrabajadoresIfEmpty();
@@ -192,6 +201,7 @@ if (!isServerless) {
         await db.init();
 
         await db.exec(CREATE_TABLES_SQL);
+        await migrarMantenimientoUsuario();
 
         await seedIfEmpty();
         await backfillTrabajadoresIfEmpty();
@@ -395,7 +405,7 @@ async function bulkLoad(data){
 
     const mantenimientosDocs = (data.mantenimientos||[]).map(mt => ({
       id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
-      realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
+      realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||'', usuario: mt.usuario||''
     }));
 
     const trabajadoresDocs = (data.trabajadores||[]).map(t => ({
@@ -437,8 +447,8 @@ async function bulkLoad(data){
       VALUES (@id,@tipo,@fecha,@trabajador,@dni,@area,@sede,@observaciones,@origen)`);
     const insIt = db.prepare(`INSERT INTO movimiento_items (movimientoId,equipoId,cantidad,descripcion,marcaModelo,serieEstado)
       VALUES (@movimientoId,@equipoId,@cantidad,@descripcion,@marcaModelo,@serieEstado)`);
-    const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion)
-      VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion)`);
+    const insMt = db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion,usuario)
+      VALUES (@id,@equipoId,@fecha,@tipo,@realizadoPor,@descripcion,@usuario)`);
 
     await db.exec('BEGIN');
     try{
@@ -466,7 +476,7 @@ async function bulkLoad(data){
       for(const mt of (data.mantenimientos||[])){
         await insMt.run({
           id: mt.id, equipoId: mt.equipoId, fecha: mt.fecha||null, tipo: mt.tipo||'',
-          realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||''
+          realizadoPor: mt.realizadoPor||'', descripcion: mt.descripcion||'', usuario: mt.usuario||''
         });
       }
       await db.exec('COMMIT');
@@ -1010,7 +1020,9 @@ async function insertEquipo(e){
     if(existente) throw new Error('Ya existe un equipo con el nombre "' + nombre + '"');
   }
 
-  const id = await nextId('EQ','eq');
+  let id;
+  do { id = await nextId('EQ','eq'); }
+  while (await db.prepare('SELECT id FROM equipos WHERE id = ?').get(id));
   await db.prepare(`INSERT INTO equipos (id,nombre,tipo,marca,modelo,serie,fechaCompra,sede,estado,usuarioActual,area,observaciones,cpu,ram,disco,origen)
     VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`).run(
     id, nombre, e.tipo||'', e.marca||'', e.modelo||'', e.serie||'', e.fechaCompra||null, e.sede||'', e.estado||'Disponible',
@@ -1546,7 +1558,7 @@ async function handleRequest(req, res){
 
       const mantenimientos = (await db.prepare('SELECT * FROM mantenimientos ORDER BY fecha DESC LIMIT 200').all() || [])
         .filter(m => m && typeof m === 'object')
-        .map(m => ({id: m.id || m._id, equipoId: m.equipoId || '', fecha: m.fecha || '', tipo: m.tipo || '', realizadoPor: m.realizadoPor || '', descripcion: m.descripcion || ''}));
+        .map(m => ({id: m.id || m._id, equipoId: m.equipoId || '', fecha: m.fecha || '', tipo: m.tipo || '', realizadoPor: m.realizadoPor || '', descripcion: m.descripcion || '', usuario: m.usuario || ''}));
 
       const trabajadoresRaw = await db.prepare('SELECT * FROM trabajadores WHERE activo=? ORDER BY nombre LIMIT 300').all(1) || [];
       console.log(`📊 /api/state: ${trabajadoresRaw?.length || 0} trabajadores cargados`);
@@ -2681,8 +2693,8 @@ async function handleRequest(req, res){
     if(pathname === '/api/mantenimientos' && req.method === 'POST'){
       const body = await readBody(req);
       const id = await nextId('MT','mt');
-      await db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion) VALUES (?,?,?,?,?,?)`)
-        .run(id, body.equipoId, body.fecha, body.tipo, body.realizadoPor||'', body.descripcion||'');
+      await db.prepare(`INSERT INTO mantenimientos (id,equipoId,fecha,tipo,realizadoPor,descripcion,usuario) VALUES (?,?,?,?,?,?,?)`)
+        .run(id, body.equipoId, body.fecha, body.tipo, body.realizadoPor||'', body.descripcion||'', body.usuario||'');
       return sendJson(res, 200, {id});
     }
 

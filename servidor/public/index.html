@@ -282,6 +282,7 @@
 <div class="view" id="view-mantenimiento">
   <div class="card">
     <h2>Registrar mantenimiento / cambio de repuesto</h2>
+    <div class="field"><label>Usuario que reporta / afectado</label><input type="text" id="mUsuario" list="mUsuarioOptions" autocomplete="off" placeholder="Buscar usuario..." style="width:100%"><datalist id="mUsuarioOptions"></datalist></div>
     <div class="grid4">
       <div class="field"><label>Equipo</label><input type="text" id="mEquipo" list="mEquipoOptions" autocomplete="off" placeholder="Buscar equipo..."><datalist id="mEquipoOptions"></datalist></div>
       <div class="field"><label>Fecha</label><input type="date" id="mFecha"></div>
@@ -300,7 +301,7 @@
   </div>
   <div class="card">
     <h2>Historial de mantenimientos</h2>
-    <div class="toolbar"><input type="text" id="mantSearch" placeholder="Filtrar por equipo/serie..."></div>
+    <div class="toolbar"><input type="text" id="mantSearch" placeholder="Filtrar por usuario, equipo, marca, serie..."></div>
     <div class="tablewrap"><table id="mantTable"></table></div>
   </div>
 </div>
@@ -458,7 +459,7 @@
     <div class="grid3">
       <div class="field"><label>Tipo</label>
         <input type="text" id="eqTipo" list="eqTipoOptions" autocomplete="off" value="Laptop">
-        <datalist id="eqTipoOptions"><option value="Laptop"><option value="PC"><option value="Impresora"><option value="Escaner"><option value="Celular"><option value="Accesorio"><option value="LIN"></datalist>
+        <datalist id="eqTipoOptions"><option value="Laptop"><option value="PC"><option value="Impresora"><option value="Escaner"><option value="Celular"><option value="Accesorio"><option value="LIN"><option value="Switch"><option value="Router"><option value="UPS"><option value="Marcador de asistencia"></datalist>
       </div>
       <div class="field"><label>Marca</label><input type="text" id="eqMarca"></div>
       <div class="field"><label>Modelo</label><input type="text" id="eqModelo"></div>
@@ -1290,7 +1291,7 @@ function openEquipoModal(id){
     btnDelete.style.display = 'none';
   }
 }
-const EQ_TIPO_VALORES = ['Laptop','PC','Impresora','Escaner','Celular','Accesorio','LIN'];
+const EQ_TIPO_VALORES = ['Laptop','PC','Impresora','Escaner','Celular','Accesorio','LIN','Switch','Router','UPS','Marcador de asistencia'];
 const EQ_ESTADO_VALORES = ['Disponible','Asignado','En custodia','Por reparar','De baja','Perdido/Robado','Vendido'];
 function matchCanonico(valores, typed){
   const t = (typed||'').trim();
@@ -1903,6 +1904,8 @@ function renderBajas(){
 
 // ---------- MANTENIMIENTO ----------
 async function saveMantenimiento(){
+  const usuario = document.getElementById('mUsuario').value.trim();
+  if(!usuario){ alert('Ingresa el usuario que reporta o está afectado'); return; }
   const equipoId = equipoIdFromLabelInput(document.getElementById('mEquipo'));
   if(!equipoId){ alert('Selecciona un equipo válido de la lista'); return; }
   const fecha = document.getElementById('mFecha').value || todayISO();
@@ -1913,26 +1916,37 @@ async function saveMantenimiento(){
   const btn = document.getElementById('btnSaveMant');
   btn.disabled = true;
   try{
-    await apiPost('/api/mantenimientos', {equipoId, fecha, tipo, realizadoPor:por, descripcion:desc});
+    await apiPost('/api/mantenimientos', {equipoId, usuario, fecha, tipo, realizadoPor:por, descripcion:desc});
     await refreshState();
+    document.getElementById('mUsuario').value=''; document.getElementById('mEquipo').value='';
     document.getElementById('mDesc').value=''; document.getElementById('mPor').value='';
   }catch(err){ alert('Error al guardar: ' + err.message); }
   finally{ btn.disabled = false; }
 }
+function refreshMantEquipoOptions(){
+  const usuario = (document.getElementById('mUsuario').value||'').trim().toLowerCase();
+  const activos = DB.equipos.filter(e=>e.estado!=='Vendido');
+  const asignados = usuario ? activos.filter(e=>(e.usuarioActual||'').trim().toLowerCase()===usuario) : [];
+  const resto = activos.filter(e=>!asignados.includes(e));
+  fillDatalist('mEquipoOptions', [...asignados, ...resto].map(equipoOptionLabel));
+}
 function renderMantenimiento(){
-  fillEquipoDatalist('mEquipoOptions', e=>!['Vendido'].includes(e.estado));
+  fillDatalist('mUsuarioOptions', [...new Set((DB.trabajadores||[]).map(t=>t.nombre))].sort());
+  refreshMantEquipoOptions();
   const q = (document.getElementById('mantSearch').value||'').toLowerCase();
   let rows = DB.mantenimientos.slice().sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||''));
-  let html = '<tr><th>Fecha</th><th>Equipo</th><th>Nombre</th><th>Tipo</th><th>Descripción</th><th>Realizado por</th></tr>';
+  let html = '<tr><th>Equipo</th><th>Usuario</th><th>Fecha</th><th>Tipo</th><th>Descripción</th><th>Realizado por</th></tr>';
   for(const m of rows){
     const e = DB.equipos.find(x=>x.id===m.equipoId) || {};
-    const blob = `${e.marca||''} ${e.modelo||''} ${e.serie||''}`.toLowerCase();
+    const blob = [m.usuario, e.nombre, e.tipo, e.marca, e.modelo, e.serie].join(' ').toLowerCase();
     if(q && !blob.includes(q)) continue;
-    html += `<tr><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(e.tipo||'')} ${escapeHtml(e.marca||'')} ${escapeHtml(e.modelo||'')} (${escapeHtml(e.serie||'')})</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(m.tipo)}</td><td>${escapeHtml(m.descripcion)}</td><td>${escapeHtml(m.realizadoPor)}</td></tr>`;
+    html += `<tr><td><strong>${escapeHtml(e.nombre||'—')}</strong><br><span class="muted">${escapeHtml(e.tipo||'')} ${escapeHtml(e.marca||'')} ${escapeHtml(e.modelo||'')} (${escapeHtml(e.serie||'')})</span></td><td>${escapeHtml(m.usuario||'—')}</td><td>${fmtDate(m.fecha)}</td><td>${escapeHtml(m.tipo)}</td><td>${escapeHtml(m.descripcion)}</td><td>${escapeHtml(m.realizadoPor)}</td></tr>`;
   }
   document.getElementById('mantTable').innerHTML = html;
 }
 document.getElementById('mantSearch').addEventListener('input', renderMantenimiento);
+document.getElementById('mUsuario').addEventListener('input', refreshMantEquipoOptions);
+document.getElementById('mUsuario').addEventListener('change', refreshMantEquipoOptions);
 
 // ---------- CARGOS / ACTAS ----------
 function renderCargos(){
