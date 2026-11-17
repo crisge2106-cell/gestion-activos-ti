@@ -7,16 +7,18 @@
 <script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@500;600;700&family=Fira+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..110,400..700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --azul:#1e40af; --azul-claro:#3b82f6; --rojo:#dc2626; --ambar:#d97706; --verde:#16a34a;
-    --gris-100:#f8fafc; --gris-200:#edf2f7; --gris-300:#e2e8f0; --gris-500:#718096; --gris-700:#2d3748; --gris-900:#1a202c;
-    --borde:#cbd5e0;
-    --font-num:'Fira Code', 'Consolas', monospace;
+    --azul:#0f5a4f; --azul-claro:#17776a; --rojo:#b42318; --ambar:#9a5b00; --verde:#1e6b45;
+    --gris-100:#f1f4f1; --gris-200:#e5ebe7; --gris-300:#d3dcd8; --gris-500:#56666b; --gris-700:#2c3d42; --gris-900:#14232b;
+    --borde:#c4cfca;
+    --font-num:'Archivo', system-ui, sans-serif;
   }
   *{box-sizing:border-box;}
-  body{font-family: 'Fira Sans', Segoe UI, Arial, sans-serif; margin:0; background:var(--gris-100); color:var(--gris-900);}
+  body{font-family:'Archivo', system-ui, sans-serif; margin:0; background:var(--gris-100); color:var(--gris-900); font-size:14px; line-height:1.45;}
+  table, .kpi .num, .chart-bar-val{font-variant-numeric:tabular-nums;}
+  :focus-visible{outline:2px solid var(--azul-claro); outline-offset:2px;}
   header{background:var(--azul); color:#fff; padding:14px 22px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap;}
   header h1{font-size:18px; margin:0; font-weight:600;}
   header .sub{font-size:12px; opacity:.8;}
@@ -92,6 +94,43 @@
   .bulkbar{display:none; align-items:center; gap:10px; background:#eff6ff; border:1px solid var(--azul-claro); border-radius:6px; padding:8px 12px; margin-bottom:10px; font-size:13px;}
   .bulkbar.active{display:flex;}
   .bulkbar .count{font-weight:600; color:var(--azul);}
+  .tablewrap table{min-width:640px;}
+  .cargoItemRow{display:grid; grid-template-columns:1.5fr 0.8fr 1fr 1fr 1fr auto; gap:8px; align-items:end; margin-bottom:8px;}
+  button.btn,button.btn-icon,nav button{min-height:36px;}
+  nav{scrollbar-width:thin;}
+  nav button{flex:0 0 auto; white-space:nowrap;}
+  .btn-group{flex-wrap:wrap;}
+  .bulkbar{flex-wrap:wrap;}
+  @media (max-width:1000px){
+    .grid4{grid-template-columns:1fr 1fr;}
+    .itemsRow{grid-template-columns:1fr 1fr;}
+    .cargoItemRow{grid-template-columns:1fr 1fr 1fr;}
+  }
+  @media (max-width:720px){
+    header{flex-direction:column; align-items:flex-start; gap:10px; padding:12px 14px;}
+    header > div:last-child{flex-wrap:wrap; width:100%;}
+    header .sub{display:none;}
+    nav{overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch;}
+    main{padding:12px;}
+    .card{padding:12px;}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr));}
+    .grid2,.grid3,.grid4,.itemsRow{grid-template-columns:1fr;}
+    .cargoItemRow{grid-template-columns:1fr 1fr;}
+    .cargoItemRow > :last-child{grid-column:1 / -1;}
+    .toolbar{flex-direction:column; align-items:stretch;}
+    .toolbar input[type=text],.toolbar input[type=date],.toolbar select,.toolbar button,.toolbar .btn{width:100%; min-width:0;}
+    .field input,.field select,.field textarea{width:100%;}
+    .toolbar .muted{text-align:center;}
+    .modal-bg{padding:12px 8px;}
+    .modal{padding:16px; max-width:100%;}
+    .chart-bar-row{grid-template-columns:90px 1fr 36px;}
+  }
+  @media (max-width:420px){
+    .kpis{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{transition:none !important; animation:none !important; scroll-behavior:auto !important;}
+  }
 </style>
 </head>
 <body>
@@ -342,7 +381,7 @@
 
 <!-- FORMULARIO SOLICITUD COMPRA (Modal) -->
 <div class="modal-bg" id="solicitudFormModal">
-  <div class="modal" style="width: 800px; max-height: 90vh; overflow-y: auto;">
+  <div class="modal" style="max-width: 800px; max-height: 90vh; overflow-y: auto;">
     <h2>Solicitud de Compra</h2>
 
     <h3>Items</h3>
@@ -1440,7 +1479,7 @@ function addCargoItemRow(){
   const celulares = disponibles.filter(e=>e.tipo==='Celular');
 
   wrap.innerHTML = `
-    <div style="display:grid; grid-template-columns:1.5fr 0.8fr 1fr 1fr 1fr auto; gap:8px; align-items:end; margin-bottom:8px;">
+    <div class="cargoItemRow">
       <div class="field"><label>Equipo existente (o deja en blanco para accesorio nuevo)</label>
         <input type="text" class="itEquipo" list="${rowId}Options" autocomplete="off" placeholder="Buscar equipo...">
         <datalist id="${rowId}Options">${disponibles.map(e=>`<option value="${escapeHtml(equipoOptionLabel(e))}">`).join('')}</datalist>

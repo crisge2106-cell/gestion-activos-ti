@@ -4,48 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ingresar — Gestión de Activos TI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..110,400..700&display=swap" rel="stylesheet">
 <style>
-  :root{ --azul:#1e3a5f; --azul-claro:#2c5282; --rojo:#c53030; --borde:#cbd5e0; --gris-100:#f7fafc; --gris-500:#718096; }
+  :root{
+    --ink:#14232b; --muted:#56666b; --paper:#f1f4f1; --card:#ffffff; --line:#cfd9d4;
+    --brand:#0f5a4f; --brand-2:#17776a; --alert:#b42318; --ok:#1e6b45;
+  }
   *{box-sizing:border-box;}
-  body{font-family: Segoe UI, Arial, sans-serif; background:linear-gradient(135deg,var(--azul),var(--azul-claro)); min-height:100vh; margin:0; display:flex; align-items:center; justify-content:center;}
-  .box{background:#fff; border-radius:12px; padding:34px; width:100%; max-width:380px; box-shadow:0 10px 40px rgba(0,0,0,.25);}
-  h1{font-size:17px; color:var(--azul); margin:0 0 4px;}
-  p.sub{color:var(--gris-500); font-size:13px; margin:0 0 22px;}
-  label{font-size:12px; font-weight:600; color:#2d3748; display:block; margin-bottom:4px;}
-  input{width:100%; padding:9px 10px; border:1px solid var(--borde); border-radius:6px; font-size:14px; margin-bottom:14px;}
-  button.btn{width:100%; background:var(--azul); color:#fff; border:none; padding:10px; border-radius:6px; font-size:14px; cursor:pointer;}
-  button.btn:hover{background:var(--azul-claro);}
-  button.btn:disabled{opacity:.6;}
-  .err{background:#fff5f5; color:var(--rojo); padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:12px; display:none;}
-  .msg{background:#f0fff4; color:#2f855a; padding:8px 10px; border-radius:6px; font-size:12.5px; margin-bottom:12px; display:none;}
-  a.link{color:var(--azul); font-size:12.5px; cursor:pointer; text-decoration:underline; display:inline-block; margin-top:4px;}
+  html{color-scheme:light;}
+  body{font-family:'Archivo', system-ui, sans-serif; background:var(--paper); color:var(--ink); min-height:100vh; min-height:100dvh; margin:0; display:flex; align-items:center; justify-content:center; padding:16px;}
+  .box{background:var(--card); border:1px solid var(--line); border-radius:6px; padding:clamp(22px,5vw,34px); width:100%; max-width:400px;}
+  h1{font-size:21px; font-weight:700; font-stretch:105%; margin:0; line-height:1.2;}
+  p.sub{color:var(--muted); font-size:13.5px; margin:4px 0 24px;}
+  label{font-size:13px; font-weight:600; display:block; margin-bottom:6px;}
+  input{width:100%; padding:11px 12px; border:1px solid var(--line); border-radius:4px; font:inherit; font-size:15px; margin-bottom:16px; background:#fff; color:var(--ink);}
+  input:focus-visible, button:focus-visible{outline:2px solid var(--brand-2); outline-offset:2px;}
+  button.btn{width:100%; background:var(--brand); color:#fff; border:0; padding:12px; border-radius:4px; font:inherit; font-weight:600; font-size:15px; cursor:pointer;}
+  button.btn:hover{background:var(--brand-2);}
+  button.btn:disabled{opacity:.6; cursor:default;}
+  button.link{display:inline-block; margin-top:14px; background:none; border:0; padding:0; color:var(--brand); font:inherit; font-size:13.5px; text-decoration:underline; cursor:pointer;}
+  .err{background:#fdf1f0; color:var(--alert); padding:9px 11px; border-radius:4px; font-size:13px; margin-bottom:14px; display:none;}
+  .msg{background:#eef7f1; color:var(--ok); padding:9px 11px; border-radius:4px; font-size:13px; margin-bottom:14px; display:none;}
   .hidden{display:none;}
 </style>
 </head>
 <body>
-  <div class="box">
+  <main class="box">
     <h1>Gestión de Activos TI</h1>
     <p class="sub">Axis Group</p>
 
     <div id="viewLogin">
       <div class="err" id="loginErr"></div>
-      <label>Usuario</label>
+      <label for="loginUser">Usuario</label>
       <input type="text" id="loginUser" autocomplete="username" placeholder="Ingresa tu usuario">
-      <label>Contraseña</label>
+      <label for="loginPass">Contraseña</label>
       <input type="password" id="loginPass" autocomplete="current-password">
-      <button class="btn" id="btnLogin">Ingresar</button>
-      <a class="link" onclick="showView('forgot1')">¿Olvidaste tu contraseña?</a>
+      <button class="btn" id="btnLogin" type="button">Ingresar</button>
+      <button type="button" class="link" onclick="showView('forgot1')">¿Olvidaste tu contraseña?</button>
     </div>
 
     <div id="viewForgot1" class="hidden">
       <div class="msg" id="forgotMsg"></div>
-      <p class="sub" style="margin-top:0;">Escribe el correo de recuperación asociado a tu usuario. Si está registrado, te enviaremos una contraseña temporal para ingresar.</p>
-      <label>Correo de recuperación</label>
+      <p class="sub">Escribe el correo de recuperación asociado a tu usuario. Si está registrado, te enviaremos una contraseña temporal para ingresar.</p>
+      <label for="forgotEmail">Correo de recuperación</label>
       <input type="email" id="forgotEmail" placeholder="tucorreo@empresa.com">
-      <button class="btn" id="btnForgot">Enviar contraseña temporal</button>
-      <a class="link" onclick="showView('login')">Volver a iniciar sesión</a>
+      <button class="btn" id="btnForgot" type="button">Enviar contraseña temporal</button>
+      <button type="button" class="link" onclick="showView('login')">Volver a iniciar sesión</button>
     </div>
-  </div>
+  </main>
 
 <script>
 function showView(name){
