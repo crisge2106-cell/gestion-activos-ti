@@ -2690,6 +2690,31 @@ async function handleRequest(req, res){
       await updateEquipoFields(eq.id, {estado:'De baja', usuarioActual:''});
       return sendJson(res, 200, {id: movId});
     }
+    if(pathname === '/api/inventario/export-xlsx' && req.method === 'POST'){
+      const body = await readBody(req);
+      const filas = Array.isArray(body.filas) ? body.filas.slice(0, 5000) : [];
+      const columnas = [
+        {header:'ID', key:'id', width:12}, {header:'Nombre', key:'nombre', width:18}, {header:'Tipo', key:'tipo', width:16},
+        {header:'Marca', key:'marca', width:16}, {header:'Modelo', key:'modelo', width:20}, {header:'Serie', key:'serie', width:22},
+        {header:'Fecha compra', key:'fechaCompra', width:14}, {header:'Sede', key:'sede', width:12}, {header:'Estado', key:'estado', width:14},
+        {header:'Usuario', key:'usuario', width:30}, {header:'Fecha entrega', key:'fechaEntrega', width:14}, {header:'Alerta', key:'alerta', width:16}
+      ];
+      const workbook = new ExcelJS.Workbook();
+      const hoja = workbook.addWorksheet('Inventario');
+      hoja.columns = columnas;
+      hoja.getRow(1).font = {bold: true};
+      for(const f of filas){
+        const fila = {};
+        for(const c of columnas) fila[c.key] = String(f[c.key] ?? '');
+        hoja.addRow(fila);
+      }
+      const buffer = await workbook.xlsx.writeBuffer();
+      res.writeHead(200, {
+        'Content-Type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition': 'attachment; filename="inventario_' + new Date().toISOString().slice(0,10) + '.xlsx"'
+      });
+      return res.end(Buffer.from(buffer));
+    }
     if(pathname === '/api/mantenimientos' && req.method === 'POST'){
       const body = await readBody(req);
       const id = await nextId('MT','mt');

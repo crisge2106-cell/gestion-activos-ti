@@ -160,7 +160,16 @@
       <input type="date" id="invFechaEntregaHasta" placeholder="Fecha entrega hasta">
       <input type="date" id="invFechaCompraDesde" placeholder="Fecha compra desde">
       <input type="date" id="invFechaCompraHasta" placeholder="Fecha compra hasta">
+      <select id="invAlertaFilter">
+        <option value="">Todas las alertas</option>
+        <option value="vencido">Vencido</option>
+        <option value="proximo">Próximo a vencer</option>
+        <option value="ok">OK</option>
+        <option value="sin-fecha">Sin fecha</option>
+        <option value="sin-umbral">Sin umbral</option>
+      </select>
       <button class="btn" onclick="openEquipoModal()">+ Registrar equipo</button>
+      <button class="btn secondary" onclick="exportarInventarioExcel()">📊 Exportar a Excel</button>
       <span class="muted" id="invCount"></span>
     </div>
     <div class="bulkbar" id="invBulkbar">
@@ -1090,6 +1099,7 @@ function renderInventario(){
   const fechaEntHasta = document.getElementById('invFechaEntregaHasta').value;
   const fechaCompDesde = document.getElementById('invFechaCompraDesde').value;
   const fechaCompHasta = document.getElementById('invFechaCompraHasta').value;
+  const alertaF = document.getElementById('invAlertaFilter').value;
   let rows = DB.equipos.filter(e=>{
     if(tipoF && !(e.tipo||'').toLowerCase().includes(tipoF)) return false;
     if(estadoF && !(e.estado||'').toLowerCase().includes(estadoF)) return false;
@@ -1108,12 +1118,18 @@ function renderInventario(){
         if(fechaCompHasta && e.fechaCompra > fechaCompHasta) return false;
       }else if(fechaCompDesde || fechaCompHasta) return false;
     }
+    if(alertaF){
+      const info = equipoAlertInfo(e);
+      const tipoAlerta = info ? info.estado : 'sin-umbral';
+      if(tipoAlerta !== alertaF) return false;
+    }
     if(q){
       const blob = [e.nombre,e.marca,e.modelo,e.serie,e.usuarioActual,e.area].join(' ').toLowerCase();
       if(!blob.includes(q)) return false;
     }
     return true;
   });
+  invRowsFiltradas = rows;
   document.getElementById('invCount').textContent = rows.length + ' equipos';
   const visibleIds = new Set(rows.map(e=>e.id));
   for(const id of [...invSelected]) if(!visibleIds.has(id)) invSelected.delete(id);
@@ -1138,6 +1154,7 @@ function renderInventario(){
 
 // ---------- Selección múltiple en Inventario ----------
 let invSelected = new Set();
+let invRowsFiltradas = [];
 function toggleInvSelect(id, checked){
   if(checked) invSelected.add(id); else invSelected.delete(id);
   updateInvBulkbar();
@@ -1249,10 +1266,31 @@ async function confirmBulkUpdateFecha(){
   }
 }
 
-['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter','invFechaEntregaDesde','invFechaEntregaHasta','invFechaCompraDesde','invFechaCompraHasta'].forEach(id=>{
+['invSearch','invTipoFilter','invEstadoFilter','invSedeFilter','invUsuarioFilter','invFechaEntregaDesde','invFechaEntregaHasta','invFechaCompraDesde','invFechaCompraHasta','invAlertaFilter'].forEach(id=>{
   document.getElementById(id).addEventListener('input', renderInventario);
   document.getElementById(id).addEventListener('change', renderInventario);
 });
+
+const ALERTA_TEXTO = {vencido:'Vencido', proximo:'Próximo a vencer', ok:'OK', 'sin-fecha':'Sin fecha'};
+async function exportarInventarioExcel(){
+  if(invRowsFiltradas.length===0) return alert('No hay equipos que exportar con los filtros actuales');
+  const filas = invRowsFiltradas.map(e=>{
+    const info = equipoAlertInfo(e);
+    return {
+      id: e.id, nombre: e.nombre||'', tipo: e.tipo||'', marca: e.marca||'', modelo: e.modelo||'', serie: e.serie||'',
+      fechaCompra: e.fechaCompra||'', sede: e.sede||'', estado: e.estado||'', usuario: e.usuarioActual||'',
+      fechaEntrega: fechaEntregaEquipo(e.id)||'', alerta: info ? (ALERTA_TEXTO[info.estado]||'') : 'Sin umbral'
+    };
+  });
+  const res = await fetch('/api/inventario/export-xlsx', {method:'POST', credentials:'include', headers:{'Content-Type':'application/json'}, body: JSON.stringify({filas})});
+  if(res.status === 401){ handleAuthFailure(401); return; }
+  if(!res.ok){ alert('Error al exportar: ' + res.status); return; }
+  const blob = await res.blob();
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'inventario_' + todayISO() + '.xlsx';
+  a.click();
+}
 
 function openEquipoModal(id){
   document.getElementById('equipoModalBg').classList.add('active');
