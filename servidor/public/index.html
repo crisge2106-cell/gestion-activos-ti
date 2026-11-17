@@ -322,6 +322,13 @@
   </div>
   <div class="card">
     <h2>Equipos dados de baja</h2>
+    <div class="toolbar">
+      <input type="text" id="bajaSearch" placeholder="Buscar por ID, nombre, serie, usuario...">
+      <select id="bajaMotivoFiltro"><option value="">Todos los motivos</option></select>
+      <input type="date" id="bajaFechaDesde" title="Fecha de baja desde">
+      <input type="date" id="bajaFechaHasta" title="Fecha de baja hasta">
+      <span class="muted" id="bajaCount"></span>
+    </div>
     <div class="tablewrap"><table id="bajasTable"></table></div>
   </div>
 </div>
@@ -1969,15 +1976,51 @@ async function saveBaja(){
   }catch(err){ alert('Error al guardar: ' + err.message); }
   finally{ btn.disabled = false; }
 }
+function bajaDeEquipo(equipoId){
+  const bajas = DB.movimientos
+    .filter(m=>m.tipo==='Baja' && m.items.some(it=>it.equipoId===equipoId))
+    .sort((a,b)=>(b.fecha||'').localeCompare(a.fecha||'') || String(b.id).localeCompare(String(a.id)));
+  const b = bajas[0];
+  if(!b) return {fecha:'', motivo:'', obs:''};
+  const partes = (b.observaciones||'').split(' — ');
+  return {fecha: b.fecha||'', motivo: partes[0]||'', obs: partes.slice(1).join(' — ')};
+}
 function renderBajas(){
   fillEquipoDatalist('bajaEquipoOptions', e=>!['De baja','Vendido'].includes(e.estado));
-  const rows = DB.equipos.filter(e=>e.estado==='De baja');
-  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Últ. usuario</th><th>Observaciones</th></tr>';
-  for(const e of rows){
-    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${escapeHtml(obtenerUltimoUsuarioEquipo(e.id)||'—')}</td><td>${escapeHtml(e.observaciones)}</td></tr>`;
+  const motivoSel = document.getElementById('bajaMotivoFiltro');
+  const motivoPrevio = motivoSel.value;
+  const motivos = [...new Set(DB.equipos.filter(e=>e.estado==='De baja').map(e=>bajaDeEquipo(e.id).motivo).filter(Boolean))].sort();
+  motivoSel.innerHTML = '<option value="">Todos los motivos</option>' + motivos.map(m=>`<option value="${escapeHtml(m)}">${escapeHtml(m)}</option>`).join('');
+  motivoSel.value = motivos.includes(motivoPrevio) ? motivoPrevio : '';
+
+  const q = (document.getElementById('bajaSearch').value||'').toLowerCase();
+  const desde = document.getElementById('bajaFechaDesde').value;
+  const hasta = document.getElementById('bajaFechaHasta').value;
+  const filtroMotivo = motivoSel.value;
+
+  const filas = DB.equipos.filter(e=>e.estado==='De baja').map(e=>({e, baja: bajaDeEquipo(e.id), usuario: obtenerUltimoUsuarioEquipo(e.id)||''}))
+    .filter(({e, baja, usuario})=>{
+      if(filtroMotivo && baja.motivo!==filtroMotivo) return false;
+      if(desde && (!baja.fecha || baja.fecha < desde)) return false;
+      if(hasta && (!baja.fecha || baja.fecha > hasta)) return false;
+      if(q){
+        const texto = [e.id, e.nombre, e.tipo, e.marca, e.modelo, e.serie, e.sede, usuario].join(' ').toLowerCase();
+        if(!texto.includes(q)) return false;
+      }
+      return true;
+    });
+
+  document.getElementById('bajaCount').textContent = filas.length + ' equipo(s)';
+  let html = '<tr><th>ID</th><th>Nombre</th><th>Tipo</th><th>Marca/Modelo</th><th>Serie</th><th>Sede</th><th>Últ. usuario</th><th>Fecha de baja</th><th>Motivo</th><th>Observaciones</th><th></th></tr>';
+  for(const {e, baja, usuario} of filas){
+    html += `<tr><td>${e.id}</td><td><strong>${escapeHtml(e.nombre||'—')}</strong></td><td>${escapeHtml(e.tipo)}</td><td>${escapeHtml(e.marca)} ${escapeHtml(e.modelo)}</td><td>${escapeHtml(e.serie)}</td><td>${escapeHtml(e.sede)}</td><td>${escapeHtml(usuario||'—')}</td><td>${baja.fecha ? fmtDate(baja.fecha) : '<span class="muted">Sin registrar</span>'}</td><td>${baja.motivo ? escapeHtml(baja.motivo) : '<span class="muted">Sin registrar</span>'}</td><td>${escapeHtml(baja.obs)}</td><td><button class="btn-icon primary" title="Historial de asignaciones" onclick="openHistorial('${e.id}')">📋</button></td></tr>`;
   }
   document.getElementById('bajasTable').innerHTML = html;
 }
+['bajaSearch','bajaMotivoFiltro','bajaFechaDesde','bajaFechaHasta'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderBajas);
+  document.getElementById(id).addEventListener('change', renderBajas);
+});
 
 // ---------- MANTENIMIENTO ----------
 async function saveMantenimiento(){
